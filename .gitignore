@@ -1,0 +1,25 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Entorno
+.env
+
+# Backups
+*.backup*
+
+# Logs
+logs/
+*.log
+
+# Base de datos
+*.sqlite3
+
+# Sistema
+.DS_Store
+Thumbs.db
