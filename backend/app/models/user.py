@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
@@ -22,4 +22,7 @@ class User(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
+
+    patient: Mapped["Patient | None"] = relationship("Patient", back_populates="user", uselist=False)
+    doctor: Mapped["Doctor | None"] = relationship("Doctor", back_populates="user", uselist=False)
     )
