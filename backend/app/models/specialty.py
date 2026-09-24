@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+from app.models.doctor_specialty import doctor_specialties
 
 
 class Specialty(Base):
@@ -16,4 +17,8 @@ class Specialty(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
+    )
+
+    doctors: Mapped[list["Doctor"]] = relationship(
+        "Doctor", secondary=doctor_specialties, back_populates="specialties"
     )
