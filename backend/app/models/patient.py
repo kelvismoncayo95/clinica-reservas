@@ -30,4 +30,6 @@ class Patient(Base):
     )
 
     user: Mapped["User"] = relationship("User", back_populates="patient")
-
+    appointments: Mapped[list["Appointment"]] = relationship(
+        "Appointment", back_populates="patient"
+    )

@@ -38,3 +38,6 @@ class Doctor(Base):
     blocks: Mapped[list["Block"]] = relationship(
         "Block", back_populates="doctor"
     )
+    appointments: Mapped[list["Appointment"]] = relationship(
+        "Appointment", back_populates="doctor"
+    )

@@ -22,3 +22,6 @@ class Specialty(Base):
     doctors: Mapped[list["Doctor"]] = relationship(
         "Doctor", secondary=doctor_specialties, back_populates="specialties"
     )
+    appointments: Mapped[list["Appointment"]] = relationship(
+        "Appointment", back_populates="specialty"
+    )
