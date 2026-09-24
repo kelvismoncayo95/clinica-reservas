@@ -22,7 +22,11 @@ class User(Base):
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
+    )
 
-    patient: Mapped["Patient | None"] = relationship("Patient", back_populates="user", uselist=False)
-    doctor: Mapped["Doctor | None"] = relationship("Doctor", back_populates="user", uselist=False)
+    patient: Mapped["Patient | None"] = relationship(
+        "Patient", back_populates="user", uselist=False
+    )
+    doctor: Mapped["Doctor | None"] = relationship(
+        "Doctor", back_populates="user", uselist=False
     )
