@@ -23,3 +23,6 @@ logs/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Documentacion privada (no se sube)
+docs/ESTADO_PROYECTO.md
