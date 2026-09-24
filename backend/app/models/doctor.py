@@ -32,3 +32,9 @@ class Doctor(Base):
     specialties: Mapped[list["Specialty"]] = relationship(
         "Specialty", secondary=doctor_specialties, back_populates="doctors"
     )
+    schedules: Mapped[list["Schedule"]] = relationship(
+        "Schedule", back_populates="doctor"
+    )
+    blocks: Mapped[list["Block"]] = relationship(
+        "Block", back_populates="doctor"
+    )
