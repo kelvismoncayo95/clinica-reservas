@@ -16,22 +16,30 @@ class PatientBase(BaseModel):
 
 
 class PatientCreate(PatientBase):
-    """Datos para crear un paciente. El admin/recepcion lo crea, sin password."""
-    pass
+    """Datos para que admin/recepcion cree un paciente desde el panel.
+
+    Incluye password porque el endpoint crea User + Patient en una
+    transaccion.
+    """
+
+    password: str = Field(min_length=6, max_length=100)
 
 
 class PatientSelfRegister(PatientBase):
-    """Datos para que un paciente se registre solo desde la web. Necesita password."""
+    """Datos para que un paciente se registre solo desde la web."""
 
     password: str = Field(min_length=6, max_length=100)
 
 
 class PatientUpdate(BaseModel):
-    """Datos para modificar un paciente. Todos opcionales."""
+    """Datos para modificar un paciente. Todos opcionales.
+
+    NOTA: el DNI no esta incluido porque no se puede modificar.
+    Si hay un error en el DNI, hay que corregirlo desde la base.
+    """
 
     first_name: str | None = Field(default=None, min_length=1, max_length=100)
     last_name: str | None = Field(default=None, min_length=1, max_length=100)
-    dni: str | None = Field(default=None, min_length=1, max_length=20)
     birth_date: date | None = None
     phone: str | None = Field(default=None, min_length=1, max_length=50)
     email: EmailStr | None = None

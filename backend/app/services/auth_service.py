@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.security import hash_password, verify_password
 from app.models.patient import Patient
 from app.models.user import User
-from app.schemas.patient import PatientSelfRegister
+from app.schemas.patient import PatientCreate, PatientSelfRegister
 
 
 class AuthServiceError(Exception):
@@ -12,8 +12,15 @@ class AuthServiceError(Exception):
     pass
 
 
-def register_patient(db: Session, data: PatientSelfRegister) -> Patient:
-    """Registra un paciente nuevo: crea User + Patient en una transaccion."""
+def register_patient(
+    db: Session, data: PatientSelfRegister | PatientCreate
+) -> Patient:
+    """Registra un paciente nuevo: crea User + Patient en una transaccion.
+
+    Sirve tanto para el registro publico (PatientSelfRegister) como
+    para que admin/recepcion cree un paciente (PatientCreate). Los
+    dos schemas tienen la misma forma.
+    """
 
     if db.scalar(select(User).where(User.email == data.email)):
         raise AuthServiceError("Ya existe una cuenta con ese email")
