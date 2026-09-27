@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, specialties, users
+from app.api import auth, patients, specialties, users
 from app.core.config import get_settings
 
 
@@ -15,7 +15,6 @@ app = FastAPI(
 )
 
 
-# CORS
 origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
@@ -26,10 +25,10 @@ app.add_middleware(
 )
 
 
-# Routers
 app.include_router(auth.router)
 app.include_router(specialties.router)
 app.include_router(users.router)
+app.include_router(patients.router)
 
 
 @app.get("/")
