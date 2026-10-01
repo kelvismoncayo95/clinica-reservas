@@ -8,6 +8,7 @@ from app.models.doctor import Doctor
 from app.models.schedule import Schedule
 from app.schemas.block import BlockCreate
 from app.schemas.schedule import ScheduleCreate, ScheduleUpdate
+from app.services.time_utils import ranges_overlap
 
 
 ALLOWED_DURATIONS = (15, 30, 45, 60)
@@ -24,13 +25,6 @@ def validate_slot_duration(minutes: int) -> None:
         raise ScheduleServiceError(
             f"La duracion debe ser una de: {list(ALLOWED_DURATIONS)}"
         )
-
-
-def _ranges_overlap(
-    start1: time, end1: time, start2: time, end2: time
-) -> bool:
-    """True si los dos rangos de tiempo se superponen."""
-    return not (end1 <= start2 or end2 <= start1)
 
 
 def check_schedule_overlap(
@@ -52,7 +46,7 @@ def check_schedule_overlap(
 
     existing = list(db.scalars(stmt).all())
     for s in existing:
-        if _ranges_overlap(start_time, end_time, s.start_time, s.end_time):
+        if ranges_overlap(start_time, end_time, s.start_time, s.end_time):
             raise ScheduleServiceError(
                 f"Se superpone con un horario existente: "
                 f"{s.start_time.strftime('%H:%M')} a "
