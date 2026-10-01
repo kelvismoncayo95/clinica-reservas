@@ -125,3 +125,197 @@ def _validate_slot_exists(
         )
     end_time = _calculate_end_time(schedule, start_time)
     return end_time
+
+
+def create_appointment(
+    db: Session, data: AppointmentCreate, current_user: User
+) -> Appointment:
+    """Crea una cita con todas las validaciones.'
+    """
+    # 1. Resolver el paciente
+    if current_user.role == "patient":
+        patient = db.scalar(
+            select(Patient).where(Patient.user_id == current_user.id)
+        )
+        if patient is None or not patient.activo:
+            raise AppointmentServiceError(
+                "No se encontro tu ficha de paciente"
+            )
+    else:
+        if data.patient_id is None:
+            raise AppointmentServiceError(
+                "Hay que indicar el paciente"
+            )
+        patient = db.get(Patient, data.patient_id)
+        if patient is None or not patient.activo:
+            raise AppointmentServiceError("Paciente no encontrado")
+
+    # 2. Doctor y especialidad
+    doctor = db.get(Doctor, data.doctor_id)
+    if doctor is None or not doctor.activo:
+        raise AppointmentServiceError("Medico no encontrado")
+
+    specialty = db.get(Specialty, data.specialty_id)
+    if specialty is None or not specialty.activo:
+        raise AppointmentServiceError("Especialidad no encontrada")
+
+    # 3. Fecha no pasada
+    if is_past_datetime(data.appointment_date, data.start_time):
+        raise AppointmentServiceError(
+            "No se puede reservar una fecha u hora pasada"
+        )
+
+    # 4. Fecha no bloqueada
+    _check_date_not_blocked(db, doctor.id, data.appointment_date)
+
+    # 5. Horario valido y end_time
+    schedule = _get_schedule_for_date(db, doctor.id, data.appointment_date)
+    end_time = _validate_slot_exists(schedule, data.start_time)
+
+    # 6. Sin superposicion
+    _check_doctor_available(
+        db,
+        doctor_id=doctor.id,
+        appointment_date=data.appointment_date,
+        start_time=data.start_time,
+        end_time=end_time,
+    )
+
+    # 7. Crear
+    appointment = Appointment(
+        patient_id=patient.id,
+        doctor_id=doctor.id,
+        specialty_id=specialty.id,
+        appointment_date=data.appointment_date,
+        start_time=data.start_time,
+        end_time=end_time,
+        status="confirmed",
+        created_by=current_user.id,
+    )
+    db.add(appointment)
+    db.flush()
+
+    log_action(
+        db,
+        appointment_id=appointment.id,
+        action="created",
+        performed_by=current_user.id,
+        details=f"Cita creada para el {data.appointment_date} a las {data.start_time.strftime('%H:%M')}",
+    )
+
+    db.commit()
+    db.refresh(appointment)
+    return appointment
+
+
+def cancel_appointment(
+    db: Session, appointment: Appointment, current_user: User
+) -> Appointment:
+    """Cancela una cita. Solo si esta confirmada."""
+    if appointment.status != "confirmed":
+        raise AppointmentServiceError(
+            "Solo se pueden cancelar citas confirmadas"
+        )
+
+    appointment.status = "cancelled"
+    appointment.cancelled_at = datetime.now()
+    appointment.cancelled_by = current_user.id
+
+    log_action(
+        db,
+        appointment_id=appointment.id,
+        action="cancelled",
+        performed_by=current_user.id,
+        details="Cita cancelada",
+    )
+
+    db.commit()
+    db.refresh(appointment)
+    return appointment
+
+
+def reschedule_appointment(
+    db: Session,
+    appointment: Appointment,
+    new_date: date,
+    new_start_time: time,
+    current_user: User,
+) -> Appointment:
+    """Reprograma una cita. Revalida todo como si fuera nueva."""
+    if appointment.status != "confirmed":
+        raise AppointmentServiceError(
+            "Solo se pueden reprogramar citas confirmadas"
+        )
+
+    if is_past_datetime(new_date, new_start_time):
+        raise AppointmentServiceError(
+            "No se puede reprogramar a una fecha u hora pasada"
+        )
+
+    _check_date_not_blocked(db, appointment.doctor_id, new_date)
+    schedule = _get_schedule_for_date(db, appointment.doctor_id, new_date)
+    new_end_time = _validate_slot_exists(schedule, new_start_time)
+
+    _check_doctor_available(
+        db,
+        doctor_id=appointment.doctor_id,
+        appointment_date=new_date,
+        start_time=new_start_time,
+        end_time=new_end_time,
+        exclude_appointment_id=appointment.id,
+    )
+
+    old_date = appointment.appointment_date
+    old_start = appointment.start_time
+
+    appointment.appointment_date = new_date
+    appointment.start_time = new_start_time
+    appointment.end_time = new_end_time
+
+    log_action(
+        db,
+        appointment_id=appointment.id,
+        action="rescheduled",
+        performed_by=current_user.id,
+        details=(
+            f"De {old_date} {old_start.strftime('%H:%M')} "
+            f"a {new_date} {new_start_time.strftime('%H:%M')}"
+        ),
+    )
+
+    db.commit()
+    db.refresh(appointment)
+    return appointment
+
+
+def update_status(
+    db: Session,
+    appointment: Appointment,
+    new_status: str,
+    current_user: User,
+) -> Appointment:
+    """Cambia el estado. Solo confirmed -> attended o no_show."""
+    if appointment.status != "confirmed":
+        raise AppointmentServiceError(
+            "Solo se puede cambiar el estado de citas confirmadas"
+        )
+
+    if new_status not in ("attended", "no_show"):
+        raise AppointmentServiceError(
+            "Estado invalido. Solo attended o no_show"
+        )
+
+    old_status = appointment.status
+    appointment.status = new_status
+
+    log_action(
+        db,
+        appointment_id=appointment.id,
+        action="status_changed",
+        performed_by=current_user.id,
+        details=f"De {old_status} a {new_status}",
+    )
+
+    db.commit()
+    db.refresh(appointment)
+    return appointment
