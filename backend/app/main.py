@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     appointments,
     auth,
+    availability,
     doctors,
     patients,
     schedules,
@@ -40,6 +41,7 @@ app.include_router(patients.router)
 app.include_router(doctors.router)
 app.include_router(schedules.router)
 app.include_router(appointments.router)
+app.include_router(availability.router)
 
 
 @app.get("/")
