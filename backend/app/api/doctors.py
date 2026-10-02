@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -75,10 +75,15 @@ def get_doctor(
 )
 def doctor_appointments(
     doctor_id: int,
+    status_filter: str | None = Query(default=None, alias="status"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Lista las citas de un medico. El medico solo puede ver las suyas."""
+    """Lista las citas de un medico. El medico solo puede ver las suyas.
+
+    Acepta un filtro opcional ?status=confirmed para traer solo las
+    confirmadas (util para el panel del dia del medico).
+    """
     doctor = db.get(Doctor, doctor_id)
     if doctor is None or not doctor.activo:
         raise HTTPException(
@@ -96,10 +101,11 @@ def doctor_appointments(
                 detail="Medico no encontrado",
             )
 
-    stmt = (
-        select(Appointment)
-        .where(Appointment.doctor_id == doctor.id)
-        .order_by(Appointment.appointment_date, Appointment.start_time)
+    stmt = select(Appointment).where(Appointment.doctor_id == doctor.id)
+    if status_filter is not None:
+        stmt = stmt.where(Appointment.status == status_filter)
+    stmt = stmt.order_by(
+        Appointment.appointment_date, Appointment.start_time
     )
     return list(db.scalars(stmt).all())
 
