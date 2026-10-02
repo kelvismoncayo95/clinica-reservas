@@ -1,0 +1,279 @@
+/* ============================================================
+   estilos.css - Tema claro moderno para el sistema
+   ============================================================ */
+
+/* ----- Variables (para cambiar el tema fácil) ----- */
+
+:root {
+  --color-primario: #2563eb;
+  --color-primario-hover: #1d4ed8;
+  --color-peligro: #dc2626;
+  --color-exito: #16a34a;
+  --color-advertencia: #d97706;
+  --color-texto: #1e293b;
+  --color-texto-suave: #64748b;
+  --color-fondo: #f8fafc;
+  --color-blanco: #ffffff;
+  --color-borde: #e2e8f0;
+  --color-borde-foco: #93c5fd;
+  --radio: 8px;
+  --sombra: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --sombra-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ----- Reset y base ----- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* ----- Login ----- */
+
+.pagina-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-blanco);
+  border-radius: 12px;
+  box-shadow: var(--sombra-lg);
+  padding: 2rem 1.75rem;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-header h1 {
+  font-size: 1.5rem;
+  color: var(--color-primario);
+  margin-bottom: 0.25rem;
+}
+
+.login-subtitle {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+
+/* ----- Pestañas ----- */
+
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-borde);
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+  font-weight: 500;
+}
+
+.tab:hover {
+  color: var(--color-primario);
+}
+
+.tab-activa {
+  color: var(--color-primario);
+  border-bottom-color: var(--color-primario);
+}
+
+
+/* ----- Formularios ----- */
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  color: var(--color-texto);
+}
+
+.form-optional {
+  font-weight: 400;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="time"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--color-texto);
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+input::placeholder {
+  color: #cbd5e1;
+}
+
+.form-help {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  margin-top: 0.35rem;
+}
+
+.form-error {
+  font-size: 0.85rem;
+  color: var(--color-peligro);
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+
+.form-error-global {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radio);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+
+/* ----- Botones ----- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  border: none;
+  border-radius: var(--radio);
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--color-primario);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primario-hover);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+
+/* ----- Notificaciones (toast) ----- */
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(1rem);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radio);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+  box-shadow: var(--sombra-lg);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 1000;
+  max-width: 90vw;
+}
+
+.toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-success {
+  background: var(--color-exito);
+}
+
+.toast-error {
+  background: var(--color-peligro);
+}
+
+.toast-info {
+  background: var(--color-primario);
+}
