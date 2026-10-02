@@ -4,8 +4,10 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.core.dependencies import get_current_user, require_admin
 from app.database import get_db
+from app.models.appointment import Appointment
 from app.models.doctor import Doctor
 from app.models.user import User
+from app.schemas.appointment import AppointmentResponse
 from app.schemas.doctor import DoctorCreate, DoctorResponse, DoctorUpdate
 from app.services.doctor_service import (
     DoctorServiceError,
@@ -19,7 +21,7 @@ router = APIRouter(prefix="/api/v1/doctors", tags=["doctors"])
 
 
 def to_doctor_response(doctor: Doctor) -> DoctorResponse:
-    """Convierte un Doctor (SQLAlchemy) a DoctorResponse incluyendo specialty_ids."""
+    """Convierte un Doctor a DoctorResponse incluyendo specialty_ids."""
     return DoctorResponse(
         id=doctor.id,
         user_id=doctor.user_id,
@@ -65,6 +67,41 @@ def get_doctor(
             detail="Medico no encontrado",
         )
     return to_doctor_response(doctor)
+
+
+@router.get(
+    "/{doctor_id}/appointments",
+    response_model=list[AppointmentResponse],
+)
+def doctor_appointments(
+    doctor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Lista las citas de un medico. El medico solo puede ver las suyas."""
+    doctor = db.get(Doctor, doctor_id)
+    if doctor is None or not doctor.activo:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Medico no encontrado",
+        )
+
+    if current_user.role == "doctor":
+        own_doctor = db.scalar(
+            select(Doctor).where(Doctor.user_id == current_user.id)
+        )
+        if own_doctor is None or own_doctor.id != doctor.id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Medico no encontrado",
+            )
+
+    stmt = (
+        select(Appointment)
+        .where(Appointment.doctor_id == doctor.id)
+        .order_by(Appointment.appointment_date, Appointment.start_time)
+    )
+    return list(db.scalars(stmt).all())
 
 
 @router.post(
