@@ -10,11 +10,16 @@ from app.models.patient import Patient
 from app.models.user import User
 from app.schemas.appointment import (
     AppointmentCreate,
+    AppointmentReschedule,
     AppointmentResponse,
+    AppointmentStatusUpdate,
 )
 from app.services.appointment_service import (
     AppointmentServiceError,
+    cancel_appointment,
     create_appointment,
+    reschedule_appointment,
+    update_status,
 )
 
 
@@ -143,3 +148,137 @@ def get_appointment(
 ):
     """Devuelve una cita. Admin/recepcion cualquiera, paciente y medico solo las suyas."""
     return _get_accessible_appointment(appointment_id, current_user, db)
+
+
+# ----- Acciones sobre citas -----
+
+
+def _appointment_is_future(appointment: Appointment) -> bool:
+    """True si la cita es futura."""
+    from datetime import datetime
+    target = datetime.combine(
+        appointment.appointment_date, appointment.start_time
+    )
+    return target > datetime.now()
+
+
+@router.patch(
+    "/{appointment_id}/cancel",
+    response_model=AppointmentResponse,
+)
+def cancel_appointment_endpoint(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Cancela una cita."""
+    appointment = _get_accessible_appointment(
+        appointment_id, current_user, db
+    )
+
+    if current_user.role == "patient":
+        if not _appointment_is_future(appointment):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No podes cancelar una cita pasada",
+            )
+    elif current_user.role == "doctor":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Los medicos no pueden cancelar citas",
+        )
+
+    try:
+        appointment = cancel_appointment(db, appointment, current_user)
+    except AppointmentServiceError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )
+    return appointment
+
+
+@router.patch(
+    "/{appointment_id}/reschedule",
+    response_model=AppointmentResponse,
+)
+def reschedule_appointment_endpoint(
+    appointment_id: int,
+    data: AppointmentReschedule,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Reprograma una cita a nueva fecha/hora."""
+    appointment = _get_accessible_appointment(
+        appointment_id, current_user, db
+    )
+
+    if current_user.role == "patient":
+        if not _appointment_is_future(appointment):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No podes reprogramar una cita pasada",
+            )
+    elif current_user.role == "doctor":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Los medicos no pueden reprogramar citas",
+        )
+
+    try:
+        appointment = reschedule_appointment(
+            db,
+            appointment,
+            new_date=data.appointment_date,
+            new_start_time=data.start_time,
+            current_user=current_user,
+        )
+    except AppointmentServiceError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=str(e)
+        )
+    return appointment
+
+
+@router.patch(
+    "/{appointment_id}/status",
+    response_model=AppointmentResponse,
+)
+def update_status_endpoint(
+    appointment_id: int,
+    data: AppointmentStatusUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Marca una cita como attended o no_show."""
+    if current_user.role == "patient":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Los pacientes no pueden cambiar el estado de una cita",
+        )
+
+    appointment = db.get(Appointment, appointment_id)
+    if appointment is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cita no encontrada",
+        )
+
+    if current_user.role == "doctor":
+        doctor = db.scalar(
+            select(Doctor).where(Doctor.user_id == current_user.id)
+        )
+        if doctor is None or appointment.doctor_id != doctor.id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Cita no encontrada",
+            )
+
+    try:
+        appointment = update_status(
+            db, appointment, data.status, current_user
+        )
+    except AppointmentServiceError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )
+    return appointment
