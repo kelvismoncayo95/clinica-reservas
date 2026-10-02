@@ -277,3 +277,271 @@ input::placeholder {
 .toast-info {
   background: var(--color-primario);
 }
+
+/* ============================================================
+   Estilos del panel de la app (después del login)
+   ============================================================ */
+
+/* ----- Header de la app ----- */
+
+.app-header {
+  background: var(--color-blanco);
+  border-bottom: 1px solid var(--color-borde);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: var(--sombra);
+}
+
+.app-header-brand h1 {
+  font-size: 1.1rem;
+  color: var(--color-primario);
+  margin: 0;
+}
+
+.app-header-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+
+/* ----- Botones secundarios y de peligro ----- */
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-texto-suave);
+  border: 1px solid var(--color-borde);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+.btn-peligro {
+  background: var(--color-peligro);
+  color: white;
+}
+
+.btn-peligro:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+
+/* ----- Navegación de la app ----- */
+
+.app-nav {
+  display: flex;
+  background: var(--color-blanco);
+  border-bottom: 1px solid var(--color-borde);
+  padding: 0 1rem;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: var(--color-primario);
+}
+
+.nav-item-activa {
+  color: var(--color-primario);
+  border-bottom-color: var(--color-primario);
+}
+
+
+/* ----- Main de la app ----- */
+
+.app-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.app-section {
+  animation: aparecer 0.2s ease-out;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.section-subtitle {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+
+/* ----- Cajas de estado ----- */
+
+.loading-box {
+  padding: 1.5rem;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  color: var(--color-texto-suave);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.empty-box {
+  padding: 2rem 1.5rem;
+  background: var(--color-blanco);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio);
+  text-align: center;
+}
+
+.empty-box h3 {
+  margin-bottom: 0.5rem;
+  color: var(--color-texto);
+}
+
+.empty-box p {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+
+/* ----- Lista de citas ----- */
+
+.citas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cita-card {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cita-confirmada {
+  border-left-color: var(--color-exito);
+}
+
+.cita-cancelada {
+  border-left-color: var(--color-peligro);
+  opacity: 0.6;
+}
+
+.cita-atendida {
+  border-left-color: var(--color-primario);
+}
+
+.cita-no-show {
+  border-left-color: var(--color-advertencia);
+}
+
+.cita-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.cita-fecha {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.cita-estado {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+
+/* ----- Grid de horarios ----- */
+
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.horario-btn {
+  padding: 0.6rem 0.5rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #dcfce7;
+  color: #166534;
+  border: 2px solid #bbf7d0;
+  border-radius: var(--radio);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  font-weight: 500;
+}
+
+.horario-btn:hover:not(:disabled) {
+  background: #bbf7d0;
+  border-color: var(--color-exito);
+}
+
+.horario-btn-seleccionado {
+  background: var(--color-exito);
+  color: white;
+  border-color: #15803d;
+  transform: scale(1.05);
+}
+
+.horario-btn-ocupado {
+  background: var(--color-fondo);
+  color: #94a3b8;
+  border-color: var(--color-borde);
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+
+/* ----- Form de reserva ----- */
+
+.reservar-form {
+  background: var(--color-blanco);
+  padding: 1.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}

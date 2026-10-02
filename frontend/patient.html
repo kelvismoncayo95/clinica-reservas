@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis citas - Clínica</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <!-- Header con el nombre del usuario y botón de logout -->
+  <header class="app-header">
+    <div class="app-header-brand">
+      <h1>Clínica Médica</h1>
+    </div>
+    <div class="app-header-user">
+      <span id="user-display-name">Cargando...</span>
+      <button type="button" class="btn btn-secondary btn-sm" id="logout-btn">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <!-- Navegación entre secciones -->
+  <nav class="app-nav" role="tablist">
+    <button class="nav-item nav-item-activa" id="nav-mis-citas" role="tab" aria-selected="true" aria-controls="section-mis-citas">
+      Mis citas
+    </button>
+    <button class="nav-item" id="nav-reservar" role="tab" aria-selected="false" aria-controls="section-reservar">
+      Reservar nueva cita
+    </button>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- ============ Sección: Mis citas ============ -->
+    <section id="section-mis-citas" class="app-section" role="tabpanel" aria-labelledby="nav-mis-citas">
+      <div class="section-header">
+        <h2>Mis citas</h2>
+        <p class="section-subtitle">Acá ves todas tus citas. Podés cancelar las que estén confirmadas y sean futuras.</p>
+      </div>
+
+      <!-- Estado de carga -->
+      <div id="citas-loading" class="loading-box">
+        <p>Cargando tus citas...</p>
+      </div>
+
+      <!-- Estado vacío -->
+      <div id="citas-empty" class="empty-box" hidden>
+        <h3>Todavía no tenés citas</h3>
+        <p>Cuando reserves una cita, va a aparecer acá.</p>
+        <button type="button" class="btn btn-primary" id="ir-a-reservar">
+          Reservar mi primera cita
+        </button>
+      </div>
+
+      <!-- Lista de citas -->
+      <div id="citas-list" class="citas-list" hidden></div>
+    </section>
+
+    <!-- ============ Sección: Reservar nueva cita ============ -->
+    <section id="section-reservar" class="app-section" role="tabpanel" aria-labelledby="nav-reservar" hidden>
+      <div class="section-header">
+        <h2>Reservar nueva cita</h2>
+        <p class="section-subtitle">Elegí especialidad, médico, fecha y horario. Después confirmá.</p>
+      </div>
+
+      <form id="reservar-form" class="reservar-form" novalidate>
+
+        <!-- Paso 1: Especialidad -->
+        <div class="form-group">
+          <label for="reserva-especialidad">1. Especialidad</label>
+          <select id="reserva-especialidad" required>
+            <option value="">Cargando especialidades...</option>
+          </select>
+          <p class="form-help">Elegí qué tipo de médico necesitás.</p>
+          <p class="form-error" id="reserva-especialidad-error" hidden></p>
+        </div>
+
+        <!-- Paso 2: Médico -->
+        <div class="form-group">
+          <label for="reserva-medico">2. Médico</label>
+          <select id="reserva-medico" required disabled>
+            <option value="">Primero elegí una especialidad</option>
+          </select>
+          <p class="form-help">Se muestran los médicos disponibles para esa especialidad.</p>
+          <p class="form-error" id="reserva-medico-error" hidden></p>
+        </div>
+
+        <!-- Paso 3: Fecha -->
+        <div class="form-group">
+          <label for="reserva-fecha">3. Fecha</label>
+          <input type="date" id="reserva-fecha" required disabled>
+          <p class="form-help">Elegí el día que querés el turno.</p>
+          <p class="form-error" id="reserva-fecha-error" hidden></p>
+        </div>
+
+        <!-- Paso 4: Horarios -->
+        <div class="form-group" id="horarios-group" hidden>
+          <label>4. Horario</label>
+          <p class="form-help">Tocá un horario verde para seleccionarlo.</p>
+          <div id="horarios-loading" class="loading-box">
+            <p>Buscando horarios disponibles...</p>
+          </div>
+          <div id="horarios-empty" class="empty-box" hidden>
+            <p>No hay horarios disponibles para ese día.</p>
+            <p class="form-help">Probá con otra fecha.</p>
+          </div>
+          <div id="horarios-grid" class="horarios-grid" hidden></div>
+          <p class="form-error" id="reserva-horario-error" hidden></p>
+        </div>
+
+        <p class="form-error form-error-global" id="reserva-error" hidden></p>
+
+        <button type="submit" class="btn btn-primary btn-block" id="reserva-submit" disabled>
+          Confirmar reserva
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/appointments.js"></script>
+  <script src="js/patient.js"></script>
+</body>
+</html>
