@@ -82,22 +82,22 @@ def _check_date_not_blocked(
         )
 
 
-def _get_schedule_for_date(
+def _get_schedules_for_date(
     db: Session, doctor_id: int, appointment_date: date
-) -> Schedule:
-    """Devuelve el Schedule activo del medico para el dia de la semana de esa fecha."""
+) -> list[Schedule]:
+    """Devuelve TODOS los horarios activos del medico para ese dia."""
     day_of_week = appointment_date.weekday()
     stmt = select(Schedule).where(
         Schedule.doctor_id == doctor_id,
         Schedule.day_of_week == day_of_week,
         Schedule.activo.is_(True),
     )
-    schedule = db.scalar(stmt)
-    if schedule is None:
+    schedules = list(db.scalars(stmt).all())
+    if not schedules:
         raise AppointmentServiceError(
             "El medico no atiende ese dia de la semana"
         )
-    return schedule
+    return schedules
 
 
 def _calculate_end_time(
@@ -110,21 +110,25 @@ def _calculate_end_time(
 
 
 def _validate_slot_exists(
-    schedule: Schedule, start_time: time
+    schedules: list[Schedule], start_time: time
 ) -> time:
-    """Valida que el start_time sea un slot valido del horario, y devuelve end_time."""
-    slots = generate_slots(
-        schedule.start_time,
-        schedule.end_time,
-        schedule.slot_duration_minutes,
-    )
-    valid_starts = [s[0] for s in slots]
-    if start_time not in valid_starts:
-        raise AppointmentServiceError(
-            f"El horario {start_time.strftime('%H:%M')} no es un slot valido del medico"
+    """Valida que start_time sea un slot valido de ALGUN horario del dia.
+
+    Devuelve el end_time calculado con la duracion del horario que lo contiene.
+    """
+    for schedule in schedules:
+        slots = generate_slots(
+            schedule.start_time,
+            schedule.end_time,
+            schedule.slot_duration_minutes,
         )
-    end_time = _calculate_end_time(schedule, start_time)
-    return end_time
+        valid_starts = [s[0] for s in slots]
+        if start_time in valid_starts:
+            return _calculate_end_time(schedule, start_time)
+
+    raise AppointmentServiceError(
+        f"El horario {start_time.strftime('%H:%M')} no es un slot valido del medico"
+    )
 
 
 def create_appointment(
@@ -169,8 +173,8 @@ def create_appointment(
     _check_date_not_blocked(db, doctor.id, data.appointment_date)
 
     # 5. Horario valido y end_time
-    schedule = _get_schedule_for_date(db, doctor.id, data.appointment_date)
-    end_time = _validate_slot_exists(schedule, data.start_time)
+    schedules = _get_schedules_for_date(db, doctor.id, data.appointment_date)
+    end_time = _validate_slot_exists(schedules, data.start_time)
 
     # 6. Sin superposicion
     _check_doctor_available(
@@ -253,8 +257,8 @@ def reschedule_appointment(
         )
 
     _check_date_not_blocked(db, appointment.doctor_id, new_date)
-    schedule = _get_schedule_for_date(db, appointment.doctor_id, new_date)
-    new_end_time = _validate_slot_exists(schedule, new_start_time)
+    schedules = _get_schedules_for_date(db, appointment.doctor_id, new_date)
+    new_end_time = _validate_slot_exists(schedules, new_start_time)
 
     _check_doctor_available(
         db,
