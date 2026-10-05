@@ -1,0 +1,232 @@
+// ============================================================
+// pacientes-admin.js - Seccion de pacientes del admin
+// ============================================================
+
+const pacientesState = {
+  patients: [],
+  filtered: [],
+  editingId: null,
+};
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Solo arranca si estamos en admin.html
+  if (!document.getElementById("section-pacientes")) return;
+
+  setupPacientesSection();
+});
+
+
+function setupPacientesSection() {
+  document.getElementById("buscar-paciente").addEventListener("input", onBuscarPaciente);
+  document.getElementById("btn-nuevo-paciente").addEventListener("click", abrirModalPaciente);
+  document.getElementById("modal-paciente-cerrar").addEventListener("click", cerrarModalPaciente);
+  document.getElementById("pac-cancelar").addEventListener("click", cerrarModalPaciente);
+  document.getElementById("form-paciente").addEventListener("submit", onPacienteSubmit);
+  document.getElementById("modal-paciente").addEventListener("click", (e) => {
+    if (e.target.id === "modal-paciente") cerrarModalPaciente();
+  });
+
+  // Se cargan cuando el usuario entra a la seccion por primera vez
+  document.getElementById("nav-pacientes").addEventListener("click", cargarPacientesSiEsNecesario);
+}
+
+
+let pacientesCargados = false;
+
+async function cargarPacientesSiEsNecesario() {
+  if (pacientesCargados) return;
+  await cargarPacientes();
+  pacientesCargados = true;
+}
+
+
+async function cargarPacientes() {
+  const loading = document.getElementById("pacientes-loading");
+  const empty = document.getElementById("pacientes-empty");
+  const list = document.getElementById("pacientes-list");
+  loading.hidden = false;
+  empty.hidden = true;
+  list.hidden = true;
+  list.innerHTML = "";
+  try {
+    pacientesState.patients = await apiFetch("/patients");
+    pacientesState.filtered = pacientesState.patients.slice();
+    loading.hidden = true;
+    renderPacientes();
+  } catch (err) {
+    loading.hidden = true;
+    empty.hidden = false;
+    showToast("No pudimos cargar los pacientes.", "error");
+  }
+}
+
+
+function onBuscarPaciente(e) {
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) {
+    pacientesState.filtered = pacientesState.patients.slice();
+  } else {
+    pacientesState.filtered = pacientesState.patients.filter((p) => {
+      return (
+        p.first_name.toLowerCase().includes(q) ||
+        p.last_name.toLowerCase().includes(q) ||
+        p.dni.toLowerCase().includes(q)
+      );
+    });
+  }
+  renderPacientes();
+}
+
+
+function renderPacientes() {
+  const empty = document.getElementById("pacientes-empty");
+  const list = document.getElementById("pacientes-list");
+  list.innerHTML = "";
+  if (pacientesState.filtered.length === 0) {
+    empty.hidden = false;
+    list.hidden = true;
+    return;
+  }
+  empty.hidden = true;
+  list.hidden = false;
+  pacientesState.filtered.forEach((p) => list.appendChild(renderPaciente(p)));
+}
+
+
+function renderPaciente(p) {
+  const card = document.createElement("article");
+  card.className = "cita-card";
+  const obra = p.obra_social ? p.obra_social : "Sin obra social";
+  card.innerHTML = `
+    <div class="cita-info">
+      <p class="cita-fecha">${p.last_name}, ${p.first_name}</p>
+      <p class="cita-detalle">DNI ${p.dni} — Tel ${p.phone}</p>
+      <p class="cita-estado">${obra}</p>
+    </div>
+  `;
+  const acciones = document.createElement("div");
+  acciones.className = "cita-acciones";
+  const btnEditar = document.createElement("button");
+  btnEditar.type = "button";
+  btnEditar.className = "btn btn-sm";
+  btnEditar.textContent = "Editar";
+  btnEditar.addEventListener("click", () => abrirModalPaciente(p));
+  acciones.appendChild(btnEditar);
+  card.appendChild(acciones);
+  return card;
+}
+
+
+// ----- Modal de paciente -----
+
+function abrirModalPaciente(paciente = null) {
+  pacientesState.editingId = paciente ? paciente.id : null;
+  const titulo = document.getElementById("modal-paciente-titulo");
+  const submit = document.getElementById("pac-submit");
+  const passwordGroup = document.getElementById("pac-password-group");
+  const dniHint = document.getElementById("pac-dni-hint");
+
+  // Reset form
+  document.getElementById("form-paciente").reset();
+  document.querySelectorAll("#form-paciente .form-error").forEach((el) => {
+    el.hidden = true;
+    el.textContent = "";
+  });
+
+  if (paciente) {
+    titulo.textContent = "Editar paciente";
+    submit.textContent = "Guardar cambios";
+    passwordGroup.hidden = true;  // En edicion no se cambia password
+    dniHint.textContent = "El DNI no se puede modificar.";
+    document.getElementById("pac-id").value = paciente.id;
+    document.getElementById("pac-first-name").value = paciente.first_name;
+    document.getElementById("pac-last-name").value = paciente.last_name;
+    document.getElementById("pac-dni").value = paciente.dni;
+    document.getElementById("pac-dni").disabled = true;
+    document.getElementById("pac-birth-date").value = paciente.birth_date;
+    document.getElementById("pac-phone").value = paciente.phone;
+    document.getElementById("pac-email").value = paciente.email;
+    document.getElementById("pac-obra-social").value = paciente.obra_social || "";
+  } else {
+    titulo.textContent = "Nuevo paciente";
+    submit.textContent = "Crear paciente";
+    passwordGroup.hidden = false;
+    document.getElementById("pac-dni").disabled = false;
+    dniHint.textContent = "";
+  }
+
+  document.getElementById("modal-paciente").hidden = false;
+}
+
+
+function cerrarModalPaciente() {
+  document.getElementById("modal-paciente").hidden = true;
+  document.getElementById("pac-id").value = "";
+}
+
+
+async function onPacienteSubmit(e) {
+  e.preventDefault();
+  document.querySelectorAll("#form-paciente .form-error").forEach((el) => {
+    el.hidden = true;
+    el.textContent = "";
+  });
+
+  const editing = pacientesState.editingId !== null;
+  const data = {
+    first_name: document.getElementById("pac-first-name").value.trim(),
+    last_name: document.getElementById("pac-last-name").value.trim(),
+    birth_date: document.getElementById("pac-birth-date").value,
+    phone: document.getElementById("pac-phone").value.trim(),
+    email: document.getElementById("pac-email").value.trim(),
+    obra_social: document.getElementById("pac-obra-social").value.trim() || null,
+  };
+
+  if (!editing) {
+    data.dni = document.getElementById("pac-dni").value.trim();
+    data.password = document.getElementById("pac-password").value;
+  }
+
+  let hasError = false;
+  if (!data.first_name) { setFieldError("pac-first-name", "Ingresá el nombre."); hasError = true; }
+  if (!data.last_name) { setFieldError("pac-last-name", "Ingresá el apellido."); hasError = true; }
+  if (!editing && !data.dni) { setFieldError("pac-dni", "Ingresá el DNI."); hasError = true; }
+  if (!data.birth_date) { setFieldError("pac-birth-date", "Ingresá la fecha de nacimiento."); hasError = true; }
+  if (!data.phone) { setFieldError("pac-phone", "Ingresá el teléfono."); hasError = true; }
+  if (!data.email) { setFieldError("pac-email", "Ingresá el correo electrónico."); hasError = true; }
+  if (!editing && (!data.password || data.password.length < 6)) {
+    setFieldError("pac-password", "La contraseña debe tener al menos 6 caracteres.");
+    hasError = true;
+  }
+  if (hasError) return;
+
+  const submit = document.getElementById("pac-submit");
+  const originalText = submit.textContent;
+  submit.disabled = true;
+  submit.textContent = editing ? "Guardando..." : "Creando...";
+
+  try {
+    if (editing) {
+      await apiFetch(`/patients/${pacientesState.editingId}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+      showToast("Paciente actualizado.", "success");
+    } else {
+      await apiFetch("/patients", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      showToast("Paciente creado.", "success");
+    }
+    cerrarModalPaciente();
+    await cargarPacientes();
+  } catch (err) {
+    document.getElementById("pac-error").textContent = err.message;
+    document.getElementById("pac-error").hidden = false;
+  } finally {
+    submit.disabled = false;
+    submit.textContent = originalText;
+  }
+}

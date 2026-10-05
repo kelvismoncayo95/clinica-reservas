@@ -104,11 +104,31 @@
     <section id="section-pacientes" class="app-section" role="tabpanel" aria-labelledby="nav-pacientes" hidden>
       <div class="section-header">
         <h2>Pacientes</h2>
-        <p class="section-subtitle">Sección en desarrollo.</p>
+        <p class="section-subtitle">Buscá por nombre, apellido o DNI. Podés crear y editar pacientes.</p>
       </div>
-      <div class="empty-box">
-        <p>Esta sección todavía no está disponible.</p>
+
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="buscar-paciente">Buscar</label>
+          <input type="search" id="buscar-paciente" placeholder="Nombre, apellido o DNI...">
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-nuevo-paciente">
+            + Nuevo paciente
+          </button>
+        </div>
       </div>
+
+      <div id="pacientes-loading" class="loading-box">
+        <p>Cargando pacientes...</p>
+      </div>
+
+      <div id="pacientes-empty" class="empty-box" hidden>
+        <h3>No hay pacientes</h3>
+        <p>Probá cambiando la búsqueda o creá uno nuevo.</p>
+      </div>
+
+      <div id="pacientes-list" class="citas-admin-list" hidden></div>
     </section>
 
     <section id="section-medicos" class="app-section" role="tabpanel" aria-labelledby="nav-medicos" hidden>
@@ -219,9 +239,88 @@
     </div>
   </div>
 
+  <!-- Modal para crear/editar paciente -->
+  <div class="modal-backdrop" id="modal-paciente" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-paciente-titulo">
+      <header class="modal-header">
+        <h3 id="modal-paciente-titulo">Nuevo paciente</h3>
+        <button type="button" class="modal-close" id="modal-paciente-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-paciente" class="modal-body" novalidate>
+        <input type="hidden" id="pac-id" value="">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pac-first-name">Nombre</label>
+            <input type="text" id="pac-first-name" required placeholder="Juan">
+            <p class="form-error" id="pac-first-name-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="pac-last-name">Apellido</label>
+            <input type="text" id="pac-last-name" required placeholder="Pérez">
+            <p class="form-error" id="pac-last-name-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pac-dni">DNI</label>
+            <input type="text" id="pac-dni" required placeholder="30123456">
+            <p class="form-hint" id="pac-dni-hint"></p>
+            <p class="form-error" id="pac-dni-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="pac-birth-date">Fecha de nacimiento</label>
+            <input type="date" id="pac-birth-date" required>
+            <p class="form-error" id="pac-birth-date-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pac-phone">Teléfono</label>
+            <input type="tel" id="pac-phone" required placeholder="1145678901">
+            <p class="form-error" id="pac-phone-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="pac-obra-social">Obra social <span class="form-optional">(opcional)</span></label>
+            <input type="text" id="pac-obra-social" placeholder="OSDE, Swiss Medical...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pac-email">Correo electrónico</label>
+          <input type="email" id="pac-email" required placeholder="juan@correo.com">
+          <p class="form-help">Lo va a usar el paciente para iniciar sesión.</p>
+          <p class="form-error" id="pac-email-error" hidden></p>
+        </div>
+
+        <div class="form-group" id="pac-password-group">
+          <label for="pac-password">Contraseña inicial</label>
+          <input type="password" id="pac-password" placeholder="Mínimo 6 caracteres">
+          <p class="form-help">El paciente la va a usar para iniciar sesión por primera vez.</p>
+          <p class="form-error" id="pac-password-error" hidden></p>
+        </div>
+
+        <p class="form-error form-error-global" id="pac-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="pac-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="pac-submit">
+            Crear paciente
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/appointments.js"></script>
   <script src="js/citas-admin.js"></script>
+  <script src="js/pacientes-admin.js"></script>
 </body>
 </html>
