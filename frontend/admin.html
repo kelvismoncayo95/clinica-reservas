@@ -251,11 +251,31 @@
     <section id="section-usuarios" class="app-section" role="tabpanel" aria-labelledby="nav-usuarios" hidden>
       <div class="section-header">
         <h2>Usuarios</h2>
-        <p class="section-subtitle">Sección en desarrollo.</p>
+        <p class="section-subtitle">Cuentas de acceso al sistema. Solo visible para administradores.</p>
       </div>
-      <div class="empty-box">
-        <p>Esta sección todavía no está disponible.</p>
+
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="buscar-usuario">Buscar</label>
+          <input type="search" id="buscar-usuario" placeholder="Email del usuario...">
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-nuevo-usuario">
+            + Nuevo usuario
+          </button>
+        </div>
       </div>
+
+      <div id="usuarios-loading" class="loading-box">
+        <p>Cargando usuarios...</p>
+      </div>
+
+      <div id="usuarios-empty" class="empty-box" hidden>
+        <h3>No hay usuarios</h3>
+        <p>Probá cambiando la búsqueda o creá uno nuevo.</p>
+      </div>
+
+      <div id="usuarios-list" class="citas-admin-list" hidden></div>
     </section>
 
   </main>
@@ -320,6 +340,65 @@
           </button>
           <button type="submit" class="btn btn-primary" id="nc-submit" disabled>
             Crear cita
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para crear/editar usuario -->
+  <div class="modal-backdrop" id="modal-usuario" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-usuario-titulo">
+      <header class="modal-header">
+        <h3 id="modal-usuario-titulo">Nuevo usuario</h3>
+        <button type="button" class="modal-close" id="modal-usuario-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-usuario" class="modal-body" novalidate>
+        <input type="hidden" id="usu-id" value="">
+
+        <div class="form-group">
+          <label for="usu-email">Email</label>
+          <input type="email" id="usu-email" required placeholder="usuario@correo.com">
+          <p class="form-error" id="usu-email-error" hidden></p>
+        </div>
+
+        <div class="form-group" id="usu-role-group">
+          <label for="usu-role">Rol</label>
+          <select id="usu-role" required>
+            <option value="">Elegí un rol</option>
+            <option value="admin">Administrador</option>
+            <option value="reception">Recepción</option>
+            <option value="doctor">Médico</option>
+            <option value="patient">Paciente</option>
+          </select>
+          <p class="form-help">Definí qué tipo de acceso tiene esta cuenta.</p>
+          <p class="form-error" id="usu-role-error" hidden></p>
+        </div>
+
+        <div class="form-row" id="usu-password-group">
+          <div class="form-group">
+            <label for="usu-password">Contraseña</label>
+            <input type="password" id="usu-password" placeholder="Mínimo 6 caracteres">
+            <p class="form-error" id="usu-password-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="usu-password-confirm">Confirmar contraseña</label>
+            <input type="password" id="usu-password-confirm" placeholder="Repetí la contraseña">
+            <p class="form-error" id="usu-password-confirm-error" hidden></p>
+          </div>
+        </div>
+
+        <p class="form-help" id="usu-password-help">Mínimo 6 caracteres. El usuario la va a usar para entrar al sistema.</p>
+
+        <p class="form-error form-error-global" id="usu-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="usu-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="usu-submit">
+            Crear usuario
           </button>
         </div>
       </form>
@@ -640,5 +719,6 @@
   <script src="js/medicos-admin.js"></script>
   <script src="js/especialidades-admin.js"></script>
   <script src="js/horarios-admin.js"></script>
+  <script src="js/usuarios-admin.js"></script>
 </body>
 </html>
