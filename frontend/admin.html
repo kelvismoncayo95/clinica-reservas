@@ -164,11 +164,31 @@
     <section id="section-especialidades" class="app-section" role="tabpanel" aria-labelledby="nav-especialidades" hidden>
       <div class="section-header">
         <h2>Especialidades</h2>
-        <p class="section-subtitle">Sección en desarrollo.</p>
+        <p class="section-subtitle">Listado de especialidades médicas de la clínica. Podés crear, editar y desactivar.</p>
       </div>
-      <div class="empty-box">
-        <p>Esta sección todavía no está disponible.</p>
+
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="buscar-especialidad">Buscar</label>
+          <input type="search" id="buscar-especialidad" placeholder="Nombre de la especialidad...">
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-nueva-especialidad">
+            + Nueva especialidad
+          </button>
+        </div>
       </div>
+
+      <div id="especialidades-loading" class="loading-box">
+        <p>Cargando especialidades...</p>
+      </div>
+
+      <div id="especialidades-empty" class="empty-box" hidden>
+        <h3>No hay especialidades</h3>
+        <p>Probá cambiando la búsqueda o creá una nueva.</p>
+      </div>
+
+      <div id="especialidades-list" class="citas-admin-list" hidden></div>
     </section>
 
     <section id="section-horarios" class="app-section" role="tabpanel" aria-labelledby="nav-horarios" hidden>
@@ -253,6 +273,42 @@
           </button>
           <button type="submit" class="btn btn-primary" id="nc-submit" disabled>
             Crear cita
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para crear/editar especialidad -->
+  <div class="modal-backdrop" id="modal-especialidad" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-especialidad-titulo">
+      <header class="modal-header">
+        <h3 id="modal-especialidad-titulo">Nueva especialidad</h3>
+        <button type="button" class="modal-close" id="modal-especialidad-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-especialidad" class="modal-body" novalidate>
+        <input type="hidden" id="esp-id" value="">
+
+        <div class="form-group">
+          <label for="esp-name">Nombre</label>
+          <input type="text" id="esp-name" required placeholder="Cardiología" maxlength="100">
+          <p class="form-error" id="esp-name-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label for="esp-description">Descripción <span class="form-optional">(opcional)</span></label>
+          <textarea id="esp-description" rows="3" placeholder="Breve descripción de la especialidad" maxlength="255"></textarea>
+        </div>
+
+        <p class="form-error form-error-global" id="esp-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="esp-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="esp-submit">
+            Crear especialidad
           </button>
         </div>
       </form>
@@ -434,5 +490,6 @@
   <script src="js/citas-admin.js"></script>
   <script src="js/pacientes-admin.js"></script>
   <script src="js/medicos-admin.js"></script>
+  <script src="js/especialidades-admin.js"></script>
 </body>
 </html>
