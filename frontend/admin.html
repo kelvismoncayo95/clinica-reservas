@@ -194,10 +194,57 @@
     <section id="section-horarios" class="app-section" role="tabpanel" aria-labelledby="nav-horarios" hidden>
       <div class="section-header">
         <h2>Horarios</h2>
-        <p class="section-subtitle">Sección en desarrollo.</p>
+        <p class="section-subtitle">Gestioná los horarios semanales y los bloqueos de cada médico.</p>
       </div>
-      <div class="empty-box">
-        <p>Esta sección todavía no está disponible.</p>
+
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="horarios-medico-select">Médico</label>
+          <select id="horarios-medico-select">
+            <option value="">Elegí un médico</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="horarios-sin-medico" class="empty-box">
+        <h3>Elegí un médico</h3>
+        <p>Arriba seleccioná el médico cuyos horarios querés gestionar.</p>
+      </div>
+
+      <div id="horarios-contenido" hidden>
+        <!-- Subseccion: horarios semanales -->
+        <div class="subsection">
+          <div class="subsection-header">
+            <h3>Horarios semanales</h3>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-nuevo-horario">
+              + Agregar horario
+            </button>
+          </div>
+          <div id="schedules-loading" class="loading-box">
+            <p>Cargando horarios...</p>
+          </div>
+          <div id="schedules-empty" class="empty-box" hidden>
+            <p>Este médico todavía no tiene horarios cargados.</p>
+          </div>
+          <div id="schedules-list" class="horarios-tabla-container" hidden></div>
+        </div>
+
+        <!-- Subseccion: bloqueos -->
+        <div class="subsection">
+          <div class="subsection-header">
+            <h3>Bloqueos (vacaciones, feriados, etc.)</h3>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-nuevo-bloqueo">
+              + Agregar bloqueo
+            </button>
+          </div>
+          <div id="blocks-loading" class="loading-box">
+            <p>Cargando bloqueos...</p>
+          </div>
+          <div id="blocks-empty" class="empty-box" hidden>
+            <p>Este médico no tiene bloqueos cargados.</p>
+          </div>
+          <div id="blocks-list" class="citas-admin-list" hidden></div>
+        </div>
       </div>
     </section>
 
@@ -273,6 +320,107 @@
           </button>
           <button type="submit" class="btn btn-primary" id="nc-submit" disabled>
             Crear cita
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para agregar horario semanal -->
+  <div class="modal-backdrop" id="modal-horario" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-horario-titulo">
+      <header class="modal-header">
+        <h3 id="modal-horario-titulo">Agregar horario semanal</h3>
+        <button type="button" class="modal-close" id="modal-horario-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-horario" class="modal-body" novalidate>
+        <div class="form-group">
+          <label for="hor-dia">Día de la semana</label>
+          <select id="hor-dia" required>
+            <option value="0">Lunes</option>
+            <option value="1">Martes</option>
+            <option value="2">Miércoles</option>
+            <option value="3">Jueves</option>
+            <option value="4">Viernes</option>
+            <option value="5">Sábado</option>
+            <option value="6">Domingo</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hor-inicio">Hora de inicio</label>
+            <input type="time" id="hor-inicio" required>
+            <p class="form-error" id="hor-inicio-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="hor-fin">Hora de fin</label>
+            <input type="time" id="hor-fin" required>
+            <p class="form-error" id="hor-fin-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="hor-duracion">Duración de cada turno</label>
+          <select id="hor-duracion" required>
+            <option value="15">15 minutos</option>
+            <option value="30" selected>30 minutos</option>
+            <option value="45">45 minutos</option>
+            <option value="60">60 minutos</option>
+          </select>
+          <p class="form-help">Cuánto dura cada turno con este médico.</p>
+        </div>
+
+        <p class="form-error form-error-global" id="hor-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="hor-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="hor-submit">
+            Agregar horario
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para agregar bloqueo -->
+  <div class="modal-backdrop" id="modal-bloqueo" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-bloqueo-titulo">
+      <header class="modal-header">
+        <h3 id="modal-bloqueo-titulo">Agregar bloqueo</h3>
+        <button type="button" class="modal-close" id="modal-bloqueo-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-bloqueo" class="modal-body" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bloq-desde">Desde</label>
+            <input type="date" id="bloq-desde" required>
+            <p class="form-error" id="bloq-desde-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="bloq-hasta">Hasta</label>
+            <input type="date" id="bloq-hasta" required>
+            <p class="form-error" id="bloq-hasta-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bloq-motivo">Motivo <span class="form-optional">(opcional)</span></label>
+          <input type="text" id="bloq-motivo" placeholder="Vacaciones, feriado, capacitación..." maxlength="255">
+        </div>
+
+        <p class="form-error form-error-global" id="bloq-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="bloq-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="bloq-submit">
+            Agregar bloqueo
           </button>
         </div>
       </form>
@@ -491,5 +639,6 @@
   <script src="js/pacientes-admin.js"></script>
   <script src="js/medicos-admin.js"></script>
   <script src="js/especialidades-admin.js"></script>
+  <script src="js/horarios-admin.js"></script>
 </body>
 </html>

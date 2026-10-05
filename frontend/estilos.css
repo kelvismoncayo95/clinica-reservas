@@ -710,3 +710,61 @@ input::placeholder {
   margin-top: 0.35rem;
   font-style: italic;
 }
+
+/* ----- Subsecciones (horarios y bloqueos) ----- */
+
+.subsection {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.subsection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.subsection-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.horarios-tabla-container {
+  overflow-x: auto;
+}
+
+.horarios-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.horarios-tabla th,
+.horarios-tabla td {
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.horarios-tabla th {
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.horarios-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+textarea {
+  font-family: inherit;
+  resize: vertical;
+}
