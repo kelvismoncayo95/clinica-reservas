@@ -179,7 +179,7 @@ function renderEspecialidadesCheckboxes(selectedIds) {
   const container = document.getElementById("med-especialidades-list");
   container.innerHTML = "";
   if (medicosState.specialties.length === 0) {
-    container.innerHTML = "<p class=\\"form-help\\">No hay especialidades cargadas.</p>";
+  container.innerHTML = '<p class="form-help">No hay especialidades cargadas.</p>';
     return;
   }
   medicosState.specialties.forEach((esp) => {
