@@ -195,9 +195,16 @@ async function onPacienteSubmit(e) {
   if (!data.birth_date) { setFieldError("pac-birth-date", "Ingresá la fecha de nacimiento."); hasError = true; }
   if (!data.phone) { setFieldError("pac-phone", "Ingresá el teléfono."); hasError = true; }
   if (!data.email) { setFieldError("pac-email", "Ingresá el correo electrónico."); hasError = true; }
-  if (!editing && (!data.password || data.password.length < 6)) {
-    setFieldError("pac-password", "La contraseña debe tener al menos 6 caracteres.");
-    hasError = true;
+  if (!editing) {
+    const pass = data.password || "";
+    const passConfirm = document.getElementById("pac-password-confirm").value;
+    if (pass.length < 6) {
+      setFieldError("pac-password", "La contraseña debe tener al menos 6 caracteres.");
+      hasError = true;
+    } else if (pass !== passConfirm) {
+      setFieldError("pac-password-confirm", "Las contraseñas no coinciden.");
+      hasError = true;
+    }
   }
   if (hasError) return;
 

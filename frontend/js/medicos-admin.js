@@ -224,6 +224,10 @@ async function onMedicoSubmit(e) {
   let hasError = false;
   if (!data.first_name) { setFieldError("med-first-name", "Ingresá el nombre."); hasError = true; }
   if (!data.last_name) { setFieldError("med-last-name", "Ingresá el apellido."); hasError = true; }
+  if (specialtyIds.length === 0) {
+    setFieldError("med-especialidades", "Marcá al menos una especialidad.");
+    hasError = true;
+  }
 
   if (!editing) {
     data.license_number = document.getElementById("med-license").value.trim();
@@ -231,8 +235,13 @@ async function onMedicoSubmit(e) {
     data.password = document.getElementById("med-password").value;
     if (!data.license_number) { setFieldError("med-license", "Ingresá la matrícula."); hasError = true; }
     if (!data.user_email) { setFieldError("med-user-email", "Ingresá el email de inicio de sesión."); hasError = true; }
-    if (!data.password || data.password.length < 6) {
+    const pass = data.password || "";
+    const passConfirm = document.getElementById("med-password-confirm").value;
+    if (pass.length < 6) {
       setFieldError("med-password", "La contraseña debe tener al menos 6 caracteres.");
+      hasError = true;
+    } else if (pass !== passConfirm) {
+      setFieldError("med-password-confirm", "Las contraseñas no coinciden.");
       hasError = true;
     }
   }

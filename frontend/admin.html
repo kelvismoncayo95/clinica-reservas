@@ -308,11 +308,17 @@
           <p class="form-error" id="med-user-email-error" hidden></p>
         </div>
 
-        <div class="form-group" id="med-password-group">
-          <label for="med-password">Contraseña inicial</label>
-          <input type="password" id="med-password" placeholder="Mínimo 6 caracteres">
-          <p class="form-help">El médico la va a usar para iniciar sesión por primera vez.</p>
-          <p class="form-error" id="med-password-error" hidden></p>
+        <div class="form-row" id="med-password-group">
+          <div class="form-group">
+            <label for="med-password">Contraseña inicial</label>
+            <input type="password" id="med-password" placeholder="Mínimo 6 caracteres">
+            <p class="form-error" id="med-password-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="med-password-confirm">Confirmar contraseña</label>
+            <input type="password" id="med-password-confirm" placeholder="Repetí la contraseña">
+            <p class="form-error" id="med-password-confirm-error" hidden></p>
+          </div>
         </div>
 
         <div class="form-group">
@@ -395,11 +401,17 @@
           <p class="form-error" id="pac-email-error" hidden></p>
         </div>
 
-        <div class="form-group" id="pac-password-group">
-          <label for="pac-password">Contraseña inicial</label>
-          <input type="password" id="pac-password" placeholder="Mínimo 6 caracteres">
-          <p class="form-help">El paciente la va a usar para iniciar sesión por primera vez.</p>
-          <p class="form-error" id="pac-password-error" hidden></p>
+        <div class="form-row" id="pac-password-group">
+          <div class="form-group">
+            <label for="pac-password">Contraseña inicial</label>
+            <input type="password" id="pac-password" placeholder="Mínimo 6 caracteres">
+            <p class="form-error" id="pac-password-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="pac-password-confirm">Confirmar contraseña</label>
+            <input type="password" id="pac-password-confirm" placeholder="Repetí la contraseña">
+            <p class="form-error" id="pac-password-confirm-error" hidden></p>
+          </div>
         </div>
 
         <p class="form-error form-error-global" id="pac-error" hidden></p>

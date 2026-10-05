@@ -47,6 +47,11 @@ def create_doctor(db: Session, data: DoctorCreate) -> Doctor:
     ):
         raise DoctorServiceError("Ya existe un medico con esa matricula")
 
+    if not data.specialty_ids:
+        raise DoctorServiceError(
+            "El medico debe tener al menos una especialidad"
+        )
+
     specialties = validate_specialty_ids(db, data.specialty_ids)
 
     user = User(
@@ -103,6 +108,10 @@ def update_doctor(db: Session, doctor: Doctor, data: DoctorUpdate) -> Doctor:
         setattr(doctor, field, value)
 
     if specialty_ids is not None:
+        if not specialty_ids:
+            raise DoctorServiceError(
+                "El medico debe tener al menos una especialidad"
+            )
         new_specialties = validate_specialty_ids(db, specialty_ids)
 
         db.execute(
