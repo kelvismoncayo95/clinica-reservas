@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de administración - Clínica</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-brand">
+      <h1>Clínica Médica</h1>
+    </div>
+    <div class="app-header-user">
+      <span id="user-display-name">Cargando...</span>
+      <button type="button" class="btn btn-secondary btn-sm" id="logout-btn">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <nav class="app-nav" role="tablist">
+    <button class="nav-item nav-item-activa" id="nav-citas" role="tab" aria-selected="true" aria-controls="section-citas">
+      Citas
+    </button>
+    <button class="nav-item" id="nav-pacientes" role="tab" aria-selected="false" aria-controls="section-pacientes" hidden>
+      Pacientes
+    </button>
+    <button class="nav-item" id="nav-medicos" role="tab" aria-selected="false" aria-controls="section-medicos" hidden>
+      Médicos
+    </button>
+    <button class="nav-item" id="nav-especialidades" role="tab" aria-selected="false" aria-controls="section-especialidades" hidden>
+      Especialidades
+    </button>
+    <button class="nav-item" id="nav-horarios" role="tab" aria-selected="false" aria-controls="section-horarios" hidden>
+      Horarios
+    </button>
+    <button class="nav-item" id="nav-usuarios" role="tab" aria-selected="false" aria-controls="section-usuarios" hidden>
+      Usuarios
+    </button>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- ============ Sección: Citas ============ -->
+    <section id="section-citas" class="app-section" role="tabpanel" aria-labelledby="nav-citas">
+      <div class="section-header">
+        <h2>Citas</h2>
+        <p class="section-subtitle">Filtrá por fecha, médico, paciente o estado. Podés marcar asistencia y crear citas nuevas.</p>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="filtro-fecha">Fecha</label>
+          <input type="date" id="filtro-fecha">
+        </div>
+        <div class="form-group">
+          <label for="filtro-medico">Médico</label>
+          <select id="filtro-medico">
+            <option value="">Todos los médicos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filtro-paciente">Paciente</label>
+          <select id="filtro-paciente">
+            <option value="">Todos los pacientes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filtro-estado">Estado</label>
+          <select id="filtro-estado">
+            <option value="">Todos los estados</option>
+            <option value="confirmed">Confirmadas</option>
+            <option value="attended">Atendidas</option>
+            <option value="no_show">No asistió</option>
+            <option value="cancelled">Canceladas</option>
+          </select>
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-secondary btn-sm" id="filtros-limpiar">
+            Limpiar filtros
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-nueva-cita">
+            + Nueva cita
+          </button>
+        </div>
+      </div>
+
+      <div id="citas-admin-loading" class="loading-box">
+        <p>Cargando citas...</p>
+      </div>
+
+      <div id="citas-admin-empty" class="empty-box" hidden>
+        <h3>No hay citas con esos filtros</h3>
+        <p>Probá cambiando la fecha o quitando algún filtro.</p>
+      </div>
+
+      <div id="citas-admin-list" class="citas-admin-list" hidden></div>
+    </section>
+
+    <!-- ============ Secciones futuras (ocultas por ahora) ============ -->
+    <section id="section-pacientes" class="app-section" role="tabpanel" aria-labelledby="nav-pacientes" hidden>
+      <div class="section-header">
+        <h2>Pacientes</h2>
+        <p class="section-subtitle">Sección en desarrollo.</p>
+      </div>
+      <div class="empty-box">
+        <p>Esta sección todavía no está disponible.</p>
+      </div>
+    </section>
+
+    <section id="section-medicos" class="app-section" role="tabpanel" aria-labelledby="nav-medicos" hidden>
+      <div class="section-header">
+        <h2>Médicos</h2>
+        <p class="section-subtitle">Sección en desarrollo.</p>
+      </div>
+      <div class="empty-box">
+        <p>Esta sección todavía no está disponible.</p>
+      </div>
+    </section>
+
+    <section id="section-especialidades" class="app-section" role="tabpanel" aria-labelledby="nav-especialidades" hidden>
+      <div class="section-header">
+        <h2>Especialidades</h2>
+        <p class="section-subtitle">Sección en desarrollo.</p>
+      </div>
+      <div class="empty-box">
+        <p>Esta sección todavía no está disponible.</p>
+      </div>
+    </section>
+
+    <section id="section-horarios" class="app-section" role="tabpanel" aria-labelledby="nav-horarios" hidden>
+      <div class="section-header">
+        <h2>Horarios</h2>
+        <p class="section-subtitle">Sección en desarrollo.</p>
+      </div>
+      <div class="empty-box">
+        <p>Esta sección todavía no está disponible.</p>
+      </div>
+    </section>
+
+    <section id="section-usuarios" class="app-section" role="tabpanel" aria-labelledby="nav-usuarios" hidden>
+      <div class="section-header">
+        <h2>Usuarios</h2>
+        <p class="section-subtitle">Sección en desarrollo.</p>
+      </div>
+      <div class="empty-box">
+        <p>Esta sección todavía no está disponible.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal para crear nueva cita -->
+  <div class="modal-backdrop" id="modal-nueva-cita" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <header class="modal-header">
+        <h3 id="modal-titulo">Nueva cita</h3>
+        <button type="button" class="modal-close" id="modal-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-nueva-cita" class="modal-body" novalidate>
+
+        <div class="form-group">
+          <label for="nc-paciente">1. Paciente</label>
+          <select id="nc-paciente" required>
+            <option value="">Cargando pacientes...</option>
+          </select>
+          <p class="form-error" id="nc-paciente-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label for="nc-especialidad">2. Especialidad</label>
+          <select id="nc-especialidad" required>
+            <option value="">Cargando especialidades...</option>
+          </select>
+          <p class="form-error" id="nc-especialidad-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label for="nc-medico">3. Médico</label>
+          <select id="nc-medico" required disabled>
+            <option value="">Primero elegí una especialidad</option>
+          </select>
+          <p class="form-error" id="nc-medico-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label for="nc-fecha">4. Fecha</label>
+          <input type="date" id="nc-fecha" required disabled>
+          <p class="form-error" id="nc-fecha-error" hidden></p>
+        </div>
+
+        <div class="form-group" id="nc-horarios-group" hidden>
+          <label>5. Horario</label>
+          <div id="nc-horarios-loading" class="loading-box">
+            <p>Buscando horarios...</p>
+          </div>
+          <div id="nc-horarios-empty" class="empty-box" hidden>
+            <p>No hay horarios disponibles para ese día.</p>
+          </div>
+          <div id="nc-horarios-grid" class="horarios-grid" hidden></div>
+          <p class="form-error" id="nc-horario-error" hidden></p>
+        </div>
+
+        <p class="form-error form-error-global" id="nc-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="nc-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="nc-submit" disabled>
+            Crear cita
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/appointments.js"></script>
+  <script src="js/citas-admin.js"></script>
+</body>
+</html>
