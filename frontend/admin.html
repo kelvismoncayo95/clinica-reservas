@@ -134,11 +134,31 @@
     <section id="section-medicos" class="app-section" role="tabpanel" aria-labelledby="nav-medicos" hidden>
       <div class="section-header">
         <h2>Médicos</h2>
-        <p class="section-subtitle">Sección en desarrollo.</p>
+        <p class="section-subtitle">Buscá por nombre, apellido o matrícula. Podés crear y editar médicos.</p>
       </div>
-      <div class="empty-box">
-        <p>Esta sección todavía no está disponible.</p>
+
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="buscar-medico">Buscar</label>
+          <input type="search" id="buscar-medico" placeholder="Nombre, apellido o matrícula...">
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-nuevo-medico">
+            + Nuevo médico
+          </button>
+        </div>
       </div>
+
+      <div id="medicos-loading" class="loading-box">
+        <p>Cargando médicos...</p>
+      </div>
+
+      <div id="medicos-empty" class="empty-box" hidden>
+        <h3>No hay médicos</h3>
+        <p>Probá cambiando la búsqueda o creá uno nuevo.</p>
+      </div>
+
+      <div id="medicos-list" class="citas-admin-list" hidden></div>
     </section>
 
     <section id="section-especialidades" class="app-section" role="tabpanel" aria-labelledby="nav-especialidades" hidden>
@@ -239,6 +259,85 @@
     </div>
   </div>
 
+  <!-- Modal para crear/editar medico -->
+  <div class="modal-backdrop" id="modal-medico" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-medico-titulo">
+      <header class="modal-header">
+        <h3 id="modal-medico-titulo">Nuevo médico</h3>
+        <button type="button" class="modal-close" id="modal-medico-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-medico" class="modal-body" novalidate>
+        <input type="hidden" id="med-id" value="">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="med-first-name">Nombre</label>
+            <input type="text" id="med-first-name" required placeholder="Carlos">
+            <p class="form-error" id="med-first-name-error" hidden></p>
+          </div>
+          <div class="form-group">
+            <label for="med-last-name">Apellido</label>
+            <input type="text" id="med-last-name" required placeholder="García">
+            <p class="form-error" id="med-last-name-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="med-license">Matrícula</label>
+          <input type="text" id="med-license" required placeholder="MP-12345">
+          <p class="form-hint" id="med-license-hint"></p>
+          <p class="form-error" id="med-license-error" hidden></p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="med-phone">Teléfono <span class="form-optional">(opcional)</span></label>
+            <input type="tel" id="med-phone" placeholder="1145678901">
+          </div>
+          <div class="form-group">
+            <label for="med-email">Email de contacto <span class="form-optional">(opcional)</span></label>
+            <input type="email" id="med-email" placeholder="carlos@clinica.com">
+          </div>
+        </div>
+
+        <div class="form-group" id="med-user-email-group">
+          <label for="med-user-email">Email de inicio de sesión</label>
+          <input type="email" id="med-user-email" placeholder="carlos@correo.com">
+          <p class="form-help">Es el correo con el que el médico va a entrar al sistema.</p>
+          <p class="form-error" id="med-user-email-error" hidden></p>
+        </div>
+
+        <div class="form-group" id="med-password-group">
+          <label for="med-password">Contraseña inicial</label>
+          <input type="password" id="med-password" placeholder="Mínimo 6 caracteres">
+          <p class="form-help">El médico la va a usar para iniciar sesión por primera vez.</p>
+          <p class="form-error" id="med-password-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label>Especialidades</label>
+          <p class="form-help">Marcá todas las especialidades del médico.</p>
+          <div id="med-especialidades-list" class="checkbox-list">
+            <p class="form-help">Cargando especialidades...</p>
+          </div>
+          <p class="form-error" id="med-especialidades-error" hidden></p>
+        </div>
+
+        <p class="form-error form-error-global" id="med-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="med-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="med-submit">
+            Crear médico
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal para crear/editar paciente -->
   <div class="modal-backdrop" id="modal-paciente" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-paciente-titulo">
@@ -322,5 +421,6 @@
   <script src="js/appointments.js"></script>
   <script src="js/citas-admin.js"></script>
   <script src="js/pacientes-admin.js"></script>
+  <script src="js/medicos-admin.js"></script>
 </body>
 </html>

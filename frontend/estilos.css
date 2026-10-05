@@ -672,3 +672,41 @@ input::placeholder {
   padding-top: 1rem;
   border-top: 1px solid var(--color-borde);
 }
+
+/* ----- Lista de checkboxes (para especialidades) ----- */
+
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  margin-top: 0.35rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  font-size: 0.95rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  margin-top: 0.35rem;
+  font-style: italic;
+}
