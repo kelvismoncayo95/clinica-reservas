@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis citas - Clínica</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-header-brand">
+      <h1>Clínica Médica</h1>
+    </div>
+    <div class="app-header-user">
+      <span id="user-display-name">Cargando...</span>
+      <button type="button" class="btn btn-secondary btn-sm" id="logout-btn">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="section-header">
+      <h2>Mis citas</h2>
+      <p class="section-subtitle">Acá ves tus citas agrupadas por día. Podés marcar si el paciente asistió o no.</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-box">
+      <div class="form-group">
+        <label for="filtro-fecha">Fecha</label>
+        <input type="date" id="filtro-fecha">
+      </div>
+      <div class="form-group">
+        <label for="filtro-estado">Estado</label>
+        <select id="filtro-estado">
+          <option value="">Todos</option>
+          <option value="confirmed" selected>Confirmadas</option>
+          <option value="attended">Atendidas</option>
+          <option value="no_show">No asistió</option>
+        </select>
+      </div>
+      <div class="filtros-acciones">
+        <button type="button" class="btn btn-secondary btn-sm" id="filtros-limpiar">
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+
+    <div id="citas-loading" class="loading-box">
+      <p>Cargando citas...</p>
+    </div>
+
+    <div id="citas-empty" class="empty-box" hidden>
+      <h3>No tenés citas con esos filtros</h3>
+      <p>Probá cambiando la fecha o el estado.</p>
+    </div>
+
+    <div id="citas-list" class="citas-agrupadas" hidden></div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/appointments.js"></script>
+  <script src="js/doctor.js"></script>
+</body>
+</html>

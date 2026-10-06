@@ -768,3 +768,23 @@ textarea {
   font-family: inherit;
   resize: vertical;
 }
+
+/* ----- Agrupamiento por dia (panel medico) ----- */
+
+.citas-agrupadas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grupo-dia-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-borde);
+}
