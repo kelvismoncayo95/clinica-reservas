@@ -309,6 +309,15 @@ def update_status(
             "Estado invalido. Solo attended o no_show"
         )
 
+    # No se puede marcar asistencia antes de que la cita haya ocurrido
+    appointment_dt = datetime.combine(
+        appointment.appointment_date, appointment.start_time
+    )
+    if appointment_dt > datetime.now():
+        raise AppointmentServiceError(
+            "No podes marcar asistencia antes de que la cita haya ocurrido"
+        )
+
     old_status = appointment.status
     appointment.status = new_status
 

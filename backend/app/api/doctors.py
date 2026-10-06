@@ -76,6 +76,7 @@ def get_doctor(
 def doctor_appointments(
     doctor_id: int,
     status_filter: str | None = Query(default=None, alias="status"),
+    date_filter: str | None = Query(default=None, alias="date"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -104,6 +105,8 @@ def doctor_appointments(
     stmt = select(Appointment).where(Appointment.doctor_id == doctor.id)
     if status_filter is not None:
         stmt = stmt.where(Appointment.status == status_filter)
+    if date_filter is not None:
+        stmt = stmt.where(Appointment.appointment_date == date_filter)
     stmt = stmt.order_by(
         Appointment.appointment_date, Appointment.start_time
     )
