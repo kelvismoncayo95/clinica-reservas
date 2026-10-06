@@ -77,6 +77,11 @@ function setupNavigation(role) {
 
 
 function switchSection(which) {
+  // Cerrar cualquier modal abierto antes de cambiar de seccion
+  document.querySelectorAll(".modal-backdrop").forEach((m) => {
+    m.hidden = true;
+  });
+
   state.currentSection = which;
   const secciones = ["citas", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
   secciones.forEach((sec) => {
