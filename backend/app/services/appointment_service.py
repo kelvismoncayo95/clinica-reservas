@@ -298,27 +298,66 @@ def update_status(
     new_status: str,
     current_user: User,
 ) -> Appointment:
-    """Cambia el estado. Solo confirmed -> attended o no_show."""
-    if appointment.status != "confirmed":
-        raise AppointmentServiceError(
-            "Solo se puede cambiar el estado de citas confirmadas"
-        )
+    """Cambia el estado de la cita.
 
-    if new_status not in ("attended", "no_show"):
+    Transiciones validas:
+    - confirmed -> attended
+    - confirmed -> no_show
+    - attended -> confirmed (solo dentro de las 2 horas)
+    - no_show -> confirmed (solo dentro de las 2 horas)
+    """
+    valid_statuses = ("confirmed", "attended", "no_show")
+    if new_status not in valid_statuses:
         raise AppointmentServiceError(
-            "Estado invalido. Solo attended o no_show"
-        )
-
-    # No se puede marcar asistencia antes de que la cita haya ocurrido
-    appointment_dt = datetime.combine(
-        appointment.appointment_date, appointment.start_time
-    )
-    if appointment_dt > datetime.now():
-        raise AppointmentServiceError(
-            "No podes marcar asistencia antes de que la cita haya ocurrido"
+            "Estado invalido. Solo confirmed, attended o no_show"
         )
 
     old_status = appointment.status
+
+    if old_status == "confirmed":
+        # Marcando asistencia
+        if new_status == "confirmed":
+            raise AppointmentServiceError(
+                "La cita ya esta confirmada"
+            )
+        # No se puede marcar asistencia antes de que la cita haya ocurrido
+        appointment_dt = datetime.combine(
+            appointment.appointment_date, appointment.start_time
+        )
+        if appointment_dt > datetime.now():
+            raise AppointmentServiceError(
+                "No podes marcar asistencia antes de que la cita haya ocurrido"
+            )
+
+    elif old_status in ("attended", "no_show"):
+        # Deshaciendo
+        if new_status != "confirmed":
+            raise AppointmentServiceError(
+                "Solo se puede volver al estado confirmado"
+            )
+        # Verificar que hayan pasado menos de 2 horas desde el cambio
+        last_log = db.scalar(
+            select(AppointmentLog)
+            .where(
+                AppointmentLog.appointment_id == appointment.id,
+                AppointmentLog.action == "status_changed",
+            )
+            .order_by(AppointmentLog.created_at.desc())
+        )
+        if last_log is None:
+            raise AppointmentServiceError(
+                "No hay registro del cambio de estado"
+            )
+        delta = datetime.now() - last_log.created_at
+        if delta.total_seconds() > 2 * 3600:
+            raise AppointmentServiceError(
+                "Ya pasaron mas de 2 horas. No se puede deshacer"
+            )
+    else:
+        raise AppointmentServiceError(
+            f"No se puede cambiar el estado desde {old_status}"
+        )
+
     appointment.status = new_status
 
     log_action(
