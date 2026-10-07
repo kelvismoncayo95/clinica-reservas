@@ -148,18 +148,22 @@ function renderCita(c) {
   const card = document.createElement("article");
   card.className = `cita-card ${getStatusClass(c.status)}`;
 
+  const patientName = c.patient_name || `Paciente #${c.patient_id}`;
+  const specialtyName = c.specialty_name || "";
+
   card.innerHTML = `
     <div class="cita-info">
       <p class="cita-fecha">${formatTime(c.start_time)} — ${formatTime(c.end_time)}</p>
-      <p class="cita-detalle">Paciente #${c.patient_id}</p>
+      <p class="cita-detalle">${patientName}</p>
+      ${specialtyName ? `<p class="cita-detalle">${specialtyName}</p>` : ""}
       <p class="cita-estado">${getStatusLabel(c.status)}</p>
     </div>
   `;
 
-  if (c.status === "confirmed") {
-    const acciones = document.createElement("div");
-    acciones.className = "cita-acciones";
+  const acciones = document.createElement("div");
+  acciones.className = "cita-acciones";
 
+  if (c.status === "confirmed") {
     const btnAtendida = document.createElement("button");
     btnAtendida.type = "button";
     btnAtendida.className = "btn btn-sm";
@@ -174,6 +178,17 @@ function renderCita(c) {
     btnNoShow.addEventListener("click", () => cambiarEstado(c.id, "no_show"));
     acciones.appendChild(btnNoShow);
 
+  } else if (c.status === "attended" || c.status === "no_show") {
+    const btnDeshacer = document.createElement("button");
+    btnDeshacer.type = "button";
+    btnDeshacer.className = "btn btn-secondary btn-sm";
+    btnDeshacer.textContent = "Deshacer";
+    btnDeshacer.title = "Volver a estado confirmado (solo dentro de las 2 horas)";
+    btnDeshacer.addEventListener("click", () => deshacerEstado(c.id));
+    acciones.appendChild(btnDeshacer);
+  }
+
+  if (acciones.children.length > 0) {
     card.appendChild(acciones);
   }
   return card;
@@ -184,6 +199,18 @@ async function cambiarEstado(id, nuevoEstado) {
   try {
     await updateAppointmentStatus(id, nuevoEstado);
     showToast(`Cita marcada como ${getStatusLabel(nuevoEstado).toLowerCase()}.`, "success");
+    await cargarCitas();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+
+async function deshacerEstado(id) {
+  if (!confirm("¿Volver esta cita al estado confirmado?")) return;
+  try {
+    await updateAppointmentStatus(id, "confirmed");
+    showToast("Cita vuelta a confirmada.", "success");
     await cargarCitas();
   } catch (err) {
     showToast(err.message, "error");
