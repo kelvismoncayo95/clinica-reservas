@@ -60,3 +60,9 @@ class AppointmentResponse(AppointmentBase):
     cancelled_by: int | None = None
     created_at: datetime
     updated_at: datetime
+
+    # Campos derivados (nombres legibles). Opcionales para compatibilidad
+    # con construcciones que no los incluyan.
+    patient_name: str | None = None
+    doctor_name: str | None = None
+    specialty_name: str | None = None

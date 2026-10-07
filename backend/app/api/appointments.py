@@ -14,6 +14,10 @@ from app.schemas.appointment import (
     AppointmentResponse,
     AppointmentStatusUpdate,
 )
+from app.services.appointment_helpers import (
+    enrich_appointment,
+    enrich_appointments,
+)
 from app.services.appointment_service import (
     AppointmentServiceError,
     cancel_appointment,
@@ -85,7 +89,7 @@ def create_appointment_endpoint(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=str(e)
         )
-    return appointment
+    return enrich_appointment(db, appointment)
 
 
 @router.get("", response_model=list[AppointmentResponse])
@@ -110,7 +114,8 @@ def list_appointments(
     stmt = stmt.order_by(
         Appointment.appointment_date, Appointment.start_time
     )
-    return list(db.scalars(stmt).all())
+    citas = list(db.scalars(stmt).all())
+    return enrich_appointments(db, citas)
 
 
 @router.get("/me", response_model=list[AppointmentResponse])
@@ -137,7 +142,8 @@ def my_appointments(
         .where(Appointment.patient_id == patient.id)
         .order_by(Appointment.appointment_date, Appointment.start_time)
     )
-    return list(db.scalars(stmt).all())
+    citas = list(db.scalars(stmt).all())
+    return enrich_appointments(db, citas)
 
 
 @router.get("/{appointment_id}", response_model=AppointmentResponse)

@@ -9,6 +9,7 @@ from app.models.doctor import Doctor
 from app.models.user import User
 from app.schemas.appointment import AppointmentResponse
 from app.schemas.doctor import DoctorCreate, DoctorResponse, DoctorUpdate
+from app.services.appointment_helpers import enrich_appointments
 from app.services.doctor_service import (
     DoctorServiceError,
     create_doctor,
@@ -110,7 +111,8 @@ def doctor_appointments(
     stmt = stmt.order_by(
         Appointment.appointment_date, Appointment.start_time
     )
-    return list(db.scalars(stmt).all())
+    citas = list(db.scalars(stmt).all())
+    return enrich_appointments(db, citas)
 
 
 @router.post(
