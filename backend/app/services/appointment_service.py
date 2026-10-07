@@ -1,4 +1,4 @@
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -348,7 +348,7 @@ def update_status(
             raise AppointmentServiceError(
                 "No hay registro del cambio de estado"
             )
-        delta = datetime.now() - last_log.created_at
+        delta = datetime.now(timezone.utc) - last_log.created_at
         if delta.total_seconds() > 2 * 3600:
             raise AppointmentServiceError(
                 "Ya pasaron mas de 2 horas. No se puede deshacer"
