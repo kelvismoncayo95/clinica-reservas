@@ -1,6 +1,6 @@
 from datetime import date, datetime, time, timedelta, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.appointment import Appointment
@@ -12,6 +12,7 @@ from app.models.schedule import Schedule
 from app.models.specialty import Specialty
 from app.models.user import User
 from app.schemas.appointment import AppointmentCreate
+from app.core.config import get_settings
 from app.services.time_utils import (
     generate_slots,
     is_past_datetime,
@@ -154,6 +155,43 @@ def create_appointment(
         if patient is None or not patient.activo:
             raise AppointmentServiceError("Paciente no encontrado")
 
+    # 1b. Reglas de negocio de reserva
+    settings = get_settings()
+    now = datetime.now(timezone.utc)
+
+    # Anticipacion minima
+    appointment_dt = datetime.combine(
+        data.appointment_date, data.start_time, tzinfo=timezone.utc
+    )
+    hours_until = (appointment_dt - now).total_seconds() / 3600
+    if hours_until < settings.APPOINTMENT_MIN_HOURS_NOTICE:
+        raise AppointmentServiceError(
+            f"El turno debe reservarse con al menos "
+            f"{settings.APPOINTMENT_MIN_HOURS_NOTICE} hora(s) de anticipacion"
+        )
+
+    # Anticipacion maxima
+    days_until = hours_until / 24
+    if days_until > settings.APPOINTMENT_MAX_DAYS_AHEAD:
+        raise AppointmentServiceError(
+            f"No se puede reservar con mas de "
+            f"{settings.APPOINTMENT_MAX_DAYS_AHEAD} dias de anticipacion"
+        )
+
+    # Maximo de citas futuras por paciente
+    future_count = db.scalar(
+        select(func.count(Appointment.id)).where(
+            Appointment.patient_id == patient.id,
+            Appointment.status == "confirmed",
+            Appointment.appointment_date >= now.date(),
+        )
+    )
+    if future_count >= settings.APPOINTMENT_MAX_FUTURE_PER_PATIENT:
+        raise AppointmentServiceError(
+            f"Ya tenes {settings.APPOINTMENT_MAX_FUTURE_PER_PATIENT} citas "
+            f"futuras. No podes reservar mas."
+        )
+
     # 2. Doctor y especialidad
     doctor = db.get(Doctor, data.doctor_id)
     if doctor is None or not doctor.activo:
@@ -220,6 +258,23 @@ def cancel_appointment(
         raise AppointmentServiceError(
             "Solo se pueden cancelar citas confirmadas"
         )
+
+    # Regla de anticipacion minima solo para pacientes
+    if current_user.role == "patient":
+        settings = get_settings()
+        now = datetime.now(timezone.utc)
+        appointment_dt = datetime.combine(
+            appointment.appointment_date,
+            appointment.start_time,
+            tzinfo=timezone.utc,
+        )
+        hours_until = (appointment_dt - now).total_seconds() / 3600
+        if hours_until < settings.APPOINTMENT_MIN_HOURS_CANCEL_PATIENT:
+            raise AppointmentServiceError(
+                f"No podes cancelar con menos de "
+                f"{settings.APPOINTMENT_MIN_HOURS_CANCEL_PATIENT} horas "
+                f"de anticipacion. Comunicate con recepcion."
+            )
 
     appointment.status = "cancelled"
     appointment.cancelled_at = datetime.now()

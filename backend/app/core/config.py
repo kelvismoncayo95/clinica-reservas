@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     EMAIL_FROM: str = ""
 
+    # Reglas de negocio de citas
+    APPOINTMENT_MIN_HOURS_NOTICE: int = 1
+    APPOINTMENT_MAX_DAYS_AHEAD: int = 60
+    APPOINTMENT_MAX_FUTURE_PER_PATIENT: int = 3
+    APPOINTMENT_MIN_HOURS_CANCEL_PATIENT: int = 24
+
 
 @lru_cache
 def get_settings() -> Settings:
