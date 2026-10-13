@@ -407,6 +407,15 @@ async function onCerrarHorarioSubmit(e) {
     return;
   }
 
+  // Validar que la fecha sea al menos manana
+  const manana = new Date();
+  manana.setDate(manana.getDate() + 1);
+  const mananaStr = manana.toISOString().split("T")[0];
+  if (validUntil < mananaStr) {
+    setFieldError("cerrar-valid-until", "La fecha tiene que ser al menos manana.");
+    return;
+  }
+
   if (!horarioActual) {
     setGlobalError("cerrar-error", "No hay horario seleccionado.");
     return;
@@ -453,6 +462,7 @@ async function onCerrarHorarioSubmit(e) {
     setGlobalError("cerrar-error", err.message);
     submit.disabled = false;
     submit.textContent = originalText;
+    submit.onclick = null;
   }
 }
 
