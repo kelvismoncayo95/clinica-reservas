@@ -1,13 +1,16 @@
-from datetime import time
+from datetime import date, datetime, time, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.block import Block
 from app.models.doctor import Doctor
+from app.models.appointment import Appointment
 from app.models.schedule import Schedule
 from app.schemas.block import BlockCreate
 from app.schemas.schedule import ScheduleCreate, ScheduleUpdate
+from app.schemas.appointment import AppointmentResponse
+from app.services.appointment_helpers import enrich_appointments
 from app.services.time_utils import ranges_overlap
 
 
@@ -140,3 +143,38 @@ def create_block(
     db.commit()
     db.refresh(block)
     return block
+
+
+def close_schedule(
+    db: Session, schedule: Schedule, end_date: date
+) -> tuple[Schedule, list[Appointment]]:
+    """Establece fecha de corte para un horario.
+
+    Devuelve el horario actualizado y la lista de citas confirmadas
+    que quedan despues de end_date (las que el admin tiene que
+    gestionar).
+    """
+    if end_date < date.today():
+        raise ScheduleServiceError(
+            "La fecha de corte no puede ser en el pasado"
+        )
+
+    # Buscar citas confirmadas despues de la fecha de corte,
+    # del mismo doctor, en el mismo dia de la semana
+    stmt = select(Appointment).where(
+        Appointment.doctor_id == schedule.doctor_id,
+        Appointment.status == "confirmed",
+        Appointment.appointment_date > end_date,
+    )
+    candidatas = list(db.scalars(stmt).all())
+
+    # Filtrar solo las que caen en el mismo dia de la semana
+    afectadas = [
+        c for c in candidatas
+        if c.appointment_date.weekday() == schedule.day_of_week
+    ]
+
+    schedule.valid_until = end_date
+    db.commit()
+    db.refresh(schedule)
+    return schedule, afectadas
