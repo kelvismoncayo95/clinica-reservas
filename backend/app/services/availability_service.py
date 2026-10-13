@@ -1,6 +1,6 @@
 from datetime import date, datetime, time
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.models.appointment import Appointment
@@ -23,12 +23,20 @@ class AvailabilitySlot:
 def _get_schedules_for_date(
     db: Session, doctor_id: int, appointment_date: date
 ) -> list[Schedule]:
-    """Devuelve los horarios activos del medico para el dia de la semana."""
+    """Devuelve los horarios activos del medico para el dia de la semana.
+
+    Solo incluye horarios cuya fecha de corte (valid_until) sea NULL
+    o posterior a la fecha consultada.
+    """
     day_of_week = appointment_date.weekday()
     stmt = select(Schedule).where(
         Schedule.doctor_id == doctor_id,
         Schedule.day_of_week == day_of_week,
         Schedule.activo.is_(True),
+        or_(
+            Schedule.valid_until.is_(None),
+            Schedule.valid_until >= appointment_date,
+        ),
     )
     return list(db.scalars(stmt).all())
 
