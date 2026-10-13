@@ -115,6 +115,7 @@ function renderTablaSchedules(schedules) {
         <th>Desde</th>
         <th>Hasta</th>
         <th>Duración</th>
+        <th>Vigencia</th>
         <th></th>
       </tr>
     </thead>
@@ -122,11 +123,15 @@ function renderTablaSchedules(schedules) {
   const tbody = document.createElement("tbody");
   schedules.forEach((s) => {
     const tr = document.createElement("tr");
+    const vigencia = s.valid_until
+      ? `Hasta ${formatDate(s.valid_until)}`
+      : "Sin corte";
     tr.innerHTML = `
       <td>${DIAS_SEMANA[s.day_of_week]}</td>
       <td>${formatTime(s.start_time)}</td>
       <td>${formatTime(s.end_time)}</td>
       <td>${s.slot_duration_minutes} min</td>
+      <td>${vigencia}</td>
     `;
     const tdAcc = document.createElement("td");
 
@@ -356,6 +361,13 @@ let horarioActual = null;
 
 function abrirModalCerrarHorario(schedule) {
   horarioActual = schedule;
+
+  // Reset del boton submit (por si quedo trabado de una operacion anterior)
+  const submit = document.getElementById("cerrar-submit");
+  submit.disabled = false;
+  submit.textContent = "Cerrar horario";
+  submit.onclick = null;
+
   document.getElementById("form-cerrar-horario").reset();
   document.querySelectorAll("#form-cerrar-horario .form-error").forEach((el) => {
     el.hidden = true;
@@ -376,6 +388,10 @@ function abrirModalCerrarHorario(schedule) {
 function cerrarModalCerrarHorario() {
   document.getElementById("modal-cerrar-horario").hidden = true;
   horarioActual = null;
+  const submit = document.getElementById("cerrar-submit");
+  submit.disabled = false;
+  submit.textContent = "Cerrar horario";
+  submit.onclick = null;
 }
 
 async function onCerrarHorarioSubmit(e) {
