@@ -129,12 +129,26 @@ function renderTablaSchedules(schedules) {
       <td>${s.slot_duration_minutes} min</td>
     `;
     const tdAcc = document.createElement("td");
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn btn-peligro btn-sm";
-    btn.textContent = "Desactivar";
-    btn.addEventListener("click", () => desactivarSchedule(s.id));
-    tdAcc.appendChild(btn);
+
+    // Boton principal: cerrar horario con fecha de corte
+    const btnCerrar = document.createElement("button");
+    btnCerrar.type = "button";
+    btnCerrar.className = "btn btn-sm";
+    btnCerrar.textContent = "Cerrar";
+    btnCerrar.title = "Cerrar este horario a partir de una fecha";
+    btnCerrar.addEventListener("click", () => abrirModalCerrarHorario(s));
+    tdAcc.appendChild(btnCerrar);
+
+    // Boton secundario: desactivar sin fecha (por si fue un error)
+    const btnDesactivar = document.createElement("button");
+    btnDesactivar.type = "button";
+    btnDesactivar.className = "btn btn-peligro btn-sm";
+    btnDesactivar.style.marginLeft = "0.5rem";
+    btnDesactivar.textContent = "Desactivar";
+    btnDesactivar.title = "Desactivar inmediatamente (por si fue un error)";
+    btnDesactivar.addEventListener("click", () => desactivarSchedule(s.id));
+    tdAcc.appendChild(btnDesactivar);
+
     tr.appendChild(tdAcc);
     tbody.appendChild(tr);
   });
@@ -333,3 +347,105 @@ async function eliminarBlock(id) {
     showToast(err.message, "error");
   }
 }
+
+
+
+// ----- Modal de cierre de horario -----
+
+let horarioActual = null;
+
+function abrirModalCerrarHorario(schedule) {
+  horarioActual = schedule;
+  document.getElementById("form-cerrar-horario").reset();
+  document.querySelectorAll("#form-cerrar-horario .form-error").forEach((el) => {
+    el.hidden = true;
+    el.textContent = "";
+  });
+  document.getElementById("cerrar-afectadas").hidden = true;
+  document.getElementById("cerrar-afectadas-list").innerHTML = "";
+
+  // Fecha minima: manana
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split("T")[0];
+  document.getElementById("cerrar-valid-until").min = minDate;
+
+  document.getElementById("modal-cerrar-horario").hidden = false;
+}
+
+function cerrarModalCerrarHorario() {
+  document.getElementById("modal-cerrar-horario").hidden = true;
+  horarioActual = null;
+}
+
+async function onCerrarHorarioSubmit(e) {
+  e.preventDefault();
+  document.querySelectorAll("#form-cerrar-horario .form-error").forEach((el) => {
+    el.hidden = true;
+    el.textContent = "";
+  });
+
+  const validUntil = document.getElementById("cerrar-valid-until").value;
+  if (!validUntil) {
+    setFieldError("cerrar-valid-until", "Elegí una fecha.");
+    return;
+  }
+
+  if (!horarioActual) {
+    setGlobalError("cerrar-error", "No hay horario seleccionado.");
+    return;
+  }
+
+  const submit = document.getElementById("cerrar-submit");
+  const originalText = submit.textContent;
+  submit.disabled = true;
+  submit.textContent = "Cerrando...";
+
+  try {
+    const result = await apiFetch(
+      `/schedules/${horarioActual.id}/close`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ valid_until: validUntil }),
+      }
+    );
+
+    if (result.affected_appointments && result.affected_appointments.length > 0) {
+      const list = document.getElementById("cerrar-afectadas-list");
+      list.innerHTML = "";
+      result.affected_appointments.forEach((c) => {
+        const div = document.createElement("p");
+        div.className = "cita-detalle";
+        div.textContent = `- ${formatDate(c.appointment_date)} a las ${formatTime(c.start_time)} - ${c.patient_name || "Paciente #" + c.patient_id}`;
+        list.appendChild(div);
+      });
+      document.getElementById("cerrar-afectadas").hidden = false;
+      showToast(`Horario cerrado. Hay ${result.affected_appointments.length} cita(s) que gestionar.`, "info");
+      submit.disabled = false;
+      submit.textContent = "Entendido";
+      submit.onclick = (e) => {
+        e.preventDefault();
+        cerrarModalCerrarHorario();
+        cargarSchedules(horariosState.currentDoctorId);
+      };
+    } else {
+      showToast("Horario cerrado sin citas afectadas.", "success");
+      cerrarModalCerrarHorario();
+      await cargarSchedules(horariosState.currentDoctorId);
+    }
+  } catch (err) {
+    setGlobalError("cerrar-error", err.message);
+    submit.disabled = false;
+    submit.textContent = originalText;
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnCerrar = document.getElementById("modal-cerrar-horario-cerrar");
+  if (btnCerrar) btnCerrar.addEventListener("click", cerrarModalCerrarHorario);
+  const btnCancelar = document.getElementById("cerrar-cancelar");
+  if (btnCancelar) btnCancelar.addEventListener("click", cerrarModalCerrarHorario);
+  const formCerrar = document.getElementById("form-cerrar-horario");
+  if (formCerrar) formCerrar.addEventListener("submit", onCerrarHorarioSubmit);
+});

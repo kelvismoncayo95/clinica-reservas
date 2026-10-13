@@ -711,6 +711,46 @@
     </div>
   </div>
 
+  <!-- Modal para cerrar horario con fecha de corte -->
+  <div class="modal-backdrop" id="modal-cerrar-horario" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-cerrar-horario-titulo">
+      <header class="modal-header">
+        <h3 id="modal-cerrar-horario-titulo">Cerrar horario</h3>
+        <button type="button" class="modal-close" id="modal-cerrar-horario-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-cerrar-horario" class="modal-body" novalidate>
+        <p class="form-help">
+          Al cerrar el horario, no se van a generar nuevos turnos a partir de la fecha elegida.
+          Las citas ya reservadas antes de esa fecha se mantienen.
+        </p>
+
+        <div class="form-group">
+          <label for="cerrar-valid-until">Cerrar a partir del</label>
+          <input type="date" id="cerrar-valid-until" required>
+          <p class="form-error" id="cerrar-valid-until-error" hidden></p>
+        </div>
+
+        <div id="cerrar-afectadas" class="empty-box" hidden>
+          <h4>Citas despues de esa fecha</h4>
+          <p>Estas son las citas que van a quedar sin horario. Recepcion tiene que gestionarlas (reprogramarlas o cancelarlas).</p>
+          <div id="cerrar-afectadas-list"></div>
+        </div>
+
+        <p class="form-error form-error-global" id="cerrar-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="cerrar-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="cerrar-submit">
+            Cerrar horario
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/appointments.js"></script>
