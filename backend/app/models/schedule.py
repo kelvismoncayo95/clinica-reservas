@@ -1,6 +1,6 @@
-from datetime import datetime, time, timezone
+from datetime import date, datetime, time, timezone
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String, Time
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -25,6 +25,7 @@ class Schedule(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+    valid_until: Mapped[date | None] = mapped_column(Date, nullable=True)
 
     __table_args__ = (
         CheckConstraint("day_of_week BETWEEN 0 AND 6", name="ck_schedules_day_of_week"),
