@@ -9,9 +9,11 @@ from app.models.doctor import Doctor
 from app.models.schedule import Schedule
 from app.models.user import User
 from app.schemas.block import BlockCreate, BlockResponse
-from app.schemas.schedule import ScheduleCreate, ScheduleResponse, ScheduleUpdate
+from app.schemas.appointment import AppointmentResponse
+from app.schemas.schedule import ScheduleClose, ScheduleCreate, ScheduleResponse, ScheduleUpdate
 from app.services.schedule_service import (
     ScheduleServiceError,
+    close_schedule,
     create_block,
     create_schedule,
     update_schedule,
@@ -179,3 +181,37 @@ def delete_block_endpoint(
     db.delete(block)
     db.commit()
     return None
+@router.patch(
+    "/schedules/{schedule_id}/close",
+    tags=["schedules"],
+)
+def close_schedule_endpoint(
+    schedule_id: int,
+    data: ScheduleClose,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
+    """Cierra un horario con una fecha de corte. Solo admin.
+
+    Devuelve el horario actualizado y la lista de citas confirmadas
+    que quedan despues de la fecha de corte (para que el admin las
+    gestione).
+    """
+    schedule = db.get(Schedule, schedule_id)
+    if schedule is None or not schedule.activo:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Horario no encontrado",
+        )
+    try:
+        schedule, afectadas = close_schedule(db, schedule, data.valid_until)
+    except ScheduleServiceError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )
+    return {
+        "schedule": ScheduleResponse.model_validate(schedule),
+        "affected_appointments": [
+            AppointmentResponse.model_validate(c) for c in afectadas
+        ],
+    }

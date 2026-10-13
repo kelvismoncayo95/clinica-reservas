@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import date, datetime, time
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -27,6 +27,12 @@ class ScheduleUpdate(BaseModel):
     activo: bool | None = None
 
 
+class ScheduleClose(BaseModel):
+    """Datos para cerrar un horario con fecha de corte."""
+
+    valid_until: date
+
+
 class ScheduleResponse(ScheduleBase):
     """Horario devuelto por la API."""
 
@@ -35,5 +41,6 @@ class ScheduleResponse(ScheduleBase):
     id: int
     doctor_id: int
     activo: bool
+    valid_until: date | None = None
     created_at: datetime
     updated_at: datetime
