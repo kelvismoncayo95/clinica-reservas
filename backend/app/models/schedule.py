@@ -26,6 +26,18 @@ class Schedule(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
     valid_until: Mapped[date | None] = mapped_column(Date, nullable=True)
+    deactivated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    deactivated_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
+    closed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    closed_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
 
     __table_args__ = (
         CheckConstraint("day_of_week BETWEEN 0 AND 6", name="ck_schedules_day_of_week"),

@@ -27,6 +27,12 @@ class Doctor(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+    deactivated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    deactivated_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
 
     user: Mapped["User"] = relationship("User", back_populates="doctor")
     specialties: Mapped[list["Specialty"]] = relationship(
