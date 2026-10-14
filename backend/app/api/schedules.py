@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -108,7 +109,7 @@ def update_schedule_endpoint(
 def deactivate_schedule(
     schedule_id: int,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    current_user: User = Depends(require_admin),
 ):
     """Desactiva un horario (soft delete). Solo admin.
 
@@ -135,6 +136,8 @@ def deactivate_schedule(
         )
 
     schedule.activo = False
+    schedule.deactivated_at = datetime.now(timezone.utc)
+    schedule.deactivated_by = current_user.id
     db.commit()
     return None
 

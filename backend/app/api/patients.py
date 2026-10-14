@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -109,7 +110,7 @@ def update_patient(
 def deactivate_patient(
     patient_id: int,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    current_user: User = Depends(require_admin),
 ):
     """Desactiva un paciente (soft delete). Solo admin."""
     patient = db.get(Patient, patient_id)
@@ -120,5 +121,7 @@ def deactivate_patient(
         )
 
     patient.activo = False
+    patient.deactivated_at = datetime.now(timezone.utc)
+    patient.deactivated_by = current_user.id
     db.commit()
     return None

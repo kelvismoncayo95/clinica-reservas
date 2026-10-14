@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -135,5 +136,7 @@ def deactivate_user(
         )
 
     user.activo = False
+    user.deactivated_at = datetime.now(timezone.utc)
+    user.deactivated_by = current_admin.id
     db.commit()
     return None

@@ -48,4 +48,6 @@ class Schedule(Base):
         ),
     )
 
-    doctor: Mapped["Doctor"] = relationship("Doctor", back_populates="schedules")
+    doctor: Mapped["Doctor"] = relationship(
+        "Doctor", back_populates="schedules", foreign_keys=[doctor_id]
+    )

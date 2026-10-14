@@ -31,8 +31,10 @@ class User(Base):
     )
 
     patient: Mapped["Patient | None"] = relationship(
-        "Patient", back_populates="user", uselist=False
+        "Patient", back_populates="user", uselist=False,
+        foreign_keys="Patient.user_id",
     )
     doctor: Mapped["Doctor | None"] = relationship(
-        "Doctor", back_populates="user", uselist=False
+        "Doctor", back_populates="user", uselist=False,
+        foreign_keys="Doctor.user_id",
     )

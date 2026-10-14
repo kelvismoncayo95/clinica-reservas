@@ -35,7 +35,9 @@ class Patient(Base):
         ForeignKey("users.id"), nullable=True
     )
 
-    user: Mapped["User"] = relationship("User", back_populates="patient")
+    user: Mapped["User"] = relationship(
+        "User", back_populates="patient", foreign_keys=[user_id]
+    )
     appointments: Mapped[list["Appointment"]] = relationship(
         "Appointment", back_populates="patient"
     )

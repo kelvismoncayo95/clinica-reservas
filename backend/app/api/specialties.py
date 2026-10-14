@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -109,7 +110,7 @@ def update_specialty(
 def deactivate_specialty(
     specialty_id: int,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    current_user: User = Depends(require_admin),
 ):
     """Desactiva una especialidad (soft delete). Solo admin."""
     specialty = db.get(Specialty, specialty_id)
@@ -120,5 +121,7 @@ def deactivate_specialty(
         )
 
     specialty.activo = False
+    specialty.deactivated_at = datetime.now(timezone.utc)
+    specialty.deactivated_by = current_user.id
     db.commit()
     return None
