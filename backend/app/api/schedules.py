@@ -14,6 +14,7 @@ from app.schemas.schedule import ScheduleClose, ScheduleCreate, ScheduleResponse
 from app.services.schedule_service import (
     ScheduleServiceError,
     close_schedule,
+    count_future_appointments,
     create_block,
     create_schedule,
     update_schedule,
@@ -109,13 +110,30 @@ def deactivate_schedule(
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ):
-    """Desactiva un horario (soft delete). Solo admin."""
+    """Desactiva un horario (soft delete). Solo admin.
+
+    Si hay citas futuras confirmadas en este horario, no se puede
+    desactivar. Primero hay que gestionarlas (cancelarlas,
+    reprogramarlas, o cerrar el horario con fecha de corte).
+    """
     schedule = db.get(Schedule, schedule_id)
     if schedule is None or not schedule.activo:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Horario no encontrado",
         )
+
+    pendientes = count_future_appointments(db, schedule)
+    if pendientes > 0:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"Este horario tiene {pendientes} cita(s) futura(s). "
+                f"No se puede desactivar sin gestionarlas. "
+                f"Cerralo con fecha de corte o gestiona las citas primero."
+            ),
+        )
+
     schedule.activo = False
     db.commit()
     return None

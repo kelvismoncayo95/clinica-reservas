@@ -788,3 +788,26 @@ textarea {
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--color-borde);
 }
+
+/* ----- Acciones de horario (botones apilados) ----- */
+
+.acciones-horario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.acciones-separador {
+  height: 1px;
+  width: 100%;
+  background: var(--color-borde);
+  margin: 0.25rem 0;
+}
+
+.acciones-nota {
+  font-size: 0.7rem;
+  color: var(--color-texto-suave);
+  font-style: italic;
+  margin: 0;
+}

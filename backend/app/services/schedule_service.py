@@ -178,3 +178,25 @@ def close_schedule(
     db.commit()
     db.refresh(schedule)
     return schedule, afectadas
+
+
+
+def count_future_appointments(
+    db: Session, schedule: Schedule
+) -> int:
+    """Cuenta las citas confirmadas futuras de este horario.
+
+    Solo cuenta las que caen en el mismo dia de la semana del horario
+    y tienen fecha >= hoy.
+    """
+    hoy = date.today()
+    stmt = select(Appointment).where(
+        Appointment.doctor_id == schedule.doctor_id,
+        Appointment.status == "confirmed",
+        Appointment.appointment_date >= hoy,
+    )
+    candidatas = list(db.scalars(stmt).all())
+    return sum(
+        1 for c in candidatas
+        if c.appointment_date.weekday() == schedule.day_of_week
+    )

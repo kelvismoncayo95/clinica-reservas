@@ -134,6 +134,7 @@ function renderTablaSchedules(schedules) {
       <td>${vigencia}</td>
     `;
     const tdAcc = document.createElement("td");
+    tdAcc.className = "acciones-horario";
 
     // Boton principal: cerrar horario con fecha de corte
     const btnCerrar = document.createElement("button");
@@ -144,15 +145,25 @@ function renderTablaSchedules(schedules) {
     btnCerrar.addEventListener("click", () => abrirModalCerrarHorario(s));
     tdAcc.appendChild(btnCerrar);
 
+    // Separador visual
+    const separador = document.createElement("div");
+    separador.className = "acciones-separador";
+    tdAcc.appendChild(separador);
+
     // Boton secundario: desactivar sin fecha (por si fue un error)
     const btnDesactivar = document.createElement("button");
     btnDesactivar.type = "button";
     btnDesactivar.className = "btn btn-peligro btn-sm";
-    btnDesactivar.style.marginLeft = "0.5rem";
     btnDesactivar.textContent = "Desactivar";
-    btnDesactivar.title = "Desactivar inmediatamente (por si fue un error)";
+    btnDesactivar.title = "Solo usar si el horario se cargó por error. No se puede desactivar si hay citas futuras.";
     btnDesactivar.addEventListener("click", () => desactivarSchedule(s.id));
     tdAcc.appendChild(btnDesactivar);
+
+    // Nota aclaratoria
+    const nota = document.createElement("p");
+    nota.className = "acciones-nota";
+    nota.textContent = "Solo si fue un error";
+    tdAcc.appendChild(nota);
 
     tr.appendChild(tdAcc);
     tbody.appendChild(tr);
