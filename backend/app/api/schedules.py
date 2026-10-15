@@ -210,7 +210,7 @@ def close_schedule_endpoint(
     schedule_id: int,
     data: ScheduleClose,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    current_user: User = Depends(require_admin),
 ):
     """Cierra un horario con una fecha de corte. Solo admin.
 
@@ -225,7 +225,9 @@ def close_schedule_endpoint(
             detail="Horario no encontrado",
         )
     try:
-        schedule, afectadas = close_schedule(db, schedule, data.valid_until)
+        schedule, afectadas = close_schedule(
+            db, schedule, data.valid_until, current_user
+        )
     except ScheduleServiceError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)

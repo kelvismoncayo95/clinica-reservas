@@ -7,6 +7,7 @@ from app.models.block import Block
 from app.models.doctor import Doctor
 from app.models.appointment import Appointment
 from app.models.schedule import Schedule
+from app.models.user import User
 from app.schemas.block import BlockCreate
 from app.schemas.schedule import ScheduleCreate, ScheduleUpdate
 from app.schemas.appointment import AppointmentResponse
@@ -146,7 +147,10 @@ def create_block(
 
 
 def close_schedule(
-    db: Session, schedule: Schedule, end_date: date
+    db: Session,
+    schedule: Schedule,
+    end_date: date,
+    current_user: User,
 ) -> tuple[Schedule, list[Appointment]]:
     """Establece fecha de corte para un horario.
 
@@ -175,6 +179,8 @@ def close_schedule(
     ]
 
     schedule.valid_until = end_date
+    schedule.closed_at = datetime.now(timezone.utc)
+    schedule.closed_by = current_user.id
     db.commit()
     db.refresh(schedule)
     return schedule, afectadas
