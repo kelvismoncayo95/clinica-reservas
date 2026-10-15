@@ -168,10 +168,18 @@ function logout() {
 
 
 function formatDateTime(isoStr) {
-  // Convierte ISO 8601 (ej: "2026-10-15T19:51:35.603467+00:00") a "15/10/2026 16:51" (local)
+  // Convierte ISO 8601 (ej: "2026-10-15T19:51:35.603467+00:00" o "...Z")
+  // a "15/10/2026 16:51" (local).
+  // Safari en iOS no tolera 6 digitos de milisegundos, asi que los
+  // normalizamos a 3 antes de parsear.
   if (!isoStr) return "";
   try {
-    const d = new Date(isoStr);
+    // Normalizar: reemplazar .NNNNNN por .NNN (3 digitos)
+    const normalizado = isoStr.replace(/\.(\d{3})\d+/, ".$1");
+    const d = new Date(normalizado);
+    if (isNaN(d.getTime())) {
+      return isoStr;
+    }
     const dia = String(d.getDate()).padStart(2, "0");
     const mes = String(d.getMonth() + 1).padStart(2, "0");
     const anio = d.getFullYear();
