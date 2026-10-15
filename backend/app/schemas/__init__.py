@@ -26,3 +26,8 @@ from app.schemas.appointment import (
     AppointmentStatus,
 )
 from app.schemas.availability import AvailabilitySlot, AvailabilityResponse
+from app.schemas.doctor_absence import (
+    DoctorAbsenceCreate,
+    DoctorAbsenceResolve,
+    DoctorAbsenceResponse,
+)
