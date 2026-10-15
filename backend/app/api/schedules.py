@@ -25,6 +25,16 @@ from app.services.schedule_service import (
 router = APIRouter(prefix="/api/v1", tags=["schedules"])
 
 
+def _enrich_schedule(db: Session, schedule: Schedule) -> ScheduleResponse:
+    """Convierte un Schedule a ScheduleResponse poblando closed_by_email."""
+    response = ScheduleResponse.model_validate(schedule)
+    if schedule.closed_by:
+        admin = db.get(User, schedule.closed_by)
+        if admin:
+            response.closed_by_email = admin.email
+    return response
+
+
 def _get_active_doctor(db: Session, doctor_id: int) -> Doctor:
     doctor = db.get(Doctor, doctor_id)
     if doctor is None or not doctor.activo:
@@ -57,7 +67,8 @@ def list_schedules(
         )
         .order_by(Schedule.day_of_week, Schedule.start_time)
     )
-    return list(db.scalars(stmt).all())
+    schedules = list(db.scalars(stmt).all())
+    return [_enrich_schedule(db, s) for s in schedules]
 
 
 @router.post(
@@ -161,7 +172,8 @@ def list_blocks(
         .where(Block.doctor_id == doctor_id)
         .order_by(Block.start_date)
     )
-    return list(db.scalars(stmt).all())
+    schedules = list(db.scalars(stmt).all())
+    return [_enrich_schedule(db, s) for s in schedules]
 
 
 @router.post(
@@ -233,12 +245,7 @@ def close_schedule_endpoint(
             status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )
 
-    # Armar la respuesta con el email del admin que cerro
-    response = ScheduleResponse.model_validate(schedule)
-    if schedule.closed_by:
-        admin = db.get(User, schedule.closed_by)
-        if admin:
-            response.closed_by_email = admin.email
+    response = _enrich_schedule(db, schedule)
 
     return {
         "schedule": response,
