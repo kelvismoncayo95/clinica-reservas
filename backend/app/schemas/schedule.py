@@ -42,5 +42,10 @@ class ScheduleResponse(ScheduleBase):
     doctor_id: int
     activo: bool
     valid_until: date | None = None
+    closed_at: datetime | None = None
+    closed_by: int | None = None
+    closed_by_email: str | None = None
+    deactivated_at: datetime | None = None
+    deactivated_by: int | None = None
     created_at: datetime
     updated_at: datetime

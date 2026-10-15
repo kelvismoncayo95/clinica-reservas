@@ -123,9 +123,17 @@ function renderTablaSchedules(schedules) {
   const tbody = document.createElement("tbody");
   schedules.forEach((s) => {
     const tr = document.createElement("tr");
-    const vigencia = s.valid_until
-      ? `Hasta ${formatDate(s.valid_until)}`
-      : "Sin corte";
+    let vigencia;
+    if (!s.valid_until) {
+      vigencia = "Sin corte";
+    } else {
+      vigencia = `Hasta ${formatDate(s.valid_until)}`;
+      if (s.closed_at) {
+        const fechaCierre = formatDateTime(s.closed_at);
+        const admin = s.closed_by_email || `Admin #${s.closed_by}`;
+        vigencia += `<br><small>Cerrado por ${admin} el ${fechaCierre}</small>`;
+      }
+    }
     tr.innerHTML = `
       <td>${DIAS_SEMANA[s.day_of_week]}</td>
       <td>${formatTime(s.start_time)}</td>

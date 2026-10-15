@@ -232,8 +232,16 @@ def close_schedule_endpoint(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )
+
+    # Armar la respuesta con el email del admin que cerro
+    response = ScheduleResponse.model_validate(schedule)
+    if schedule.closed_by:
+        admin = db.get(User, schedule.closed_by)
+        if admin:
+            response.closed_by_email = admin.email
+
     return {
-        "schedule": ScheduleResponse.model_validate(schedule),
+        "schedule": response,
         "affected_appointments": [
             AppointmentResponse.model_validate(c) for c in afectadas
         ],

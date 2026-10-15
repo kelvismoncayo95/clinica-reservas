@@ -165,3 +165,20 @@ function logout() {
   clearSession();
   window.location.href = "index.html";
 }
+
+
+function formatDateTime(isoStr) {
+  // Convierte ISO 8601 (ej: "2026-10-15T19:51:35.603467+00:00") a "15/10/2026 16:51" (local)
+  if (!isoStr) return "";
+  try {
+    const d = new Date(isoStr);
+    const dia = String(d.getDate()).padStart(2, "0");
+    const mes = String(d.getMonth() + 1).padStart(2, "0");
+    const anio = d.getFullYear();
+    const hora = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+    return `${dia}/${mes}/${anio} ${hora}:${min}`;
+  } catch {
+    return isoStr;
+  }
+}
