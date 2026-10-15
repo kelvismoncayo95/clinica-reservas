@@ -217,3 +217,73 @@ async function deshacerEstado(id) {
     showToast(err.message, "error");
   }
 }
+
+
+
+// ----- Modal de notificar ausencia -----
+
+function setupModalAusencia() {
+  document.getElementById("btn-no-asistir").addEventListener("click", abrirModalAusencia);
+  document.getElementById("modal-ausencia-cerrar").addEventListener("click", cerrarModalAusencia);
+  document.getElementById("aus-cancelar").addEventListener("click", cerrarModalAusencia);
+  document.getElementById("form-ausencia").addEventListener("submit", onAusenciaSubmit);
+  document.getElementById("modal-ausencia").addEventListener("click", (e) => {
+    if (e.target.id === "modal-ausencia") cerrarModalAusencia();
+  });
+}
+
+function abrirModalAusencia() {
+  document.getElementById("form-ausencia").reset();
+  document.querySelectorAll("#form-ausencia .form-error").forEach((el) => {
+    el.hidden = true;
+    el.textContent = "";
+  });
+
+  const hoy = new Date().toISOString().split("T")[0];
+  document.getElementById("aus-fecha").min = hoy;
+
+  document.getElementById("modal-ausencia").hidden = false;
+}
+
+function cerrarModalAusencia() {
+  document.getElementById("modal-ausencia").hidden = true;
+  const submit = document.getElementById("aus-submit");
+  submit.disabled = false;
+  submit.textContent = "Notificar ausencia";
+}
+
+async function onAusenciaSubmit(e) {
+  e.preventDefault();
+  document.querySelectorAll("#form-ausencia .form-error").forEach((el) => {
+    el.hidden = true;
+    el.textContent = "";
+  });
+
+  const fecha = document.getElementById("aus-fecha").value;
+  const motivo = document.getElementById("aus-motivo").value.trim() || null;
+
+  if (!fecha) {
+    setFieldError("aus-fecha", "Elegí una fecha.");
+    return;
+  }
+
+  const submit = document.getElementById("aus-submit");
+  const originalText = submit.textContent;
+  submit.disabled = true;
+  submit.textContent = "Enviando...";
+
+  try {
+    await apiFetch("/doctors/me/notify-absence", {
+      method: "POST",
+      body: JSON.stringify({ absence_date: fecha, reason: motivo }),
+    });
+    showToast("Ausencia notificada. Recepción va a gestionar las citas.", "success");
+    cerrarModalAusencia();
+  } catch (err) {
+    const errorEl = document.getElementById("aus-error");
+    errorEl.textContent = err.message;
+    errorEl.hidden = false;
+    submit.disabled = false;
+    submit.textContent = originalText;
+  }
+}
