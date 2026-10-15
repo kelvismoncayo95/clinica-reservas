@@ -5,6 +5,7 @@ from app.api import (
     appointments,
     auth,
     availability,
+    doctor_absences,
     doctors,
     patients,
     schedules,
@@ -38,6 +39,7 @@ app.include_router(auth.router)
 app.include_router(specialties.router)
 app.include_router(users.router)
 app.include_router(patients.router)
+app.include_router(doctor_absences.router)
 app.include_router(doctors.router)
 app.include_router(schedules.router)
 app.include_router(appointments.router)
