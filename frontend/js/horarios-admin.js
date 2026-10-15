@@ -89,6 +89,7 @@ async function cargarSchedules(doctorId) {
   list.innerHTML = "";
   try {
     const data = await apiFetch(`/doctors/${doctorId}/schedules`);
+    console.log("cargarSchedules: data =", data);
     horariosState.schedules = data;
     loading.hidden = true;
     if (!data || data.length === 0) {
@@ -100,7 +101,8 @@ async function cargarSchedules(doctorId) {
   } catch (err) {
     loading.hidden = true;
     empty.hidden = false;
-    showToast("No pudimos cargar los horarios.", "error");
+    console.error("Error en cargarSchedules:", err);
+    showToast("Error al cargar horarios: " + (err.message || "desconocido"), "error");
   }
 }
 
@@ -131,7 +133,7 @@ function renderTablaSchedules(schedules) {
       if (s.closed_at) {
         const fechaCierre = formatDateTime(s.closed_at);
         const admin = s.closed_by_email || `Admin #${s.closed_by}`;
-        vigencia += `<br><small>Cerrado por ${admin} el ${fechaCierre}</small>`;
+        vigencia += ` (cerrado por ${admin} el ${fechaCierre})`;
       }
     }
     tr.innerHTML = `
