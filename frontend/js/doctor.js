@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupHeader();
   setupFiltros();
+  setupModalAusencia();
 
   // Fecha de hoy por defecto
   const hoy = new Date().toISOString().split("T")[0];

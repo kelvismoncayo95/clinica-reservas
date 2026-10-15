@@ -24,6 +24,9 @@
     <div class="section-header">
       <h2>Mis citas</h2>
       <p class="section-subtitle">Acá ves tus citas agrupadas por día. Podés marcar si el paciente asistió o no.</p>
+      <button type="button" class="btn btn-peligro" id="btn-no-asistir" style="margin-top: 0.75rem;">
+        No puedo asistir un día
+      </button>
     </div>
 
     <!-- Filtros -->
@@ -59,6 +62,45 @@
 
     <div id="citas-list" class="citas-agrupadas" hidden></div>
   </main>
+
+  <!-- Modal para notificar ausencia -->
+  <div class="modal-backdrop" id="modal-ausencia" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-ausencia-titulo">
+      <header class="modal-header">
+        <h3 id="modal-ausencia-titulo">No puedo asistir</h3>
+        <button type="button" class="modal-close" id="modal-ausencia-cerrar" aria-label="Cerrar">×</button>
+      </header>
+
+      <form id="form-ausencia" class="modal-body" novalidate>
+        <p class="form-help">
+          Al notificar una ausencia, se avisa a recepción para que gestione las citas afectadas.
+          Las citas NO se cancelan automáticamente.
+        </p>
+
+        <div class="form-group">
+          <label for="aus-fecha">¿Qué día no vas a poder asistir?</label>
+          <input type="date" id="aus-fecha" required>
+          <p class="form-error" id="aus-fecha-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label for="aus-motivo">Motivo <span class="form-optional">(opcional)</span></label>
+          <input type="text" id="aus-motivo" maxlength="255" placeholder="Ej: turno médico, licencia, etc.">
+        </div>
+
+        <p class="form-error form-error-global" id="aus-error" hidden></p>
+
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secondary" id="aus-cancelar">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-peligro" id="aus-submit">
+            Notificar ausencia
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script src="js/config.js"></script>
   <script src="js/auth.js"></script>
