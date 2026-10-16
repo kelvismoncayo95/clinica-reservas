@@ -173,6 +173,10 @@ def resolve_absence(
     if absence.resolved_at is None:
         absence.resolved_at = datetime.now(timezone.utc)
         absence.resolved_by = current_user.id
+        # Si nunca se marco como vista, marcarla ahora
+        if absence.seen_at is None:
+            absence.seen_at = absence.resolved_at
+            absence.seen_by = current_user.id
         if data.reason:
             absence.reason = (absence.reason or "") + " | " + data.reason
         db.commit()

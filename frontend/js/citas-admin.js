@@ -589,7 +589,7 @@ function renderAusenciaAdmin(a) {
   const acciones = document.createElement("div");
   acciones.className = "cita-acciones";
 
-  if (!a.seen_at) {
+  if (!a.seen_at && !a.resolved_at) {
     const btnVista = document.createElement("button");
     btnVista.type = "button";
     btnVista.className = "btn btn-sm";
