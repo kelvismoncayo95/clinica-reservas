@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!state.doctorId) return;
 
   await cargarCitas();
+  await cargarAusencias();
 });
 
 
@@ -286,4 +287,58 @@ async function onAusenciaSubmit(e) {
     submit.disabled = false;
     submit.textContent = originalText;
   }
+}
+
+
+// ----- Mis ausencias notificadas -----
+
+async function cargarAusencias() {
+  const loading = document.getElementById("ausencias-loading");
+  const empty = document.getElementById("ausencias-empty");
+  const list = document.getElementById("ausencias-list");
+  loading.hidden = false;
+  empty.hidden = true;
+  list.hidden = true;
+  list.innerHTML = "";
+
+  try {
+    const data = await apiFetch("/doctors/me/absences");
+    loading.hidden = true;
+    if (!data || data.length === 0) {
+      empty.hidden = false;
+      return;
+    }
+    list.hidden = false;
+    data.forEach((a) => list.appendChild(renderAusencia(a)));
+  } catch (err) {
+    loading.hidden = true;
+    empty.hidden = false;
+    showToast("No pudimos cargar tus ausencias.", "error");
+  }
+}
+
+function renderAusencia(a) {
+  const card = document.createElement("article");
+  card.className = "cita-card";
+
+  let estado = "Pendiente de gestión";
+  let claseEstado = "cita-no-show";
+  if (a.resolved_at) {
+    estado = "Resuelta por recepción";
+    claseEstado = "cita-atendida";
+  } else if (a.seen_at) {
+    estado = "Vista por recepción";
+    claseEstado = "cita-confirmada";
+  }
+  card.className = `cita-card ${claseEstado}`;
+
+  const motivo = a.reason ? a.reason : "Sin motivo especificado";
+  card.innerHTML = `
+    <div class="cita-info">
+      <p class="cita-fecha">${formatDate(a.absence_date)}</p>
+      <p class="cita-detalle">${motivo}</p>
+      <p class="cita-estado">${estado}</p>
+    </div>
+  `;
+  return card;
 }

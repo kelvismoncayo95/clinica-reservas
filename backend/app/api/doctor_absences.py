@@ -179,3 +179,29 @@ def resolve_absence(
         db.refresh(absence)
 
     return _enrich_absence(db, absence)
+
+
+@router.get(
+    "/doctors/me/absences",
+    response_model=list[DoctorAbsenceResponse],
+)
+def my_absences(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Devuelve las ausencias notificadas por el medico logueado."""
+    if current_user.role != "doctor":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo los medicos tienen este endpoint",
+        )
+
+    doctor = _get_current_doctor(db, current_user)
+
+    stmt = (
+        select(DoctorAbsence)
+        .where(DoctorAbsence.doctor_id == doctor.id)
+        .order_by(DoctorAbsence.absence_date.desc())
+    )
+    ausencias = list(db.scalars(stmt).all())
+    return [_enrich_absence(db, a) for a in ausencias]
