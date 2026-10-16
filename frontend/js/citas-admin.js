@@ -76,6 +76,8 @@ function setupNavigation(role) {
 }
 
 
+let ausenciasAdminCargadas = false;
+
 function switchSection(which) {
   // Cerrar cualquier modal abierto antes de cambiar de seccion
   document.querySelectorAll(".modal-backdrop").forEach((m) => {
@@ -94,6 +96,12 @@ function switchSection(which) {
     }
     if (section) section.hidden = !active;
   });
+
+  // Cargar ausencias la primera vez que se entra
+  if (which === "ausencias" && !ausenciasAdminCargadas) {
+    cargarAusenciasAdmin();
+    ausenciasAdminCargadas = true;
+  }
 }
 
 
@@ -518,3 +526,129 @@ async function onModalSubmit(e) {
     submit.textContent = originalText;
   }
 }
+
+
+
+// ----- Seccion de ausencias del admin -----
+
+async function cargarAusenciasAdmin() {
+  const loading = document.getElementById("ausencias-admin-loading");
+  const empty = document.getElementById("ausencias-admin-empty");
+  const list = document.getElementById("ausencias-admin-list");
+  loading.hidden = false;
+  empty.hidden = true;
+  list.hidden = true;
+  list.innerHTML = "";
+
+  const estado = document.getElementById("filtro-ausencia-estado").value;
+  let url = "/absences";
+  if (estado) {
+    url += `?status_filter=${estado}`;
+  }
+
+  try {
+    const data = await apiFetch(url);
+    loading.hidden = true;
+    if (!data || data.length === 0) {
+      empty.hidden = false;
+      return;
+    }
+    list.hidden = false;
+    data.forEach((a) => list.appendChild(renderAusenciaAdmin(a)));
+  } catch (err) {
+    loading.hidden = true;
+    empty.hidden = false;
+    showToast("No pudimos cargar las ausencias: " + err.message, "error");
+  }
+}
+
+function renderAusenciaAdmin(a) {
+  const card = document.createElement("article");
+  let claseEstado = "cita-no-show";
+  if (a.resolved_at) {
+    claseEstado = "cita-atendida";
+  } else if (a.seen_at) {
+    claseEstado = "cita-confirmada";
+  }
+  card.className = `cita-card ${claseEstado}`;
+
+  const doctorName = a.doctor_name || `Médico #${a.doctor_id}`;
+  const motivo = a.reason ? a.reason : "Sin motivo especificado";
+  let estadoTexto = "Pendiente de gestión";
+  if (a.resolved_at) estadoTexto = "Resuelta";
+  else if (a.seen_at) estadoTexto = "Vista, sin resolver";
+
+  card.innerHTML = `
+    <div class="cita-info">
+      <p class="cita-fecha">${formatDate(a.absence_date)} — ${doctorName}</p>
+      <p class="cita-detalle">${motivo}</p>
+      <p class="cita-estado">${estadoTexto}</p>
+    </div>
+  `;
+
+  const acciones = document.createElement("div");
+  acciones.className = "cita-acciones";
+
+  if (!a.seen_at) {
+    const btnVista = document.createElement("button");
+    btnVista.type = "button";
+    btnVista.className = "btn btn-sm";
+    btnVista.textContent = "Marcar vista";
+    btnVista.addEventListener("click", () => marcarAusenciaVista(a.id));
+    acciones.appendChild(btnVista);
+  }
+
+  if (!a.resolved_at) {
+    const btnResolver = document.createElement("button");
+    btnResolver.type = "button";
+    btnResolver.className = "btn btn-sm";
+    btnResolver.textContent = "Marcar resuelta";
+    btnResolver.addEventListener("click", () => resolverAusencia(a.id));
+    acciones.appendChild(btnResolver);
+  }
+
+  if (acciones.children.length > 0) {
+    card.appendChild(acciones);
+  }
+  return card;
+}
+
+async function marcarAusenciaVista(id) {
+  try {
+    await apiFetch(`/absences/${id}/mark-seen`, { method: "PATCH" });
+    showToast("Ausencia marcada como vista.", "success");
+    await cargarAusenciasAdmin();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+async function resolverAusencia(id) {
+  if (!confirm("¿Marcar esta ausencia como resuelta? Solo si ya gestionaste todas las citas afectadas.")) return;
+  try {
+    await apiFetch(`/absences/${id}/resolve`, {
+      method: "PATCH",
+      body: JSON.stringify({}),
+    });
+    showToast("Ausencia marcada como resuelta.", "success");
+    await cargarAusenciasAdmin();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+
+// Listener del filtro de estado
+document.addEventListener("DOMContentLoaded", () => {
+  const filtro = document.getElementById("filtro-ausencia-estado");
+  if (filtro) {
+    filtro.addEventListener("change", cargarAusenciasAdmin);
+  }
+  const btnLimpiar = document.getElementById("ausencias-limpiar");
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener("click", () => {
+      document.getElementById("filtro-ausencia-estado").value = "";
+      cargarAusenciasAdmin();
+    });
+  }
+});
