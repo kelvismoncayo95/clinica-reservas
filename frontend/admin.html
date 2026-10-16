@@ -24,6 +24,9 @@
     <button class="nav-item nav-item-activa" id="nav-citas" role="tab" aria-selected="true" aria-controls="section-citas">
       Citas
     </button>
+    <button class="nav-item" id="nav-ausencias" role="tab" aria-selected="false" aria-controls="section-ausencias" hidden>
+      Ausencias
+    </button>
     <button class="nav-item" id="nav-pacientes" role="tab" aria-selected="false" aria-controls="section-pacientes" hidden>
       Pacientes
     </button>
@@ -101,6 +104,41 @@
     </section>
 
     <!-- ============ Secciones futuras (ocultas por ahora) ============ -->
+    <section id="section-ausencias" class="app-section" role="tabpanel" aria-labelledby="nav-ausencias" hidden>
+      <div class="section-header">
+        <h2>Ausencias notificadas</h2>
+        <p class="section-subtitle">Avisos de los médicos que no van a poder asistir. Recepción gestiona las citas afectadas manualmente.</p>
+      </div>
+
+      <div class="filtros-box">
+        <div class="form-group">
+          <label for="filtro-ausencia-estado">Estado</label>
+          <select id="filtro-ausencia-estado">
+            <option value="">Todas</option>
+            <option value="pending" selected>Pendientes de gestión</option>
+            <option value="seen">Vistas, sin resolver</option>
+            <option value="resolved">Resueltas</option>
+          </select>
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-secondary btn-sm" id="ausencias-limpiar">
+            Ver todas
+          </button>
+        </div>
+      </div>
+
+      <div id="ausencias-admin-loading" class="loading-box">
+        <p>Cargando ausencias...</p>
+      </div>
+
+      <div id="ausencias-admin-empty" class="empty-box" hidden>
+        <h3>No hay ausencias con ese filtro</h3>
+        <p>Probá cambiando el estado.</p>
+      </div>
+
+      <div id="ausencias-admin-list" class="citas-admin-list" hidden></div>
+    </section>
+
     <section id="section-pacientes" class="app-section" role="tabpanel" aria-labelledby="nav-pacientes" hidden>
       <div class="section-header">
         <h2>Pacientes</h2>

@@ -52,7 +52,7 @@ function setupHeader() {
 // ----- Navegacion -----
 
 function setupNavigation(role) {
-  const secciones = ["citas", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
+  const secciones = ["citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
 
   // Mostrar las que corresponden al rol
   if (role === "admin") {
@@ -61,7 +61,7 @@ function setupNavigation(role) {
       if (btn) btn.hidden = false;
     });
   } else if (role === "reception") {
-    ["citas", "pacientes", "medicos"].forEach((s) => {
+    ["citas", "ausencias", "pacientes", "medicos"].forEach((s) => {
       const btn = document.getElementById(`nav-${s}`);
       if (btn) btn.hidden = false;
     });
@@ -83,7 +83,7 @@ function switchSection(which) {
   });
 
   state.currentSection = which;
-  const secciones = ["citas", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
+  const secciones = ["citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
   secciones.forEach((sec) => {
     const btn = document.getElementById(`nav-${sec}`);
     const section = document.getElementById(`section-${sec}`);
