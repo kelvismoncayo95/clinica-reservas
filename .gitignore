@@ -26,3 +26,8 @@ Thumbs.db
 
 # Documentacion privada (no se sube)
 docs/ESTADO_PROYECTO.md
+
+# Documentos personales de trabajo (no van al repo público)
+docs/CODIGO_REFERENCIA.md
+docs/GUIA_MAESTRA.md
+docs/README_PUBLICO.md
