@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function setupPacientesSection() {
   document.getElementById("buscar-paciente").addEventListener("input", onBuscarPaciente);
-  document.getElementById("btn-nuevo-paciente").addEventListener("click", abrirModalPaciente);
+  document.getElementById("btn-nuevo-paciente").addEventListener("click", () => abrirModalPaciente());
   document.getElementById("modal-paciente-cerrar").addEventListener("click", cerrarModalPaciente);
   document.getElementById("pac-cancelar").addEventListener("click", cerrarModalPaciente);
   document.getElementById("form-paciente").addEventListener("submit", onPacienteSubmit);

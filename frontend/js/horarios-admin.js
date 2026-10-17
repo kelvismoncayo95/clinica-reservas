@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function setupHorariosSection() {
   document.getElementById("horarios-medico-select").addEventListener("change", onMedicoChange);
-  document.getElementById("btn-nuevo-horario").addEventListener("click", abrirModalHorario);
-  document.getElementById("btn-nuevo-bloqueo").addEventListener("click", abrirModalBloqueo);
+  document.getElementById("btn-nuevo-horario").addEventListener("click", () => abrirModalHorario());
+  document.getElementById("btn-nuevo-bloqueo").addEventListener("click", () => abrirModalBloqueo());
   document.getElementById("modal-horario-cerrar").addEventListener("click", cerrarModalHorario);
   document.getElementById("hor-cancelar").addEventListener("click", cerrarModalHorario);
   document.getElementById("modal-bloqueo-cerrar").addEventListener("click", cerrarModalBloqueo);

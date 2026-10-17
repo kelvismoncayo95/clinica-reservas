@@ -118,7 +118,7 @@ function setupFiltros() {
     document.getElementById("filtro-estado").value = "";
     loadCitas();
   });
-  document.getElementById("btn-nueva-cita").addEventListener("click", abrirModalNuevaCita);
+  document.getElementById("btn-nueva-cita").addEventListener("click", () => abrirModalNuevaCita());
 }
 
 

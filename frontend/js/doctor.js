@@ -224,7 +224,7 @@ async function deshacerEstado(id) {
 // ----- Modal de notificar ausencia -----
 
 function setupModalAusencia() {
-  document.getElementById("btn-no-asistir").addEventListener("click", abrirModalAusencia);
+  document.getElementById("btn-no-asistir").addEventListener("click", () => abrirModalAusencia());
   document.getElementById("modal-ausencia-cerrar").addEventListener("click", cerrarModalAusencia);
   document.getElementById("aus-cancelar").addEventListener("click", cerrarModalAusencia);
   document.getElementById("form-ausencia").addEventListener("submit", onAusenciaSubmit);
