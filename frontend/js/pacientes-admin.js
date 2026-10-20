@@ -156,6 +156,13 @@ function abrirModalPaciente(paciente = null) {
     dniHint.textContent = "";
   }
 
+  // Actualizar la fecha máxima a HOY (dinámico)
+  const hoyMax = new Date();
+  const anioMax = hoyMax.getFullYear();
+  const mesMax = String(hoyMax.getMonth() + 1).padStart(2, "0");
+  const diaMax = String(hoyMax.getDate()).padStart(2, "0");
+  document.getElementById("pac-birth-date").max = `${anioMax}-${mesMax}-${diaMax}`;
+
   document.getElementById("modal-paciente").hidden = false;
 }
 
@@ -167,6 +174,11 @@ function cerrarModalPaciente() {
 
 
 async function onPacienteSubmit(e) {
+  // Validación nativa del navegador: si falla, mostrar el tooltip y salir.
+  if (!e.target.checkValidity()) {
+    e.target.reportValidity();
+    return;
+  }
   e.preventDefault();
   document.querySelectorAll("#form-paciente .form-error").forEach((el) => {
     el.hidden = true;
@@ -189,6 +201,18 @@ async function onPacienteSubmit(e) {
   }
 
   let hasError = false;
+
+  // Validación manual de la fecha (por si el HTML5 falla)
+  if (data.birth_date) {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Ignorar la hora para comparar solo fechas
+    const fechaNac = new Date(data.birth_date + "T00:00:00");
+    if (fechaNac > hoy) {
+      setFieldError("pac-birth-date", "La fecha de nacimiento no puede ser futura.");
+      hasError = true;
+    }
+  }
+
   if (!data.first_name) { setFieldError("pac-first-name", "Ingresá el nombre."); hasError = true; }
   if (!data.last_name) { setFieldError("pac-last-name", "Ingresá el apellido."); hasError = true; }
   if (!editing && !data.dni) { setFieldError("pac-dni", "Ingresá el DNI."); hasError = true; }
