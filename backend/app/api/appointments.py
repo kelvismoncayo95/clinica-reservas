@@ -95,6 +95,8 @@ def create_appointment_endpoint(
 @router.get("", response_model=list[AppointmentResponse])
 def list_appointments(
     appointment_date: str | None = Query(default=None, alias="date"),
+    date_from: str | None = Query(default=None, alias="date_from"),
+    date_to: str | None = Query(default=None, alias="date_to"),
     doctor_id: int | None = None,
     patient_id: int | None = None,
     status_filter: str | None = Query(default=None, alias="status"),
@@ -105,6 +107,10 @@ def list_appointments(
     stmt = select(Appointment)
     if appointment_date is not None:
         stmt = stmt.where(Appointment.appointment_date == appointment_date)
+    if date_from is not None:
+        stmt = stmt.where(Appointment.appointment_date >= date_from)
+    if date_to is not None:
+        stmt = stmt.where(Appointment.appointment_date <= date_to)
     if doctor_id is not None:
         stmt = stmt.where(Appointment.doctor_id == doctor_id)
     if patient_id is not None:
