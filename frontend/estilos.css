@@ -970,3 +970,120 @@ textarea {
     background: #fee2e2;
   }
 }
+
+/* ============================================================
+   FASE 3: Pantalla de Inicio (Dashboard)
+   ============================================================ */
+
+/* Contenedor de tarjetas de resumen */
+.inicio-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Tarjeta de resumen */
+.inicio-tarjeta {
+  background: var(--color-blanco);
+  border-radius: var(--radio);
+  border: 1px solid var(--color-borde);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--sombra);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.inicio-tarjeta-label {
+  font-size: 0.875rem;
+  color: var(--color-texto-suave);
+  font-weight: 500;
+}
+
+.inicio-tarjeta-numero {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-texto);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.inicio-tarjeta-detalle {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+/* Card de agenda */
+.inicio-card {
+  background: var(--color-blanco);
+  border-radius: var(--radio);
+  border: 1px solid var(--color-borde);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.inicio-card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inicio-card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+/* Lista de la agenda */
+.inicio-agenda-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.inicio-agenda-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.inicio-agenda-item:last-child {
+  border-bottom: none;
+}
+
+.inicio-agenda-hora {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primario);
+  min-width: 60px;
+}
+
+.inicio-agenda-info {
+  flex: 1;
+}
+
+.inicio-agenda-paciente {
+  font-weight: 600;
+  color: var(--color-texto);
+  font-size: 0.95rem;
+}
+
+.inicio-agenda-detalle {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  margin-top: 0.15rem;
+}
+
+/* Badges de estado (reutilizamos las píldoras) */
+.estado-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radio-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.estado-confirmed { background: #d1fae5; color: #065f46; }
+.estado-attended { background: #dbeafe; color: #1e40af; }
+.estado-pending { background: #fef3c7; color: #92400e; }
+.estado-cancelled { background: #fee2e2; color: #991b1b; }
+.estado-no_show { background: #f3f4f6; color: #374151; }

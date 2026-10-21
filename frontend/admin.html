@@ -25,6 +25,9 @@
 
   <div class="app-layout">
     <nav class="app-nav" role="tablist">
+    <button class="nav-item" id="nav-inicio" role="tab" aria-selected="false" aria-controls="section-inicio">
+      Inicio
+    </button>
     <button class="nav-item nav-item-activa" id="nav-citas" role="tab" aria-selected="true" aria-controls="section-citas">
       Citas
     </button>
@@ -49,6 +52,48 @@
   </nav>
 
   <main class="app-main">
+
+    <!-- ============ Sección: Inicio ============ -->
+    <section id="section-inicio" class="app-section" role="tabpanel" aria-labelledby="nav-inicio">
+      <div class="section-header">
+        <h2>Buenos días</h2>
+        <p class="section-subtitle" id="inicio-fecha-hoy"></p>
+      </div>
+
+      <!-- Tarjetas de resumen -->
+      <div class="inicio-tarjetas">
+        <div class="inicio-tarjeta">
+          <span class="inicio-tarjeta-label">Citas de hoy</span>
+          <span class="inicio-tarjeta-numero" id="inicio-total-citas">—</span>
+          <span class="inicio-tarjeta-detalle" id="inicio-detalle-citas"></span>
+        </div>
+        <div class="inicio-tarjeta">
+          <span class="inicio-tarjeta-label">Ausencias por resolver</span>
+          <span class="inicio-tarjeta-numero" id="inicio-total-ausencias">—</span>
+          <span class="inicio-tarjeta-detalle">Requieren tu atención</span>
+        </div>
+        <div class="inicio-tarjeta">
+          <span class="inicio-tarjeta-label">Médicos atendiendo</span>
+          <span class="inicio-tarjeta-numero" id="inicio-total-medicos">—</span>
+          <span class="inicio-tarjeta-detalle">Activos en el sistema</span>
+        </div>
+      </div>
+
+      <!-- Agenda del día -->
+      <div class="inicio-card">
+        <div class="inicio-card-header">
+          <h3>Agenda de hoy</h3>
+        </div>
+        <div id="inicio-agenda-loading" class="loading-box">
+          <p>Cargando agenda...</p>
+        </div>
+        <div id="inicio-agenda-empty" class="empty-box" hidden>
+          <h4>No hay citas para hoy</h4>
+          <p>Cuando se agenden citas, van a aparecer acá.</p>
+        </div>
+        <div id="inicio-agenda-list" class="inicio-agenda-list" hidden></div>
+      </div>
+    </section>
 
     <!-- ============ Sección: Citas ============ -->
     <section id="section-citas" class="app-section" role="tabpanel" aria-labelledby="nav-citas">
@@ -795,6 +840,7 @@
   </div>
 
   <script src="js/config.js?v=4"></script>
+  <script src="js/inicio-admin.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/appointments.js"></script>
   <script src="js/citas-admin.js"></script>
