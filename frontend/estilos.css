@@ -818,3 +818,155 @@ textarea {
   font-style: italic;
   margin: 0;
 }
+
+/* --- Limpieza de botones (Fase 1) --- */
+.btn,
+.btn:visited,
+.btn:hover,
+.btn:focus {
+  text-decoration: none !important;
+  color: inherit;
+}
+.btn-primary,
+.btn-primary:visited {
+  color: #ffffff !important;
+}
+
+/* ============================================================
+   FASE 2: Barra lateral (Desktop)
+   ============================================================ */
+
+/* Layout general: sidebar + main */
+.app-layout {
+  display: flex;
+  min-height: calc(100vh - 64px); /* 64px = altura del header */
+}
+
+/* Barra lateral (antes era la barra de pestañas) */
+.app-nav {
+  width: 240px;
+  background: var(--color-blanco);
+  border-right: 1px solid var(--color-borde);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+/* Botones de la barra lateral */
+.app-nav .nav-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-texto-suave);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.app-nav .nav-item:hover {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+.app-nav .nav-item-activa {
+  background: var(--color-primario-suave, #ccfbf1);
+  color: var(--color-primario);
+  font-weight: 600;
+}
+
+/* Main: ocupa el resto del espacio */
+.app-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   RESPONSIVE: En móvil, la barra lateral vuelve a ser arriba
+   ============================================================ */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+  
+  .app-nav {
+    width: 100%;
+    flex-direction: row;
+    height: auto;
+    overflow-x: auto;
+    padding: 0.5rem;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--color-borde);
+    gap: 0.25rem;
+  }
+  
+  .app-nav .nav-item {
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  .app-main {
+    padding: 1rem;
+  }
+}
+
+/* ============================================================
+   FASE 2.1: Botones en listas (más discretos y elegantes)
+   ============================================================ */
+
+/* Contenedor de acciones en las tarjetas */
+.cita-acciones {
+  display: flex;
+  gap: 0.5rem; /* Separación entre los botones */
+  align-items: center;
+}
+
+/* Botón Editar (Secundario) */
+.cita-acciones .btn {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  color: var(--color-texto-suave);
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radio-sm);
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+.cita-acciones .btn:hover {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* Botón Desactivar (Peligro discreto) */
+.cita-acciones .btn-peligro {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-peligro);
+}
+.cita-acciones .btn-peligro:hover {
+  background: #fee2e2; /* Rojo muy suave al pasar el mouse */
+  border-color: #fecaca;
+}
+
+/* En el iPhone, que no se quede pegado el rojo al tocar */
+@media (hover: none) {
+  .cita-acciones .btn-peligro:hover {
+    background: transparent;
+  }
+  .cita-acciones .btn-peligro:active {
+    background: #fee2e2;
+  }
+}
