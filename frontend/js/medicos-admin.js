@@ -200,52 +200,99 @@ function renderEspecialidadesCheckboxes(selectedIds) {
 
 async function onMedicoSubmit(e) {
   e.preventDefault();
+  
+  // Limpiar errores previos
   document.querySelectorAll("#form-medico .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
   });
 
-  const editing = medicosState.editingId !== null;
-
-  // Especialidades seleccionadas
-  const specialtyIds = [];
-  document.querySelectorAll("#med-especialidades-list input:checked").forEach((cb) => {
-    specialtyIds.push(Number(cb.value));
-  });
-
+  // Leer los valores del formulario
   const data = {
     first_name: document.getElementById("med-first-name").value.trim(),
     last_name: document.getElementById("med-last-name").value.trim(),
+    license_number: document.getElementById("med-license").value.trim(),
     phone: document.getElementById("med-phone").value.trim() || null,
     email: document.getElementById("med-email").value.trim() || null,
-    specialty_ids: specialtyIds,
+    user_email: document.getElementById("med-user-email").value.trim(),
   };
 
+  const editing = medState.editingId !== null;
+  const password = document.getElementById("med-password").value;
+  const passwordConfirm = document.getElementById("med-password-confirm").value;
+  
+  // Leer especialidades
+  const checkboxes = document.querySelectorAll("#med-especialidades-list input[type=checkbox]:checked");
+  const specialty_ids = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
   let hasError = false;
-  if (!data.first_name) { setFieldError("med-first-name", "Ingresá el nombre."); hasError = true; }
-  if (!data.last_name) { setFieldError("med-last-name", "Ingresá el apellido."); hasError = true; }
-  if (specialtyIds.length === 0) {
-    setFieldError("med-especialidades", "Marcá al menos una especialidad.");
+
+  // Validar Nombre
+  if (!data.first_name) {
+    setFieldError("med-first-name", "El nombre es obligatorio.");
+    hasError = true;
+  } else if (data.first_name.length < 2) {
+    setFieldError("med-first-name", "El nombre debe tener al menos 2 letras.");
     hasError = true;
   }
 
+  // Validar Apellido
+  if (!data.last_name) {
+    setFieldError("med-last-name", "El apellido es obligatorio.");
+    hasError = true;
+  } else if (data.last_name.length < 2) {
+    setFieldError("med-last-name", "El apellido debe tener al menos 2 letras.");
+    hasError = true;
+  }
+
+  // Validar Matrícula (solo en modo creación, en edición no se modifica)
   if (!editing) {
-    data.license_number = document.getElementById("med-license").value.trim();
-    data.user_email = document.getElementById("med-user-email").value.trim();
-    data.password = document.getElementById("med-password").value;
-    if (!data.license_number) { setFieldError("med-license", "Ingresá la matrícula."); hasError = true; }
-    if (!data.user_email) { setFieldError("med-user-email", "Ingresá el email de inicio de sesión."); hasError = true; }
-    const pass = data.password || "";
-    const passConfirm = document.getElementById("med-password-confirm").value;
-    if (pass.length < 6) {
+    if (!data.license_number) {
+      setFieldError("med-license", "La matrícula es obligatoria.");
+      hasError = true;
+    } else if (data.license_number.length < 3) {
+      setFieldError("med-license", "La matrícula debe tener al menos 3 caracteres.");
+      hasError = true;
+    }
+  }
+
+  // Validar Email de login
+  if (!data.user_email) {
+    setFieldError("med-user-email", "El email de inicio de sesión es obligatorio.");
+    hasError = true;
+  } else if (!data.user_email.includes("@") || !data.user_email.includes(".")) {
+    setFieldError("med-user-email", "El email no tiene un formato válido (ejemplo: nombre@dominio.com).");
+    hasError = true;
+  }
+
+  // Validar Contraseña (solo en modo creación)
+  if (!editing) {
+    if (!password || password.length < 6) {
       setFieldError("med-password", "La contraseña debe tener al menos 6 caracteres.");
       hasError = true;
-    } else if (pass !== passConfirm) {
+    } else if (password !== passwordConfirm) {
       setFieldError("med-password-confirm", "Las contraseñas no coinciden.");
       hasError = true;
     }
   }
-  if (hasError) return;
+
+  // Validar Especialidades (mínimo una)
+  if (specialty_ids.length === 0) {
+    setFieldError("med-especialidades", "Marcá al menos una especialidad.");
+    hasError = true;
+  }
+
+  // Si hay errores, frenamos acá. Los mensajes rojos ya están pintados.
+  if (hasError) {
+    // Hacer scroll al primer error para que el usuario lo vea
+    const primerError = document.querySelector("#form-medico .form-error:not([hidden])");
+    if (primerError) {
+      primerError.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    return;
+  }
+
+  // --- A partir de acá, todo está válido. Enviar al backend ---
 
   const submit = document.getElementById("med-submit");
   const originalText = submit.textContent;
@@ -269,7 +316,29 @@ async function onMedicoSubmit(e) {
     cerrarModalMedico();
     await cargarMedicos();
   } catch (err) {
-    document.getElementById("med-error").textContent = err.message;
+    // Parsear el mensaje de error: si es un array (validación de Pydantic), tomar el primero
+    let mensaje = err.message;
+    if (typeof mensaje === "string" && mensaje.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(mensaje);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].msg) {
+          // Extraer el nombre del campo del error
+          const campo = parsed[0].loc && parsed[0].loc[parsed[0].loc.length - 1];
+          const msgOriginal = parsed[0].msg;
+          // Traducir mensajes comunes de Pydantic
+          if (msgOriginal.includes("email")) {
+            mensaje = `El correo electrónico no tiene un formato válido.`;
+          } else if (msgOriginal.includes("required")) {
+            mensaje = `Falta el campo: ${campo}.`;
+          } else {
+            mensaje = `Error en ${campo}: ${msgOriginal}`;
+          }
+        }
+      } catch (_) {
+        // Si no es JSON, dejar el mensaje como estaba
+      }
+    }
+    document.getElementById("med-error").textContent = mensaje;
     document.getElementById("med-error").hidden = false;
   } finally {
     submit.disabled = false;

@@ -588,25 +588,25 @@
         <button type="button" class="modal-close" id="modal-medico-cerrar" aria-label="Cerrar">×</button>
       </header>
 
-      <form id="form-medico" class="modal-body" novalidate>
+      <form id="form-medico" class="modal-body">
         <input type="hidden" id="med-id" value="">
 
         <div class="form-row">
           <div class="form-group">
             <label for="med-first-name">Nombre</label>
-            <input type="text" id="med-first-name" required placeholder="Carlos">
+            <input type="text" id="med-first-name" required placeholder="Carlos" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,100}" title="Solo letras y espacios" minlength="2" maxlength="100">
             <p class="form-error" id="med-first-name-error" hidden></p>
           </div>
           <div class="form-group">
             <label for="med-last-name">Apellido</label>
-            <input type="text" id="med-last-name" required placeholder="García">
+            <input type="text" id="med-last-name" required placeholder="García" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,100}" title="Solo letras y espacios" minlength="2" maxlength="100">
             <p class="form-error" id="med-last-name-error" hidden></p>
           </div>
         </div>
 
         <div class="form-group">
           <label for="med-license">Matrícula</label>
-          <input type="text" id="med-license" required placeholder="MP-12345">
+          <input type="text" id="med-license" required placeholder="MP-12345" pattern="[A-Za-z0-9\-]{3,20}" title="Letras, números y guiones (3-20 caracteres)" minlength="3" maxlength="20">
           <p class="form-hint" id="med-license-hint"></p>
           <p class="form-error" id="med-license-error" hidden></p>
         </div>
@@ -614,7 +614,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="med-phone">Teléfono <span class="form-optional">(opcional)</span></label>
-            <input type="tel" id="med-phone" placeholder="1145678901">
+            <input type="tel" id="med-phone" placeholder="1145678901" pattern="[0-9+\s\-]{7,20}" title="Solo números, espacios, guiones o +" minlength="7" maxlength="20" inputmode="tel">
           </div>
           <div class="form-group">
             <label for="med-email">Email de contacto <span class="form-optional">(opcional)</span></label>
@@ -789,12 +789,12 @@
     </div>
   </div>
 
-  <script src="js/config.js"></script>
+  <script src="js/config.js?v=4"></script>
   <script src="js/auth.js"></script>
   <script src="js/appointments.js"></script>
   <script src="js/citas-admin.js"></script>
   <script src="js/pacientes-admin.js?v=2"></script>
-  <script src="js/medicos-admin.js"></script>
+  <script src="js/medicos-admin.js?v=3"></script>
   <script src="js/especialidades-admin.js"></script>
   <script src="js/horarios-admin.js"></script>
   <script src="js/usuarios-admin.js"></script>

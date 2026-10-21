@@ -87,9 +87,32 @@ async function apiFetch(path, options = {}) {
 
   // Error HTTP: lanzar con el mensaje del backend
   if (!response.ok) {
-    const message =
-      (data && data.detail) ||
-      `Error ${response.status}: ${response.statusText}`;
+    let message = `Error ${response.status}: ${response.statusText}`;
+    if (data && data.detail) {
+      if (typeof data.detail === "string") {
+        // Caso normal: el backend devuelve un string
+        message = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        // Caso Pydantic: devuelve un array de errores de validación
+        const primerError = data.detail[0];
+        const campo = primerError.loc && primerError.loc[primerError.loc.length - 1];
+        const msgOriginal = primerError.msg || "Error de validación";
+        // Traducir mensajes comunes de Pydantic al español
+        if (msgOriginal.includes("email")) {
+          message = `El correo electrónico no tiene un formato válido.`;
+        } else if (msgOriginal.includes("required") || msgOriginal.includes("Field required")) {
+          message = `El campo "${campo}" es obligatorio.`;
+        } else if (msgOriginal.includes("String should have at least")) {
+          message = `El campo "${campo}" es demasiado corto.`;
+        } else if (msgOriginal.includes("String should have at most")) {
+          message = `El campo "${campo}" es demasiado largo.`;
+        } else {
+          message = `Error en "${campo}": ${msgOriginal}`;
+        }
+      } else {
+        message = JSON.stringify(data.detail);
+      }
+    }
     throw new Error(message);
   }
 
@@ -189,4 +212,31 @@ function formatDateTime(isoStr) {
   } catch {
     return isoStr;
   }
+}
+
+// ----- Helpers de errores inline (para formularios de admin) -----
+
+function setFieldError(fieldId, message) {
+  const errorEl = document.getElementById(`${fieldId}-error`);
+  if (errorEl) {
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+  }
+}
+
+
+function clearFieldError(fieldId) {
+  const errorEl = document.getElementById(`${fieldId}-error`);
+  if (errorEl) {
+    errorEl.textContent = "";
+    errorEl.hidden = true;
+  }
+}
+
+
+function clearAllErrors() {
+  document.querySelectorAll(".form-error").forEach((el) => {
+    el.textContent = "";
+    el.hidden = true;
+  });
 }
