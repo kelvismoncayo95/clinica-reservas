@@ -5,20 +5,22 @@
 /* ----- Variables (para cambiar el tema fácil) ----- */
 
 :root {
-  --color-primario: #2563eb;
-  --color-primario-hover: #1d4ed8;
+  /* Paleta verde azulado (Teal) - Maqueta rediseño */
+  --color-primario: #0f766e;
+  --color-primario-hover: #115e59;
   --color-peligro: #dc2626;
-  --color-exito: #16a34a;
-  --color-advertencia: #d97706;
-  --color-texto: #1e293b;
-  --color-texto-suave: #64748b;
-  --color-fondo: #f8fafc;
+  --color-exito: #15803d;
+  --color-advertencia: #b45309;
+  --color-texto: #10211f;
+  --color-texto-suave: #4b5f5c;
+  --color-fondo: #f3f7f6;
   --color-blanco: #ffffff;
-  --color-borde: #e2e8f0;
-  --color-borde-foco: #93c5fd;
-  --radio: 8px;
-  --sombra: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --sombra-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --color-borde: #dfe8e6;
+  --color-borde-foco: #0d9488;
+  --radio: 12px;
+  --radio-lg: 16px;
+  --sombra: 0 1px 2px rgba(16,33,31,.08), 0 4px 16px rgba(16,33,31,.05);
+  --sombra-lg: 0 10px 30px rgba(16,33,31,.14);
 }
 
 
@@ -42,7 +44,7 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--color-fondo);
   color: var(--color-texto);
   line-height: 1.5;
