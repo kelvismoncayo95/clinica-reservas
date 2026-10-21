@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Cargar datos iniciales
   await Promise.all([loadDoctors(), loadPatients(), loadSpecialties()]);
   await loadCitas();
+
+  // Arrancar mostrando la sección de Inicio
+  switchSection("inicio");
 });
 
 
