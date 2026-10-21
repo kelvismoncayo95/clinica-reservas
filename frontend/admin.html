@@ -31,6 +31,9 @@
     <button class="nav-item" id="nav-citas" role="tab" aria-selected="false" aria-controls="section-citas">
       Citas
     </button>
+    <button class="nav-item" id="nav-agenda" role="tab" aria-selected="false" aria-controls="section-agenda" hidden>
+      Agenda
+    </button>
     <button class="nav-item" id="nav-ausencias" role="tab" aria-selected="false" aria-controls="section-ausencias" hidden>
       Ausencias
     </button>
@@ -92,6 +95,41 @@
           <p>Cuando se agenden citas, van a aparecer acá.</p>
         </div>
         <div id="inicio-agenda-list" class="inicio-agenda-list" hidden></div>
+      </div>
+    </section>
+
+    <!-- ============ Sección: Agenda Semanal ============ -->
+    <section id="section-agenda" class="app-section" role="tabpanel" aria-labelledby="nav-agenda" hidden>
+      <div class="agenda-header">
+        <div class="agenda-titulo">
+          <h2>Agenda semanal</h2>
+          <p class="section-subtitle" id="agenda-rango-semana">—</p>
+        </div>
+        <div class="agenda-controles">
+          <button type="button" class="btn btn-secondary btn-sm" id="agenda-semana-anterior">←</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="agenda-semana-siguiente">→</button>
+          <button type="button" class="btn btn-primary btn-sm" id="agenda-nueva-cita">Nueva cita</button>
+        </div>
+      </div>
+
+      <div class="agenda-leyenda">
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-confirmed"></span> Confirmada</span>
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-pending"></span> Pendiente</span>
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-attended"></span> Atendida</span>
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-cancelled"></span> Cancelada</span>
+      </div>
+
+      <div id="agenda-loading" class="loading-box">
+        <p>Cargando agenda...</p>
+      </div>
+
+      <div id="agenda-empty" class="empty-box" hidden>
+        <h3>No hay citas esta semana</h3>
+        <p>Cuando se agenden citas, van a aparecer acá.</p>
+      </div>
+
+      <div id="agenda-grilla-container" class="agenda-grilla-container" hidden>
+        <div id="agenda-grilla" class="agenda-grilla"></div>
       </div>
     </section>
 
@@ -841,6 +879,7 @@
 
   <script src="js/config.js?v=4"></script>
   <script src="js/inicio-admin.js"></script>
+  <script src="js/agenda-admin.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/appointments.js"></script>
   <script src="js/citas-admin.js"></script>
