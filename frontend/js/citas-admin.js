@@ -70,7 +70,15 @@ function setupNavigation(role) {
     });
   }
 
+  // Enlazar el botón de Inicio explícitamente (porque el JS se cargó antes de que existiera)
+  const btnInicio = document.getElementById("nav-inicio");
+  if (btnInicio) {
+    btnInicio.addEventListener("click", () => switchSection("inicio"));
+  }
+
+  // Enlazar el resto de las secciones
   secciones.forEach((sec) => {
+    if (sec === "inicio") return; // Ya lo hicimos arriba
     const btn = document.getElementById(`nav-${sec}`);
     if (btn) {
       btn.addEventListener("click", () => switchSection(sec));
@@ -88,7 +96,7 @@ function switchSection(which) {
   });
 
   state.currentSection = which;
-  const secciones = ["citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
+  const secciones = ["inicio", "citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
   secciones.forEach((sec) => {
     const btn = document.getElementById(`nav-${sec}`);
     const section = document.getElementById(`section-${sec}`);
