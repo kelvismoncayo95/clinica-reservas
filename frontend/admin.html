@@ -25,10 +25,10 @@
 
   <div class="app-layout">
     <nav class="app-nav" role="tablist">
-    <button class="nav-item" id="nav-inicio" role="tab" aria-selected="false" aria-controls="section-inicio">
+    <button class="nav-item nav-item-activa" id="nav-inicio" role="tab" aria-selected="true" aria-controls="section-inicio">
       Inicio
     </button>
-    <button class="nav-item nav-item-activa" id="nav-citas" role="tab" aria-selected="true" aria-controls="section-citas">
+    <button class="nav-item" id="nav-citas" role="tab" aria-selected="false" aria-controls="section-citas">
       Citas
     </button>
     <button class="nav-item" id="nav-ausencias" role="tab" aria-selected="false" aria-controls="section-ausencias" hidden>
@@ -96,7 +96,7 @@
     </section>
 
     <!-- ============ Sección: Citas ============ -->
-    <section id="section-citas" class="app-section" role="tabpanel" aria-labelledby="nav-citas">
+    <section id="section-citas" class="app-section" role="tabpanel" aria-labelledby="nav-citas" hidden>
       <div class="section-header">
         <h2>Citas</h2>
         <p class="section-subtitle">Filtrá por fecha, médico, paciente o estado. Podés marcar asistencia y crear citas nuevas.</p>
