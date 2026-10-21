@@ -52,7 +52,7 @@ function setupHeader() {
 // ----- Navegacion -----
 
 function setupNavigation(role) {
-  const secciones = ["citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
+  const secciones = ["inicio", "citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
 
   // Mostrar las que corresponden al rol
   if (role === "admin") {
@@ -101,6 +101,11 @@ function switchSection(which) {
   if (which === "ausencias" && !ausenciasAdminCargadas) {
     cargarAusenciasAdmin();
     ausenciasAdminCargadas = true;
+  }
+
+  // Cargar inicio cada vez que se entra (para tener datos frescos)
+  if (which === "inicio" && typeof cargarInicio === "function") {
+    cargarInicio();
   }
 }
 
