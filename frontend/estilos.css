@@ -1359,3 +1359,63 @@ textarea {
 .lista-menu button.peligro:hover {
   background: #fee2e2;
 }
+
+/* ============================================================
+   FASE 5: Tabla de Horarios (estilo nuevo)
+   ============================================================ */
+
+.horarios-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-blanco);
+  border-radius: var(--radio);
+  border: 1px solid var(--color-borde);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.horarios-tabla thead {
+  background: var(--color-fondo);
+}
+
+.horarios-tabla th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.horarios-tabla td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-borde);
+  font-size: 0.9rem;
+  color: var(--color-texto);
+  vertical-align: middle;
+}
+
+.horarios-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.horarios-tabla tbody tr:hover {
+  background: var(--color-fondo);
+}
+
+/* Celda de acciones con los botones apilados */
+.acciones-horario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-end;
+}
+
+.acciones-separador {
+  height: 1px;
+  width: 100%;
+  background: var(--color-borde);
+  margin: 0.2rem 0;
+}
