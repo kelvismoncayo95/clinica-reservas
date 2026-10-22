@@ -88,29 +88,88 @@ function renderEspecialidades() {
 
 function renderEspecialidad(s) {
   const card = document.createElement("article");
-  card.className = "cita-card";
-  const desc = s.description ? s.description : "Sin descripción";
-  card.innerHTML = `
-    <div class="cita-info">
-      <p class="cita-fecha">${s.name}</p>
-      <p class="cita-estado">${desc}</p>
-    </div>
-  `;
+  card.className = "lista-card";
+
+  // 1. Avatar con iniciales
+  const avatar = document.createElement("div");
+  avatar.className = "lista-avatar";
+  const iniciales = (s.name || "?").charAt(0).toUpperCase();
+  avatar.textContent = iniciales;
+
+  // 2. Contenido
+  const contenido = document.createElement("div");
+  contenido.className = "lista-contenido";
+
+  const titulo = document.createElement("div");
+  titulo.className = "lista-titulo";
+  titulo.textContent = s.name;
+
+  const detalle = document.createElement("div");
+  detalle.className = "lista-detalle-secundario";
+  detalle.textContent = s.description || "Sin descripción";
+
+  contenido.appendChild(titulo);
+  contenido.appendChild(detalle);
+
+  // 3. Píldora de estado
+  const estado = document.createElement("span");
+  estado.className = `lista-estado ${s.activo ? "lista-estado-activo" : "lista-estado-inactivo"}`;
+  estado.textContent = s.activo ? "Activo" : "Inactivo";
+
+  // 4. Menú de acciones (⋯)
   const acciones = document.createElement("div");
-  acciones.className = "cita-acciones";
+  acciones.className = "lista-acciones";
+
+  const btnMenu = document.createElement("button");
+  btnMenu.type = "button";
+  btnMenu.className = "lista-menu-btn";
+  btnMenu.setAttribute("aria-label", "Acciones");
+  btnMenu.textContent = "⋯";
+
+  const menu = document.createElement("div");
+  menu.className = "lista-menu";
+  menu.hidden = true;
+
   const btnEditar = document.createElement("button");
   btnEditar.type = "button";
-  btnEditar.className = "btn btn-sm";
   btnEditar.textContent = "Editar";
-  btnEditar.addEventListener("click", () => abrirModalEspecialidad(s));
-  acciones.appendChild(btnEditar);
+  btnEditar.addEventListener("click", () => {
+    menu.hidden = true;
+    abrirModalEspecialidad(s);
+  });
+
   const btnDesactivar = document.createElement("button");
   btnDesactivar.type = "button";
-  btnDesactivar.className = "btn btn-peligro btn-sm";
+  btnDesactivar.className = "peligro";
   btnDesactivar.textContent = "Desactivar";
-  btnDesactivar.addEventListener("click", () => desactivarEspecialidad(s));
-  acciones.appendChild(btnDesactivar);
+  btnDesactivar.addEventListener("click", () => {
+    menu.hidden = true;
+    desactivarEspecialidad(s);
+  });
+
+  menu.appendChild(btnEditar);
+  menu.appendChild(btnDesactivar);
+  acciones.appendChild(btnMenu);
+  acciones.appendChild(menu);
+
+  btnMenu.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.querySelectorAll(".lista-menu").forEach((m) => {
+      if (m !== menu) m.hidden = true;
+    });
+    menu.hidden = !menu.hidden;
+  });
+
+  document.addEventListener("click", () => {
+    menu.hidden = true;
+  });
+
+  // 5. Armar la tarjeta
+  card.appendChild(avatar);
+  card.appendChild(contenido);
+  card.appendChild(estado);
   card.appendChild(acciones);
+
   return card;
 }
 
