@@ -55,7 +55,7 @@ function setupHeader() {
 // ----- Navegacion -----
 
 function setupNavigation(role) {
-  const secciones = ["inicio", "citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
+  const secciones = ["inicio", "citas", "agenda", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
 
   // Mostrar las que corresponden al rol
   if (role === "admin") {
@@ -96,7 +96,7 @@ function switchSection(which) {
   });
 
   state.currentSection = which;
-  const secciones = ["inicio", "citas", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
+  const secciones = ["inicio", "citas", "agenda", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
   secciones.forEach((sec) => {
     const btn = document.getElementById(`nav-${sec}`);
     const section = document.getElementById(`section-${sec}`);
@@ -224,48 +224,124 @@ async function loadCitas() {
 
 function renderCitaAdmin(cita) {
   const card = document.createElement("article");
-  card.className = `cita-card ${getStatusClass(cita.status)}`;
+  card.className = "lista-card";
 
   const doctor = state.doctors.find((d) => d.id === cita.doctor_id);
   const patient = state.patients.find((p) => p.id === cita.patient_id);
   const doctorName = doctor ? `${doctor.last_name}, ${doctor.first_name}` : `Médico #${cita.doctor_id}`;
   const patientName = patient ? `${patient.last_name}, ${patient.first_name}` : `Paciente #${cita.patient_id}`;
 
-  card.innerHTML = `
-    <div class="cita-info">
-      <p class="cita-fecha">${formatDate(cita.appointment_date)} a las ${formatTime(cita.start_time)}</p>
-      <p class="cita-detalle">${patientName} con ${doctorName}</p>
-      <p class="cita-estado">${getStatusLabel(cita.status)}</p>
-    </div>
-  `;
+  // 1. Avatar con iniciales del paciente
+  const avatar = document.createElement("div");
+  avatar.className = "lista-avatar";
+  let iniciales = "?";
+  if (patient) {
+    iniciales = `${(patient.first_name || "?").charAt(0)}${(patient.last_name || "?").charAt(0)}`.toUpperCase();
+  }
+  avatar.textContent = iniciales;
 
+  // 2. Contenido
+  const contenido = document.createElement("div");
+  contenido.className = "lista-contenido";
+
+  const hora = document.createElement("div");
+  hora.className = "lista-titulo";
+  hora.textContent = `${formatTime(cita.start_time)} · ${formatDate(cita.appointment_date)}`;
+
+  const paciente = document.createElement("div");
+  paciente.className = "lista-detalle";
+  paciente.textContent = patientName;
+
+  const detalle = document.createElement("div");
+  detalle.className = "lista-detalle-secundario";
+  detalle.textContent = `${doctorName}${cita.specialty_name ? " · " + cita.specialty_name : ""}`;
+
+  contenido.appendChild(hora);
+  contenido.appendChild(paciente);
+  contenido.appendChild(detalle);
+
+  // 3. Píldora de estado
+  const estado = document.createElement("span");
+  const statusClass = cita.status === "confirmed" ? "lista-estado-activo"
+    : cita.status === "attended" ? "lista-estado-activo"
+    : cita.status === "cancelled" ? "lista-estado-inactivo"
+    : "lista-estado-inactivo";
+  estado.className = `lista-estado ${statusClass}`;
+  estado.textContent = getStatusLabel(cita.status);
+
+  // 4. Menú de acciones (⋯)
   const acciones = document.createElement("div");
-  acciones.className = "cita-acciones";
+  acciones.className = "lista-acciones";
 
+  const btnMenu = document.createElement("button");
+  btnMenu.type = "button";
+  btnMenu.className = "lista-menu-btn";
+  btnMenu.setAttribute("aria-label", "Acciones");
+  btnMenu.textContent = "⋯";
+
+  const menu = document.createElement("div");
+  menu.className = "lista-menu";
+  menu.hidden = true;
+
+  // Solo mostramos acciones si la cita está confirmada
   if (cita.status === "confirmed") {
     const btnAtendida = document.createElement("button");
     btnAtendida.type = "button";
-    btnAtendida.className = "btn btn-sm";
-    btnAtendida.textContent = "Atendida";
-    btnAtendida.addEventListener("click", () => cambiarEstado(cita.id, "attended"));
-    acciones.appendChild(btnAtendida);
+    btnAtendida.textContent = "Marcar atendida";
+    btnAtendida.addEventListener("click", () => {
+      menu.hidden = true;
+      cambiarEstado(cita.id, "attended");
+    });
+    menu.appendChild(btnAtendida);
 
     const btnNoShow = document.createElement("button");
     btnNoShow.type = "button";
-    btnNoShow.className = "btn btn-sm";
-    btnNoShow.textContent = "No asistió";
-    btnNoShow.addEventListener("click", () => cambiarEstado(cita.id, "no_show"));
-    acciones.appendChild(btnNoShow);
+    btnNoShow.textContent = "Marcar no asistió";
+    btnNoShow.addEventListener("click", () => {
+      menu.hidden = true;
+      cambiarEstado(cita.id, "no_show");
+    });
+    menu.appendChild(btnNoShow);
 
     const btnCancelar = document.createElement("button");
     btnCancelar.type = "button";
-    btnCancelar.className = "btn btn-peligro btn-sm";
-    btnCancelar.textContent = "Cancelar";
-    btnCancelar.addEventListener("click", () => cancelarCitaAdmin(cita.id));
-    acciones.appendChild(btnCancelar);
+    btnCancelar.className = "peligro";
+    btnCancelar.textContent = "Cancelar cita";
+    btnCancelar.addEventListener("click", () => {
+      menu.hidden = true;
+      cancelarCitaAdmin(cita.id);
+    });
+    menu.appendChild(btnCancelar);
+  } else {
+    const info = document.createElement("button");
+    info.type = "button";
+    info.disabled = true;
+    info.textContent = "Sin acciones disponibles";
+    info.style.color = "var(--color-texto-suave)";
+    menu.appendChild(info);
   }
 
+  acciones.appendChild(btnMenu);
+  acciones.appendChild(menu);
+
+  btnMenu.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.querySelectorAll(".lista-menu").forEach((m) => {
+      if (m !== menu) m.hidden = true;
+    });
+    menu.hidden = !menu.hidden;
+  });
+
+  document.addEventListener("click", () => {
+    menu.hidden = true;
+  });
+
+  // 5. Armar la tarjeta
+  card.appendChild(avatar);
+  card.appendChild(contenido);
+  card.appendChild(estado);
   card.appendChild(acciones);
+
   return card;
 }
 
