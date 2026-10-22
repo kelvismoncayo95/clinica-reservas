@@ -95,7 +95,26 @@ function renderMedicos() {
 
 function renderMedico(d) {
   const card = document.createElement("article");
-  card.className = "cita-card";
+  card.className = "lista-card";
+
+  // 1. Avatar con iniciales
+  const avatar = document.createElement("div");
+  avatar.className = "lista-avatar";
+  const iniciales = `${(d.first_name || "?").charAt(0)}${(d.last_name || "?").charAt(0)}`.toUpperCase();
+  avatar.textContent = iniciales;
+
+  // 2. Contenido (nombre, matrícula, especialidades)
+  const contenido = document.createElement("div");
+  contenido.className = "lista-contenido";
+
+  const titulo = document.createElement("div");
+  titulo.className = "lista-titulo";
+  titulo.textContent = `${d.last_name}, ${d.first_name}`;
+
+  const detalle = document.createElement("div");
+  detalle.className = "lista-detalle";
+  detalle.textContent = `Matrícula ${d.license_number}`;
+
   const especialidades = (d.specialty_ids || [])
     .map((id) => {
       const esp = medicosState.specialties.find((s) => s.id === id);
@@ -105,22 +124,64 @@ function renderMedico(d) {
   const espText = especialidades.length > 0
     ? especialidades.join(", ")
     : "Sin especialidades asignadas";
-  card.innerHTML = `
-    <div class="cita-info">
-      <p class="cita-fecha">${d.last_name}, ${d.first_name}</p>
-      <p class="cita-detalle">Matrícula ${d.license_number}</p>
-      <p class="cita-estado">${espText}</p>
-    </div>
-  `;
+
+  const secundario = document.createElement("div");
+  secundario.className = "lista-detalle-secundario";
+  secundario.textContent = espText;
+
+  contenido.appendChild(titulo);
+  contenido.appendChild(detalle);
+  contenido.appendChild(secundario);
+
+  // 3. Píldora de estado
+  const estado = document.createElement("span");
+  estado.className = `lista-estado ${d.activo ? "lista-estado-activo" : "lista-estado-inactivo"}`;
+  estado.textContent = d.activo ? "Activo" : "Inactivo";
+
+  // 4. Menú de acciones (⋯)
   const acciones = document.createElement("div");
-  acciones.className = "cita-acciones";
+  acciones.className = "lista-acciones";
+
+  const btnMenu = document.createElement("button");
+  btnMenu.type = "button";
+  btnMenu.className = "lista-menu-btn";
+  btnMenu.setAttribute("aria-label", "Acciones");
+  btnMenu.textContent = "⋯";
+
+  const menu = document.createElement("div");
+  menu.className = "lista-menu";
+  menu.hidden = true;
+
   const btnEditar = document.createElement("button");
   btnEditar.type = "button";
-  btnEditar.className = "btn btn-sm";
   btnEditar.textContent = "Editar";
-  btnEditar.addEventListener("click", () => abrirModalMedico(d));
-  acciones.appendChild(btnEditar);
+  btnEditar.addEventListener("click", () => {
+    menu.hidden = true;
+    abrirModalMedico(d);
+  });
+
+  menu.appendChild(btnEditar);
+  acciones.appendChild(btnMenu);
+  acciones.appendChild(menu);
+
+  btnMenu.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.querySelectorAll(".lista-menu").forEach((m) => {
+      if (m !== menu) m.hidden = true;
+    });
+    menu.hidden = !menu.hidden;
+  });
+
+  document.addEventListener("click", () => {
+    menu.hidden = true;
+  });
+
+  // 5. Armar la tarjeta completa
+  card.appendChild(avatar);
+  card.appendChild(contenido);
+  card.appendChild(estado);
   card.appendChild(acciones);
+
   return card;
 }
 
