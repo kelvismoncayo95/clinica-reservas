@@ -1213,3 +1213,149 @@ textarea {
 .agenda-bloque-hora { font-weight: 600; }
 .agenda-bloque-paciente { font-weight: 500; }
 .agenda-bloque-medico { font-size: 0.7rem; opacity: 0.85; }
+
+/* ============================================================
+   FASE 5: Tarjetas de lista (rediseño con avatar y menú)
+   ============================================================ */
+
+.lista-card {
+  background: var(--color-blanco);
+  border-radius: var(--radio);
+  border: 1px solid var(--color-borde);
+  box-shadow: var(--sombra);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.lista-card:hover {
+  box-shadow: var(--sombra-lg);
+}
+
+/* Avatar circular con iniciales */
+.lista-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-primario-suave, #ccfbf1);
+  color: var(--color-primario);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+/* Contenido principal de la tarjeta */
+.lista-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.lista-titulo {
+  font-weight: 600;
+  color: var(--color-texto);
+  font-size: 1rem;
+  margin-bottom: 0.15rem;
+}
+
+.lista-detalle {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  margin-bottom: 0.15rem;
+}
+
+.lista-detalle-secundario {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* Píldora de estado */
+.lista-estado {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radio-pill, 9999px);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lista-estado-activo {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.lista-estado-inactivo {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Menú de acciones (⋯) */
+.lista-acciones {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.lista-menu-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-texto-suave);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radio-sm, 8px);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.lista-menu-btn:hover {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+.lista-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--color-blanco);
+  border-radius: var(--radio-sm, 8px);
+  border: 1px solid var(--color-borde);
+  box-shadow: var(--sombra-lg);
+  padding: 0.25rem;
+  min-width: 140px;
+  z-index: 10;
+}
+
+.lista-menu[hidden] {
+  display: none !important;
+}
+
+.lista-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-texto);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.lista-menu button:hover {
+  background: var(--color-fondo);
+}
+
+.lista-menu button.peligro {
+  color: var(--color-peligro);
+}
+
+.lista-menu button.peligro:hover {
+  background: #fee2e2;
+}
