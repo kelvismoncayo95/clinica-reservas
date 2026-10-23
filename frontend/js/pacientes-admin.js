@@ -224,12 +224,13 @@ function abrirModalPaciente(paciente = null) {
   const diaMax = String(hoyMax.getDate()).padStart(2, "0");
   document.getElementById("pac-birth-date").max = `${anioMax}-${mesMax}-${diaMax}`;
 
-  document.getElementById("modal-paciente").hidden = false;
+  document.getElementById("modal-paciente").showModal();
 }
 
 
 function cerrarModalPaciente() {
-  document.getElementById("modal-paciente").hidden = true;
+  const dialog = document.getElementById("modal-paciente");
+  if (dialog.open) dialog.close();
   document.getElementById("pac-id").value = "";
 }
 

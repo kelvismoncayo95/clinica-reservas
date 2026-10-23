@@ -748,14 +748,13 @@
   </dialog>
 
   <!-- Modal para crear/editar paciente -->
-  <div class="modal-backdrop" id="modal-paciente" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-paciente-titulo">
-      <header class="modal-header">
-        <h3 id="modal-paciente-titulo">Nuevo paciente</h3>
-        <button type="button" class="modal-close" id="modal-paciente-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-paciente" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-paciente-titulo">Nuevo paciente</h3>
+      <button type="button" class="modal-close" id="modal-paciente-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-paciente" class="modal-body">
+    <form id="form-paciente" class="modal-body">
         <input type="hidden" id="pac-id" value="">
 
         <div class="form-row">
@@ -819,17 +818,16 @@
 
         <p class="form-error form-error-global" id="pac-error" hidden></p>
 
-        <div class="modal-acciones">
-          <button type="button" class="btn btn-secondary" id="pac-cancelar">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" id="pac-submit">
-            Crear paciente
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="pac-cancelar">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" id="pac-submit">
+          Crear paciente
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para cerrar horario con fecha de corte -->
   <div class="modal-backdrop" id="modal-cerrar-horario" hidden>
