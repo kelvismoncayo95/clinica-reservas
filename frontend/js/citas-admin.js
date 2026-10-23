@@ -613,6 +613,10 @@ async function onModalSubmit(e) {
   } catch (err) {
     errorEl.textContent = err.message;
     errorEl.hidden = false;
+    // Scroll automático al error para que el usuario lo vea sin buscar
+    setTimeout(() => {
+      errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
   } finally {
     submit.disabled = false;
     submit.textContent = originalText;
