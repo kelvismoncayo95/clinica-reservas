@@ -1460,3 +1460,64 @@ textarea {
     border-radius: 16px;
   }
 }
+
+/* ============================================================
+   FASE 6: Estilos para <dialog>
+   ============================================================ */
+
+.app-dialog {
+  padding: 0;
+  border: none;
+  border-radius: var(--radio);
+  max-width: 520px;
+  width: 100%;
+  max-height: 92dvh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background: var(--color-blanco);
+}
+
+/* El backdrop (fondo oscuro) que agrega <dialog> automáticamente */
+.app-dialog::backdrop {
+  background: rgba(16, 33, 31, 0.55);
+}
+
+/* En móvil, hoja inferior */
+@media (max-width: 699px) {
+  .app-dialog {
+    margin: 0;
+    margin-top: auto;
+    border-radius: 16px 16px 0 0;
+    max-height: 92dvh;
+  }
+}
+
+/* En desktop, centrado */
+@media (min-width: 700px) {
+  .app-dialog {
+    margin: auto;
+    border-radius: var(--radio);
+  }
+}
+
+/* Ajustes del contenido interno */
+.app-dialog .modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-borde);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-dialog .modal-body {
+  padding: 1.5rem;
+}
+
+.app-dialog .modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borde);
+  margin-top: 1.5rem;
+}

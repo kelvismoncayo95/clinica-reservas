@@ -633,40 +633,38 @@
   </div>
 
   <!-- Modal para crear/editar especialidad -->
-  <div class="modal-backdrop" id="modal-especialidad" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-especialidad-titulo">
-      <header class="modal-header">
-        <h3 id="modal-especialidad-titulo">Nueva especialidad</h3>
-        <button type="button" class="modal-close" id="modal-especialidad-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-especialidad" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-especialidad-titulo">Nueva especialidad</h3>
+      <button type="button" class="modal-close" id="modal-especialidad-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-especialidad" class="modal-body">
-        <input type="hidden" id="esp-id" value="">
+    <form id="form-especialidad" class="modal-body">
+      <input type="hidden" id="esp-id" value="">
 
-        <div class="form-group">
-          <label for="esp-name">Nombre</label>
-          <input type="text" id="esp-name" required placeholder="Cardiología" maxlength="100">
-          <p class="form-error" id="esp-name-error" hidden></p>
-        </div>
+      <div class="form-group">
+        <label for="esp-name">Nombre</label>
+        <input type="text" id="esp-name" required placeholder="Cardiología" maxlength="100">
+        <p class="form-error" id="esp-name-error" hidden></p>
+      </div>
 
-        <div class="form-group">
-          <label for="esp-description">Descripción <span class="form-optional">(opcional)</span></label>
-          <textarea id="esp-description" rows="3" placeholder="Breve descripción de la especialidad" maxlength="255"></textarea>
-        </div>
+      <div class="form-group">
+        <label for="esp-description">Descripción <span class="form-optional">(opcional)</span></label>
+        <textarea id="esp-description" rows="3" placeholder="Breve descripción de la especialidad" maxlength="255"></textarea>
+      </div>
 
-        <p class="form-error form-error-global" id="esp-error" hidden></p>
+      <p class="form-error form-error-global" id="esp-error" hidden></p>
 
-        <div class="modal-acciones">
-          <button type="button" class="btn btn-secondary" id="esp-cancelar">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" id="esp-submit">
-            Crear especialidad
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="esp-cancelar">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" id="esp-submit">
+          Crear especialidad
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para crear/editar medico -->
   <div class="modal-backdrop" id="modal-medico" hidden>

@@ -198,12 +198,13 @@ function abrirModalEspecialidad(esp = null) {
     submit.textContent = "Crear especialidad";
   }
 
-  document.getElementById("modal-especialidad").hidden = false;
+  document.getElementById("modal-especialidad").showModal();
 }
 
 
 function cerrarModalEspecialidad() {
-  document.getElementById("modal-especialidad").hidden = true;
+  const dialog = document.getElementById("modal-especialidad");
+  if (dialog.open) dialog.close();
   document.getElementById("esp-id").value = "";
 }
 
