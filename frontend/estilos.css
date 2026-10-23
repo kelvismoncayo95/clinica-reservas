@@ -1419,3 +1419,44 @@ textarea {
   background: var(--color-borde);
   margin: 0.2rem 0;
 }
+
+/* ============================================================
+   FASE 6: Modales como hoja inferior (móvil) / centrados (PC)
+   ============================================================ */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(16, 33, 31, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background: var(--color-blanco);
+  border-radius: 16px 16px 0 0;
+}
+
+.modal-acciones {
+  position: sticky;
+  bottom: 0;
+  background: var(--color-blanco);
+  padding-top: 0.75rem;
+}
+
+@media (min-width: 700px) {
+  .modal-backdrop {
+    align-items: center;
+    padding: 1rem;
+  }
+  .modal {
+    border-radius: 16px;
+  }
+}
