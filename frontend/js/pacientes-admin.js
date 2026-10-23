@@ -317,6 +317,11 @@ async function onPacienteSubmit(e) {
   } catch (err) {
     document.getElementById("pac-error").textContent = err.message;
     document.getElementById("pac-error").hidden = false;
+    // Scroll automático al error
+    setTimeout(() => {
+      const errorEl = document.getElementById("pac-error");
+      if (errorEl) errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
   } finally {
     submit.disabled = false;
     submit.textContent = originalText;
