@@ -407,14 +407,13 @@
   </div>
 
   <!-- Modal para crear nueva cita -->
-  <div class="modal-backdrop" id="modal-nueva-cita" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
-      <header class="modal-header">
-        <h3 id="modal-titulo">Nueva cita</h3>
-        <button type="button" class="modal-close" id="modal-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-nueva-cita" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-titulo">Nueva cita</h3>
+      <button type="button" class="modal-close" id="modal-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-nueva-cita" class="modal-body" novalidate>
+    <form id="form-nueva-cita" class="modal-body" novalidate>
 
         <div class="form-group">
           <label for="nc-paciente">1. Paciente</label>
@@ -460,17 +459,16 @@
 
         <p class="form-error form-error-global" id="nc-error" hidden></p>
 
-        <div class="modal-acciones">
-          <button type="button" class="btn btn-secondary" id="nc-cancelar">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" id="nc-submit" disabled>
-            Crear cita
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="nc-cancelar">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" id="nc-submit" disabled>
+          Crear cita
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para crear/editar usuario -->
   <dialog id="modal-usuario" class="app-dialog">

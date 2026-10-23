@@ -389,7 +389,7 @@ function setupModalNuevaCita() {
 
 async function abrirModalNuevaCita() {
   resetModalNuevaCita();
-  document.getElementById("modal-nueva-cita").hidden = false;
+  document.getElementById("modal-nueva-cita").showModal();
 
   // Llenar pacientes
   const selectPac = document.getElementById("nc-paciente");
@@ -414,7 +414,8 @@ async function abrirModalNuevaCita() {
 
 
 function cerrarModalNuevaCita() {
-  document.getElementById("modal-nueva-cita").hidden = true;
+  const dialog = document.getElementById("modal-nueva-cita");
+  if (dialog.open) dialog.close();
 }
 
 
