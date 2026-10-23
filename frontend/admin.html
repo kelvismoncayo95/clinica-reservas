@@ -644,7 +644,7 @@
 
       <div class="form-group">
         <label for="esp-name">Nombre</label>
-        <input type="text" id="esp-name" required placeholder="Cardiología" maxlength="100">
+        <input type="text" id="esp-name" required placeholder="Cardiología" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,100}" title="Solo letras y espacios" minlength="2" maxlength="100">
         <p class="form-error" id="esp-name-error" hidden></p>
       </div>
 
@@ -667,14 +667,13 @@
   </dialog>
 
   <!-- Modal para crear/editar medico -->
-  <div class="modal-backdrop" id="modal-medico" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-medico-titulo">
-      <header class="modal-header">
-        <h3 id="modal-medico-titulo">Nuevo médico</h3>
-        <button type="button" class="modal-close" id="modal-medico-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-medico" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-medico-titulo">Nuevo médico</h3>
+      <button type="button" class="modal-close" id="modal-medico-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-medico" class="modal-body">
+    <form id="form-medico" class="modal-body">
         <input type="hidden" id="med-id" value="">
 
         <div class="form-row">
@@ -739,17 +738,16 @@
 
         <p class="form-error form-error-global" id="med-error" hidden></p>
 
-        <div class="modal-acciones">
-          <button type="button" class="btn btn-secondary" id="med-cancelar">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" id="med-submit">
-            Crear médico
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="med-cancelar">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" id="med-submit">
+          Crear médico
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para crear/editar paciente -->
   <div class="modal-backdrop" id="modal-paciente" hidden>

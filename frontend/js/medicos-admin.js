@@ -226,12 +226,13 @@ function abrirModalMedico(doctor = null) {
     licenseHint.textContent = "";
   }
 
-  document.getElementById("modal-medico").hidden = false;
+  document.getElementById("modal-medico").showModal();
 }
 
 
 function cerrarModalMedico() {
-  document.getElementById("modal-medico").hidden = true;
+  const dialog = document.getElementById("modal-medico");
+  if (dialog.open) dialog.close();
   document.getElementById("med-id").value = "";
 }
 
