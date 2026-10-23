@@ -316,12 +316,13 @@ function abrirModalBloqueo() {
     el.hidden = true;
     el.textContent = "";
   });
-  document.getElementById("modal-bloqueo").hidden = false;
+  document.getElementById("modal-bloqueo").showModal();
 }
 
 
 function cerrarModalBloqueo() {
-  document.getElementById("modal-bloqueo").hidden = true;
+  const dialog = document.getElementById("modal-bloqueo");
+  if (dialog.open) dialog.close();
 }
 
 

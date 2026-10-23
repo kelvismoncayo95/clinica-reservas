@@ -588,14 +588,13 @@
   </div>
 
   <!-- Modal para agregar bloqueo -->
-  <div class="modal-backdrop" id="modal-bloqueo" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-bloqueo-titulo">
-      <header class="modal-header">
-        <h3 id="modal-bloqueo-titulo">Agregar bloqueo</h3>
-        <button type="button" class="modal-close" id="modal-bloqueo-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-bloqueo" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-bloqueo-titulo">Agregar bloqueo</h3>
+      <button type="button" class="modal-close" id="modal-bloqueo-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-bloqueo" class="modal-body">
+    <form id="form-bloqueo" class="modal-body">
         <div class="form-row">
           <div class="form-group">
             <label for="bloq-desde">Desde</label>
@@ -620,13 +619,12 @@
           <button type="button" class="btn btn-secondary" id="bloq-cancelar">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" id="bloq-submit">
-            Agregar bloqueo
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+        <button type="submit" class="btn btn-primary" id="bloq-submit">
+          Agregar bloqueo
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para crear/editar especialidad -->
   <dialog id="modal-especialidad" class="app-dialog">
