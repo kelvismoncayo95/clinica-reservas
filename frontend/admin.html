@@ -473,14 +473,13 @@
   </div>
 
   <!-- Modal para crear/editar usuario -->
-  <div class="modal-backdrop" id="modal-usuario" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-usuario-titulo">
-      <header class="modal-header">
-        <h3 id="modal-usuario-titulo">Nuevo usuario</h3>
-        <button type="button" class="modal-close" id="modal-usuario-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-usuario" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-usuario-titulo">Nuevo usuario</h3>
+      <button type="button" class="modal-close" id="modal-usuario-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-usuario" class="modal-body">
+    <form id="form-usuario" class="modal-body">
         <input type="hidden" id="usu-id" value="">
 
         <div class="form-group">
@@ -519,17 +518,16 @@
 
         <p class="form-error form-error-global" id="usu-error" hidden></p>
 
-        <div class="modal-acciones">
-          <button type="button" class="btn btn-secondary" id="usu-cancelar">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" id="usu-submit">
-            Crear usuario
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="usu-cancelar">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary" id="usu-submit">
+          Crear usuario
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para agregar horario semanal -->
   <div class="modal-backdrop" id="modal-horario" hidden>

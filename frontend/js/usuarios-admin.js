@@ -216,12 +216,13 @@ function abrirModalUsuario(user = null) {
     passwordHelp.textContent = "Mínimo 6 caracteres. El usuario la va a usar para entrar al sistema.";
   }
 
-  document.getElementById("modal-usuario").hidden = false;
+  document.getElementById("modal-usuario").showModal();
 }
 
 
 function cerrarModalUsuario() {
-  document.getElementById("modal-usuario").hidden = true;
+  const dialog = document.getElementById("modal-usuario");
+  if (dialog.open) dialog.close();
   document.getElementById("usu-id").value = "";
 }
 
