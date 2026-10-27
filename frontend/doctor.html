@@ -23,14 +23,21 @@
     </div>
   </header>
 
-  <main class="app-main">
-    <div class="section-header">
-      <h2>Mis citas</h2>
-      <p class="section-subtitle">Acá ves tus citas agrupadas por día. Podés marcar si el paciente asistió o no.</p>
-      <button type="button" class="btn btn-peligro" id="btn-no-asistir" style="margin-top: 0.75rem;">
-        No puedo asistir un día
+  <div class="app-layout">
+    <nav class="app-nav" role="tablist">
+      <button class="nav-item nav-item-activa" id="nav-mis-citas" role="tab" aria-selected="true">
+        Mis citas
       </button>
-    </div>
+      <button class="nav-item" id="nav-notificar-ausencia" role="tab" aria-selected="false">
+        Notificar ausencia
+      </button>
+    </nav>
+
+    <main class="app-main">
+      <div class="section-header">
+        <h2>Mis citas</h2>
+        <p class="section-subtitle">Acá ves tus citas agrupadas por día. Podés marcar si el paciente asistió o no.</p>
+      </div>
 
     <!-- Filtros -->
     <div class="filtros-box">
@@ -80,17 +87,17 @@
     </div>
 
     <div id="ausencias-list" class="citas-admin-list" hidden></div>
-  </main>
+    </main>
+  </div>
 
   <!-- Modal para notificar ausencia -->
-  <div class="modal-backdrop" id="modal-ausencia" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-ausencia-titulo">
-      <header class="modal-header">
-        <h3 id="modal-ausencia-titulo">No puedo asistir</h3>
-        <button type="button" class="modal-close" id="modal-ausencia-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-ausencia" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-ausencia-titulo">No puedo asistir</h3>
+      <button type="button" class="modal-close" id="modal-ausencia-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-ausencia" class="modal-body" novalidate>
+    <form id="form-ausencia" class="modal-body" novalidate>
         <p class="form-help">
           Al notificar una ausencia, se avisa a recepción para que gestione las citas afectadas.
           Las citas NO se cancelan automáticamente.
@@ -113,13 +120,12 @@
           <button type="button" class="btn btn-secondary" id="aus-cancelar">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-peligro" id="aus-submit">
-            Notificar ausencia
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+        <button type="submit" class="btn btn-peligro" id="aus-submit">
+          Notificar ausencia
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="js/config.js?v=4"></script>
   <script src="js/auth.js"></script>

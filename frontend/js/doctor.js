@@ -224,7 +224,10 @@ async function deshacerEstado(id) {
 // ----- Modal de notificar ausencia -----
 
 function setupModalAusencia() {
-  document.getElementById("btn-no-asistir").addEventListener("click", () => abrirModalAusencia());
+  const btnNavAusencia = document.getElementById("nav-notificar-ausencia");
+  if (btnNavAusencia) {
+    btnNavAusencia.addEventListener("click", () => abrirModalAusencia());
+  }
   document.getElementById("modal-ausencia-cerrar").addEventListener("click", cerrarModalAusencia);
   document.getElementById("aus-cancelar").addEventListener("click", cerrarModalAusencia);
   document.getElementById("form-ausencia").addEventListener("submit", onAusenciaSubmit);
@@ -243,11 +246,12 @@ function abrirModalAusencia() {
   const hoy = new Date().toISOString().split("T")[0];
   document.getElementById("aus-fecha").min = hoy;
 
-  document.getElementById("modal-ausencia").hidden = false;
+  document.getElementById("modal-ausencia").showModal();
 }
 
 function cerrarModalAusencia() {
-  document.getElementById("modal-ausencia").hidden = true;
+  const dialog = document.getElementById("modal-ausencia");
+  if (dialog.open) dialog.close();
   const submit = document.getElementById("aus-submit");
   submit.disabled = false;
   submit.textContent = "Notificar ausencia";
