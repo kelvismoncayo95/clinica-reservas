@@ -308,21 +308,21 @@ function renderCita(cita) {
   estado.className = `lista-estado ${statusClass}`;
   estado.textContent = getStatusLabel(cita.status);
 
-  // 4. Menú de acciones (⋯) — solo si se puede cancelar
+  // 4. Menú de acciones (⋯) — siempre visible
   const acciones = document.createElement("div");
   acciones.className = "lista-acciones";
 
+  const btnMenu = document.createElement("button");
+  btnMenu.type = "button";
+  btnMenu.className = "lista-menu-btn";
+  btnMenu.setAttribute("aria-label", "Acciones");
+  btnMenu.textContent = "⋯";
+
+  const menu = document.createElement("div");
+  menu.className = "lista-menu";
+  menu.hidden = true;
+
   if (canCancel) {
-    const btnMenu = document.createElement("button");
-    btnMenu.type = "button";
-    btnMenu.className = "lista-menu-btn";
-    btnMenu.setAttribute("aria-label", "Acciones");
-    btnMenu.textContent = "⋯";
-
-    const menu = document.createElement("div");
-    menu.className = "lista-menu";
-    menu.hidden = true;
-
     const btnCancelar = document.createElement("button");
     btnCancelar.type = "button";
     btnCancelar.className = "peligro";
@@ -332,22 +332,29 @@ function renderCita(cita) {
       cancelarCita(cita.id);
     });
     menu.appendChild(btnCancelar);
-
-    acciones.appendChild(btnMenu);
-    acciones.appendChild(menu);
-
-    btnMenu.addEventListener("click", (e) => {
-      e.stopPropagation();
-      document.querySelectorAll(".lista-menu").forEach((m) => {
-        if (m !== menu) m.hidden = true;
-      });
-      menu.hidden = !menu.hidden;
-    });
-
-    document.addEventListener("click", () => {
-      menu.hidden = true;
-    });
+  } else {
+    const info = document.createElement("button");
+    info.type = "button";
+    info.disabled = true;
+    info.textContent = "Sin acciones disponibles";
+    info.style.color = "var(--color-texto-suave)";
+    menu.appendChild(info);
   }
+
+  acciones.appendChild(btnMenu);
+  acciones.appendChild(menu);
+
+  btnMenu.addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.querySelectorAll(".lista-menu").forEach((m) => {
+      if (m !== menu) m.hidden = true;
+    });
+    menu.hidden = !menu.hidden;
+  });
+
+  document.addEventListener("click", () => {
+    menu.hidden = true;
+  });
 
   // 5. Armar la tarjeta
   card.appendChild(avatar);
@@ -359,7 +366,13 @@ function renderCita(cita) {
 }
 
 async function cancelarCita(id) {
-  if (!confirm("¿Estás seguro de que querés cancelar esta cita?")) return;
+  const confirmado = await confirmDialog(
+    "Cancelar cita",
+    "¿Estás seguro de que querés cancelar esta cita? Esta acción no se puede deshacer.",
+    "Sí, cancelar"
+  );
+  if (!confirmado) return;
+  
   try {
     await cancelAppointment(id);
     showToast("Cita cancelada.", "success");
