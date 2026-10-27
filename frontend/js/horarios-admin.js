@@ -405,11 +405,12 @@ function abrirModalCerrarHorario(schedule) {
   const minDate = tomorrow.toISOString().split("T")[0];
   document.getElementById("cerrar-valid-until").min = minDate;
 
-  document.getElementById("modal-cerrar-horario").hidden = false;
+  document.getElementById("modal-cerrar-horario").showModal();
 }
 
 function cerrarModalCerrarHorario() {
-  document.getElementById("modal-cerrar-horario").hidden = true;
+  const dialog = document.getElementById("modal-cerrar-horario");
+  if (dialog.open) dialog.close();
   horarioActual = null;
   const submit = document.getElementById("cerrar-submit");
   submit.disabled = false;

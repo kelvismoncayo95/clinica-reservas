@@ -824,14 +824,13 @@
   </dialog>
 
   <!-- Modal para cerrar horario con fecha de corte -->
-  <div class="modal-backdrop" id="modal-cerrar-horario" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-cerrar-horario-titulo">
-      <header class="modal-header">
-        <h3 id="modal-cerrar-horario-titulo">Cerrar horario</h3>
-        <button type="button" class="modal-close" id="modal-cerrar-horario-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-cerrar-horario" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-cerrar-horario-titulo">Cerrar horario</h3>
+      <button type="button" class="modal-close" id="modal-cerrar-horario-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-cerrar-horario" class="modal-body">
+    <form id="form-cerrar-horario" class="modal-body">
         <p class="form-help">
           Al cerrar el horario, no se van a generar nuevos turnos a partir de la fecha elegida.
           Las citas ya reservadas antes de esa fecha se mantienen.
@@ -855,13 +854,12 @@
           <button type="button" class="btn btn-secondary" id="cerrar-cancelar">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" id="cerrar-submit">
-            Cerrar horario
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+        <button type="submit" class="btn btn-primary" id="cerrar-submit">
+          Cerrar horario
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="js/config.js?v=4"></script>
   <script src="js/inicio-admin.js"></script>
