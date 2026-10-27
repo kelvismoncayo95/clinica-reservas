@@ -55,8 +55,8 @@ async function resolverDoctorId() {
 
 
 function setupFiltros() {
-  document.getElementById("filtro-fecha-desde").addEventListener("change", cargarCitas);
-  document.getElementById("filtro-fecha-hasta").addEventListener("change", cargarCitas);
+  document.getElementById("filtro-fecha-desde").addEventListener("change", onFechaChange);
+  document.getElementById("filtro-fecha-hasta").addEventListener("change", onFechaChange);
   document.getElementById("filtro-estado").addEventListener("change", cargarCitas);
   
   // Botones de acceso rápido
@@ -97,6 +97,28 @@ function setupFiltros() {
   });
 }
 
+
+function validarRangoFechas() {
+  const desde = document.getElementById("filtro-fecha-desde").value;
+  const hasta = document.getElementById("filtro-fecha-hasta").value;
+  
+  if (desde && hasta && desde > hasta) {
+    showToast("La fecha 'Desde' no puede ser posterior a 'Hasta'.", "error");
+    return false;
+  }
+  return true;
+}
+
+function onFechaChange() {
+  if (!validarRangoFechas()) {
+    // Si el rango es inválido, vaciar la lista y mostrar el estado vacío
+    document.getElementById("citas-list").innerHTML = "";
+    document.getElementById("citas-list").hidden = true;
+    document.getElementById("citas-empty").hidden = false;
+    return;
+  }
+  cargarCitas();
+}
 
 async function cargarCitas() {
   const loading = document.getElementById("citas-loading");
