@@ -267,7 +267,9 @@ function initSearchableSelect(inputId, items, onSelect) {
     const filtro = filter.toLowerCase().trim();
     const filtrados = items.filter((item) => {
       if (!filtro) return true;
-      return item.label.toLowerCase().includes(filtro);
+      const enLabel = item.label.toLowerCase().includes(filtro);
+      const enDetalle = item.detalle && item.detalle.toLowerCase().includes(filtro);
+      return enLabel || enDetalle;
     });
     
     dropdown.innerHTML = "";
