@@ -377,7 +377,6 @@ function setupModalNuevaCita() {
   document.getElementById("modal-cerrar").addEventListener("click", cerrarModalNuevaCita);
   document.getElementById("nc-cancelar").addEventListener("click", cerrarModalNuevaCita);
   document.getElementById("nc-especialidad").addEventListener("change", onModalSpecialtyChange);
-  document.getElementById("nc-medico").addEventListener("change", onModalDoctorChange);
   document.getElementById("nc-fecha").addEventListener("change", onModalDateChange);
   document.getElementById("form-nueva-cita").addEventListener("submit", onModalSubmit);
   document.getElementById("modal-nueva-cita").addEventListener("click", (e) => {
@@ -430,9 +429,12 @@ function resetModalNuevaCita() {
 
   document.getElementById("nc-paciente").value = "";
   document.getElementById("nc-especialidad").value = "";
-  const selMed = document.getElementById("nc-medico");
-  selMed.innerHTML = "<option value=\"\">Primero elegí una especialidad</option>";
-  selMed.disabled = true;
+  const inputMed = document.getElementById("nc-medico");
+  inputMed.value = "";
+  inputMed.placeholder = "Primero elegí una especialidad";
+  inputMed.disabled = true;
+  document.getElementById("nc-medico-id").value = "";
+  document.getElementById("nc-medico-dropdown").hidden = true;
   const inputFecha = document.getElementById("nc-fecha");
   inputFecha.value = "";
   inputFecha.disabled = true;
@@ -455,27 +457,47 @@ function onModalSpecialtyChange(e) {
   state.selectedDate = null;
   state.selectedStartTime = null;
 
-  const selMed = document.getElementById("nc-medico");
+  const inputMed = document.getElementById("nc-medico");
   const inputFecha = document.getElementById("nc-fecha");
   document.getElementById("nc-horarios-group").hidden = true;
+  document.getElementById("nc-medico-dropdown").hidden = true;
   inputFecha.value = "";
   inputFecha.disabled = true;
 
   if (!specialtyId) {
-    selMed.innerHTML = "<option value=\"\">Primero elegí una especialidad</option>";
-    selMed.disabled = true;
+    inputMed.value = "";
+    inputMed.placeholder = "Primero elegí una especialidad";
+    inputMed.disabled = true;
+    document.getElementById("nc-medico-id").value = "";
     actualizarSubmitModal();
     return;
   }
 
   const filtered = filterDoctorsBySpecialty(state.doctors, specialtyId);
-  selMed.innerHTML = "";
+  inputMed.value = "";
+  inputMed.disabled = false;
+  document.getElementById("nc-medico-id").value = "";
+  document.getElementById("nc-medico-dropdown").hidden = true;
+
   if (filtered.length === 0) {
-    selMed.innerHTML = "<option value=\"\">No hay médicos para esa especialidad</option>";
-    selMed.disabled = true;
+    inputMed.placeholder = "No hay médicos para esa especialidad";
+    inputMed.disabled = true;
     actualizarSubmitModal();
     return;
   }
+  
+  inputMed.placeholder = "Escribí el nombre del médico...";
+  const doctorItems = filtered.map((d) => ({
+    value: d.id,
+    label: `${d.last_name}, ${d.first_name}`,
+    detalle: `Matrícula ${d.license_number}`,
+  }));
+  initSearchableSelect("nc-medico", doctorItems, (item) => {
+    state.selectedDoctorId = item.value;
+    // Habilitar el campo de fecha cuando se elige un médico
+    inputFecha.disabled = false;
+    actualizarSubmitModal();
+  });
   const first = document.createElement("option");
   first.value = "";
   first.textContent = "Elegí un médico";

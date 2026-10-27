@@ -435,9 +435,11 @@
 
         <div class="form-group">
           <label for="nc-medico">3. Médico</label>
-          <select id="nc-medico" required disabled>
-            <option value="">Primero elegí una especialidad</option>
-          </select>
+          <div class="searchable-select" id="nc-medico-container">
+            <input type="text" id="nc-medico" placeholder="Primero elegí una especialidad" autocomplete="off" required disabled>
+            <input type="hidden" id="nc-medico-id" value="">
+            <div class="searchable-dropdown" id="nc-medico-dropdown" hidden></div>
+          </div>
           <p class="form-error" id="nc-medico-error" hidden></p>
         </div>
 
