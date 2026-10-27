@@ -55,8 +55,14 @@ async function resolverDoctorId() {
 
 
 function setupFiltros() {
-  document.getElementById("filtro-fecha-desde").addEventListener("change", onFechaChange);
-  document.getElementById("filtro-fecha-hasta").addEventListener("change", onFechaChange);
+  document.getElementById("filtro-fecha-desde").addEventListener("change", () => {
+    actualizarRestriccionesFecha();
+    onFechaChange();
+  });
+  document.getElementById("filtro-fecha-hasta").addEventListener("change", () => {
+    actualizarRestriccionesFecha();
+    onFechaChange();
+  });
   document.getElementById("filtro-estado").addEventListener("change", cargarCitas);
   
   // Botones de acceso rápido
@@ -107,6 +113,17 @@ function validarRangoFechas() {
     return false;
   }
   return true;
+}
+
+function actualizarRestriccionesFecha() {
+  const desde = document.getElementById("filtro-fecha-desde").value;
+  const hasta = document.getElementById("filtro-fecha-hasta").value;
+  
+  // Si hay "Desde", el "Hasta" no puede ser menor
+  document.getElementById("filtro-fecha-hasta").min = desde || "";
+  
+  // Si hay "Hasta", el "Desde" no puede ser mayor
+  document.getElementById("filtro-fecha-desde").max = hasta || "";
 }
 
 function onFechaChange() {
