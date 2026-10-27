@@ -528,14 +528,13 @@
   </dialog>
 
   <!-- Modal para agregar horario semanal -->
-  <div class="modal-backdrop" id="modal-horario" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-horario-titulo">
-      <header class="modal-header">
-        <h3 id="modal-horario-titulo">Agregar horario semanal</h3>
-        <button type="button" class="modal-close" id="modal-horario-cerrar" aria-label="Cerrar">×</button>
-      </header>
+  <dialog id="modal-horario" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-horario-titulo">Agregar horario semanal</h3>
+      <button type="button" class="modal-close" id="modal-horario-cerrar" aria-label="Cerrar">×</button>
+    </header>
 
-      <form id="form-horario" class="modal-body">
+    <form id="form-horario" class="modal-body">
         <div class="form-group">
           <label for="hor-dia">Día de la semana</label>
           <select id="hor-dia" required>
@@ -579,13 +578,12 @@
           <button type="button" class="btn btn-secondary" id="hor-cancelar">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" id="hor-submit">
-            Agregar horario
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+        <button type="submit" class="btn btn-primary" id="hor-submit">
+          Agregar horario
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- Modal para agregar bloqueo -->
   <dialog id="modal-bloqueo" class="app-dialog">

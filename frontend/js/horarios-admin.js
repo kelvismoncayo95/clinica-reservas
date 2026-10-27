@@ -242,12 +242,13 @@ function abrirModalHorario() {
     el.hidden = true;
     el.textContent = "";
   });
-  document.getElementById("modal-horario").hidden = false;
+  document.getElementById("modal-horario").showModal();
 }
 
 
 function cerrarModalHorario() {
-  document.getElementById("modal-horario").hidden = true;
+  const dialog = document.getElementById("modal-horario");
+  if (dialog.open) dialog.close();
 }
 
 
