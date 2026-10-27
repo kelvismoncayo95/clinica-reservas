@@ -376,7 +376,6 @@ async function cancelarCitaAdmin(id) {
 function setupModalNuevaCita() {
   document.getElementById("modal-cerrar").addEventListener("click", cerrarModalNuevaCita);
   document.getElementById("nc-cancelar").addEventListener("click", cerrarModalNuevaCita);
-  document.getElementById("nc-paciente").addEventListener("change", onModalPatientChange);
   document.getElementById("nc-especialidad").addEventListener("change", onModalSpecialtyChange);
   document.getElementById("nc-medico").addEventListener("change", onModalDoctorChange);
   document.getElementById("nc-fecha").addEventListener("change", onModalDateChange);
@@ -391,15 +390,18 @@ async function abrirModalNuevaCita() {
   resetModalNuevaCita();
   document.getElementById("modal-nueva-cita").showModal();
 
-  // Llenar pacientes
-  const selectPac = document.getElementById("nc-paciente");
-  selectPac.innerHTML = "<option value=\"\">Elegí un paciente</option>";
-  state.patients.forEach((p) => {
-    const opt = document.createElement("option");
-    opt.value = p.id;
-    opt.textContent = `${p.last_name}, ${p.first_name} (DNI ${p.dni})`;
-    selectPac.appendChild(opt);
+  // Llenar pacientes con buscador
+  const patientItems = state.patients.map((p) => ({
+    value: p.id,
+    label: `${p.last_name}, ${p.first_name}`,
+    detalle: `DNI ${p.dni}`,
+  }));
+  initSearchableSelect("nc-paciente", patientItems, (item) => {
+    state.selectedPatientId = item.value;
   });
+  document.getElementById("nc-paciente-id").value = "";
+  document.getElementById("nc-paciente").value = "";
+  document.getElementById("nc-paciente-dropdown").hidden = true;
 
   // Llenar especialidades
   const selectEsp = document.getElementById("nc-especialidad");

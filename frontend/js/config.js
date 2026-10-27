@@ -240,3 +240,80 @@ function clearAllErrors() {
     el.hidden = true;
   });
 }
+
+// ============================================================
+// FASE 7: Buscador con autocompletado (searchable select)
+// ============================================================
+
+function initSearchableSelect(inputId, items, onSelect) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  
+  // Evitar inicializar dos veces el mismo input (memory leak de listeners)
+  if (input.dataset.searchableInitialized === "true") {
+    // Solo actualizar los items y el callback
+    input._searchableItems = items;
+    input._searchableOnSelect = onSelect;
+    return;
+  }
+  input.dataset.searchableInitialized = "true";
+  input._searchableItems = items;
+  input._searchableOnSelect = onSelect;
+  
+  const container = input.closest(".searchable-select");
+  const dropdown = container.querySelector(".searchable-dropdown");
+  
+  function renderOptions(filter = "") {
+    const filtro = filter.toLowerCase().trim();
+    const filtrados = items.filter((item) => {
+      if (!filtro) return true;
+      return item.label.toLowerCase().includes(filtro);
+    });
+    
+    dropdown.innerHTML = "";
+    
+    if (filtrados.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "searchable-empty";
+      empty.textContent = "No se encontraron resultados";
+      dropdown.appendChild(empty);
+    } else {
+      filtrados.slice(0, 50).forEach((item) => {
+        const option = document.createElement("div");
+        option.className = "searchable-option";
+        
+        const label = document.createElement("div");
+        label.textContent = item.label;
+        option.appendChild(label);
+        
+        if (item.detalle) {
+          const detalle = document.createElement("div");
+          detalle.className = "option-detalle";
+          detalle.textContent = item.detalle;
+          option.appendChild(detalle);
+        }
+        
+        option.addEventListener("click", () => {
+          input.value = item.label;
+          const hiddenId = container.querySelector("input[type=hidden]");
+          if (hiddenId) hiddenId.value = item.value;
+          dropdown.hidden = true;
+          if (onSelect) onSelect(item);
+        });
+        
+        dropdown.appendChild(option);
+      });
+    }
+    
+    dropdown.hidden = false;
+  }
+  
+  input.addEventListener("focus", () => renderOptions(input.value));
+  input.addEventListener("input", () => renderOptions(input.value));
+  
+  document.addEventListener("click", (e) => {
+    if (!container.contains(e.target)) {
+      dropdown.hidden = true;
+    }
+  });
+}

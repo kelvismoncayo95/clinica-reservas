@@ -1521,3 +1521,80 @@ textarea {
   border-top: 1px solid var(--color-borde);
   margin-top: 1.5rem;
 }
+
+/* ============================================================
+   FASE 7: Buscador con autocompletado
+   ============================================================ */
+
+.searchable-select {
+  position: relative;
+  width: 100%;
+}
+
+.searchable-select input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--color-borde);
+  background: var(--color-fondo);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.searchable-select input[type="text"]:focus {
+  border-color: var(--color-primario);
+  background: var(--color-blanco);
+  box-shadow: 0 0 0 3px var(--color-primario-suave, #ccfbf1);
+  outline: none;
+}
+
+.searchable-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  box-shadow: var(--sombra-lg);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 100;
+  margin-top: 4px;
+}
+
+.searchable-dropdown[hidden] {
+  display: none !important;
+}
+
+.searchable-option {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--color-texto);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.searchable-option:last-child {
+  border-bottom: none;
+}
+
+.searchable-option:hover,
+.searchable-option.selected {
+  background: var(--color-primario-suave, #ccfbf1);
+  color: var(--color-primario);
+}
+
+.searchable-option .option-detalle {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  margin-top: 0.15rem;
+}
+
+.searchable-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}

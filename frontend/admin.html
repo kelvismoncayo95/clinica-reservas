@@ -417,9 +417,11 @@
 
         <div class="form-group">
           <label for="nc-paciente">1. Paciente</label>
-          <select id="nc-paciente" required>
-            <option value="">Cargando pacientes...</option>
-          </select>
+          <div class="searchable-select" id="nc-paciente-container">
+            <input type="text" id="nc-paciente" placeholder="Escribí el nombre o DNI..." autocomplete="off" required>
+            <input type="hidden" id="nc-paciente-id" value="">
+            <div class="searchable-dropdown" id="nc-paciente-dropdown" hidden></div>
+          </div>
           <p class="form-error" id="nc-paciente-error" hidden></p>
         </div>
 
