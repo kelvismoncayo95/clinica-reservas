@@ -269,23 +269,92 @@ async function loadMyAppointments() {
 
 function renderCita(cita) {
   const card = document.createElement("article");
-  card.className = `cita-card ${getStatusClass(cita.status)}`;
+  card.className = "lista-card";
   const isFuture = isFutureAppointment(cita);
   const canCancel = cita.status === "confirmed" && isFuture;
-  card.innerHTML = `
-    <div class="cita-info">
-      <p class="cita-fecha">${formatDate(cita.appointment_date)} a las ${formatTime(cita.start_time)}</p>
-      <p class="cita-estado">${getStatusLabel(cita.status)}</p>
-    </div>
-  `;
+
+  // 1. Avatar con iniciales del médico
+  const avatar = document.createElement("div");
+  avatar.className = "lista-avatar";
+  const iniciales = "C"; // paciente no ve el nombre del médico en el backend actual
+  avatar.textContent = iniciales;
+
+  // 2. Contenido
+  const contenido = document.createElement("div");
+  contenido.className = "lista-contenido";
+
+  const titulo = document.createElement("div");
+  titulo.className = "lista-titulo";
+  titulo.textContent = `${formatDate(cita.appointment_date)} · ${formatTime(cita.start_time)}`;
+
+  const detalle = document.createElement("div");
+  detalle.className = "lista-detalle";
+  detalle.textContent = cita.doctor_name || "Médico";
+
+  const secundario = document.createElement("div");
+  secundario.className = "lista-detalle-secundario";
+  secundario.textContent = cita.specialty_name || "Consulta médica";
+
+  contenido.appendChild(titulo);
+  contenido.appendChild(detalle);
+  contenido.appendChild(secundario);
+
+  // 3. Píldora de estado
+  const estado = document.createElement("span");
+  const statusClass = cita.status === "confirmed" ? "lista-estado-activo"
+    : cita.status === "attended" ? "lista-estado-activo"
+    : cita.status === "cancelled" ? "lista-estado-inactivo"
+    : "lista-estado-inactivo";
+  estado.className = `lista-estado ${statusClass}`;
+  estado.textContent = getStatusLabel(cita.status);
+
+  // 4. Menú de acciones (⋯) — solo si se puede cancelar
+  const acciones = document.createElement("div");
+  acciones.className = "lista-acciones";
+
   if (canCancel) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn btn-peligro btn-sm";
-    btn.textContent = "Cancelar";
-    btn.addEventListener("click", () => cancelarCita(cita.id));
-    card.appendChild(btn);
+    const btnMenu = document.createElement("button");
+    btnMenu.type = "button";
+    btnMenu.className = "lista-menu-btn";
+    btnMenu.setAttribute("aria-label", "Acciones");
+    btnMenu.textContent = "⋯";
+
+    const menu = document.createElement("div");
+    menu.className = "lista-menu";
+    menu.hidden = true;
+
+    const btnCancelar = document.createElement("button");
+    btnCancelar.type = "button";
+    btnCancelar.className = "peligro";
+    btnCancelar.textContent = "Cancelar cita";
+    btnCancelar.addEventListener("click", () => {
+      menu.hidden = true;
+      cancelarCita(cita.id);
+    });
+    menu.appendChild(btnCancelar);
+
+    acciones.appendChild(btnMenu);
+    acciones.appendChild(menu);
+
+    btnMenu.addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.querySelectorAll(".lista-menu").forEach((m) => {
+        if (m !== menu) m.hidden = true;
+      });
+      menu.hidden = !menu.hidden;
+    });
+
+    document.addEventListener("click", () => {
+      menu.hidden = true;
+    });
   }
+
+  // 5. Armar la tarjeta
+  card.appendChild(avatar);
+  card.appendChild(contenido);
+  card.appendChild(estado);
+  card.appendChild(acciones);
+
   return card;
 }
 
