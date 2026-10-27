@@ -41,9 +41,15 @@
 
     <!-- Filtros -->
     <div class="filtros-box">
-      <div class="form-group">
-        <label for="filtro-fecha">Fecha</label>
-        <input type="date" id="filtro-fecha">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filtro-fecha-desde">Desde</label>
+          <input type="date" id="filtro-fecha-desde">
+        </div>
+        <div class="form-group">
+          <label for="filtro-fecha-hasta">Hasta</label>
+          <input type="date" id="filtro-fecha-hasta">
+        </div>
       </div>
       <div class="form-group">
         <label for="filtro-estado">Estado</label>
@@ -55,9 +61,10 @@
         </select>
       </div>
       <div class="filtros-acciones">
-        <button type="button" class="btn btn-secondary btn-sm" id="filtros-limpiar">
-          Limpiar filtros
-        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="filtro-hoy">Hoy</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="filtro-semana">Esta semana</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="filtro-mes">Este mes</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="filtros-limpiar">Limpiar filtros</button>
       </div>
     </div>
 

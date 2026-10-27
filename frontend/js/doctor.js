@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Fecha de hoy por defecto
   const hoy = new Date().toISOString().split("T")[0];
-  document.getElementById("filtro-fecha").value = hoy;
+  document.getElementById("filtro-fecha-desde").value = hoy;
+  document.getElementById("filtro-fecha-hasta").value = hoy;
 
   // Resolver el doctor_id del usuario logueado
   await resolverDoctorId();
@@ -54,10 +55,43 @@ async function resolverDoctorId() {
 
 
 function setupFiltros() {
-  document.getElementById("filtro-fecha").addEventListener("change", cargarCitas);
+  document.getElementById("filtro-fecha-desde").addEventListener("change", cargarCitas);
+  document.getElementById("filtro-fecha-hasta").addEventListener("change", cargarCitas);
   document.getElementById("filtro-estado").addEventListener("change", cargarCitas);
+  
+  // Botones de acceso rápido
+  document.getElementById("filtro-hoy").addEventListener("click", () => {
+    const hoy = new Date().toISOString().split("T")[0];
+    document.getElementById("filtro-fecha-desde").value = hoy;
+    document.getElementById("filtro-fecha-hasta").value = hoy;
+    cargarCitas();
+  });
+  
+  document.getElementById("filtro-semana").addEventListener("click", () => {
+    const hoy = new Date();
+    const lunes = new Date(hoy);
+    const dia = hoy.getDay();
+    const diff = dia === 0 ? -6 : 1 - dia;
+    lunes.setDate(hoy.getDate() + diff);
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
+    document.getElementById("filtro-fecha-desde").value = lunes.toISOString().split("T")[0];
+    document.getElementById("filtro-fecha-hasta").value = domingo.toISOString().split("T")[0];
+    cargarCitas();
+  });
+  
+  document.getElementById("filtro-mes").addEventListener("click", () => {
+    const hoy = new Date();
+    const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+    document.getElementById("filtro-fecha-desde").value = primerDia.toISOString().split("T")[0];
+    document.getElementById("filtro-fecha-hasta").value = ultimoDia.toISOString().split("T")[0];
+    cargarCitas();
+  });
+  
   document.getElementById("filtros-limpiar").addEventListener("click", () => {
-    document.getElementById("filtro-fecha").value = "";
+    document.getElementById("filtro-fecha-desde").value = "";
+    document.getElementById("filtro-fecha-hasta").value = "";
     document.getElementById("filtro-estado").value = "";
     cargarCitas();
   });
@@ -79,9 +113,11 @@ async function cargarCitas() {
   }
 
   const params = new URLSearchParams();
-  const fecha = document.getElementById("filtro-fecha").value;
+  const fechaDesde = document.getElementById("filtro-fecha-desde").value;
+  const fechaHasta = document.getElementById("filtro-fecha-hasta").value;
   const estado = document.getElementById("filtro-estado").value;
-  if (fecha) params.append("date", fecha);
+  if (fechaDesde) params.append("date_from", fechaDesde);
+  if (fechaHasta) params.append("date_to", fechaHasta);
   if (estado) params.append("status", estado);
   const qs = params.toString();
 
