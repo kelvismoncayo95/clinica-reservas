@@ -86,7 +86,13 @@ function setupReservaForm() {
   document.getElementById("reservar-form").addEventListener("submit", onReservaSubmit);
 }
 
+function limpiarErrorReserva() {
+  const errorEl = document.getElementById("reserva-error");
+  if (errorEl) errorEl.hidden = true;
+}
+
 function onSpecialtyChange(e) {
+  limpiarErrorReserva();
   const specialtyId = e.target.value ? Number(e.target.value) : null;
   state.selectedSpecialtyId = specialtyId;
   state.selectedDoctorId = null;
@@ -124,6 +130,7 @@ function onSpecialtyChange(e) {
 }
 
 function onDoctorChange(e) {
+  limpiarErrorReserva();
   const doctorId = e.target.value ? Number(e.target.value) : null;
   state.selectedDoctorId = doctorId;
   state.selectedDate = null;
@@ -140,6 +147,7 @@ function onDoctorChange(e) {
 }
 
 async function onDateChange(e) {
+  limpiarErrorReserva();
   const dateStr = e.target.value;
   state.selectedDate = dateStr || null;
   state.selectedStartTime = null;
