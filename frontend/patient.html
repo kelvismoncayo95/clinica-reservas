@@ -125,6 +125,61 @@
   </main>
   </div>
 
+  <dialog id="modal-reprogramar" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-reprogramar-titulo">Reprogramar cita</h3>
+      <button type="button" class="modal-close" id="modal-reprogramar-cerrar" aria-label="Cerrar">×</button>
+    </header>
+    <div class="modal-body">
+      <p id="modal-reprogramar-info" style="margin-bottom: 1rem; color: var(--color-texto-suave);"></p>
+      
+      <div class="form-group">
+        <label for="repro-fecha">Nueva fecha</label>
+        <input type="date" id="repro-fecha" required>
+      </div>
+      
+      <div class="form-group" id="repro-horarios-group" hidden>
+        <label>Nuevos horarios disponibles</label>
+        <div id="repro-horarios-loading" class="loading-box">
+          <p>Buscando horarios...</p>
+        </div>
+        <div id="repro-horarios-empty" class="empty-box" hidden>
+          <p>No hay horarios disponibles para ese día.</p>
+        </div>
+        <div id="repro-horarios-grid" class="horarios-grid" hidden></div>
+      </div>
+      
+      <p class="form-error form-error-global" id="repro-error" hidden></p>
+      
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="repro-cancelar">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" id="repro-confirmar" disabled>
+          Confirmar reprogramación
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="modal-confirm" class="app-dialog">
+    <header class="modal-header">
+      <h3 id="modal-confirm-titulo">Confirmar</h3>
+      <button type="button" class="modal-close" id="modal-confirm-cerrar" aria-label="Cerrar">×</button>
+    </header>
+    <div class="modal-body">
+      <p id="modal-confirm-mensaje" style="margin-bottom: 1.5rem;"></p>
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secondary" id="modal-confirm-cancelar">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-peligro" id="modal-confirm-aceptar">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </dialog>
+
   <script src="js/config.js?v=4"></script>
   <script src="js/auth.js"></script>
   <script src="js/appointments.js"></script>

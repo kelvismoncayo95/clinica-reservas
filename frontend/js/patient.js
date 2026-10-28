@@ -331,6 +331,15 @@ function renderCita(cita) {
   menu.hidden = true;
 
   if (canCancel) {
+    const btnReprogramar = document.createElement("button");
+    btnReprogramar.type = "button";
+    btnReprogramar.textContent = "Reprogramar";
+    btnReprogramar.addEventListener("click", () => {
+      menu.hidden = true;
+      abrirModalReprogramar(cita);
+    });
+    menu.appendChild(btnReprogramar);
+
     const btnCancelar = document.createElement("button");
     btnCancelar.type = "button";
     btnCancelar.className = "peligro";
@@ -389,3 +398,142 @@ async function cancelarCita(id) {
     showToast(err.message, "error");
   }
 }
+
+
+// ============================================================
+// FASE 10: Reprogramar cita
+// ============================================================
+
+let citaAReprogramar = null;
+let horarioReproSeleccionado = null;
+
+function abrirModalReprogramar(cita) {
+  citaAReprogramar = cita;
+  horarioReproSeleccionado = null;
+  
+  const info = document.getElementById("modal-reprogramar-info");
+  info.textContent = `Cita actual: ${formatDate(cita.appointment_date)} a las ${formatTime(cita.start_time)}`;
+  
+  // Reset
+  document.getElementById("repro-fecha").value = "";
+  document.getElementById("repro-fecha").min = new Date().toISOString().split("T")[0];
+  document.getElementById("repro-horarios-group").hidden = true;
+  document.getElementById("repro-horarios-grid").hidden = true;
+  document.getElementById("repro-horarios-grid").innerHTML = "";
+  document.getElementById("repro-horarios-loading").hidden = true;
+  document.getElementById("repro-horarios-empty").hidden = true;
+  document.getElementById("repro-error").hidden = true;
+  document.getElementById("repro-confirmar").disabled = true;
+  
+  document.getElementById("modal-reprogramar").showModal();
+}
+
+async function cargarHorariosRepro(doctorId, fecha) {
+  const loading = document.getElementById("repro-horarios-loading");
+  const empty = document.getElementById("repro-horarios-empty");
+  const grid = document.getElementById("repro-horarios-grid");
+  
+  loading.hidden = false;
+  empty.hidden = true;
+  grid.hidden = true;
+  grid.innerHTML = "";
+  
+  try {
+    const data = await fetchAvailability(doctorId, fecha);
+    loading.hidden = true;
+    
+    if (!data.slots || data.slots.length === 0) {
+      empty.hidden = false;
+      return;
+    }
+    
+    // Filtrar slots ocupados por esta misma cita (para que se pueda elegir el mismo horario si está dentro de la misma fecha)
+    const slotsDisponibles = data.slots;
+    
+    grid.hidden = false;
+    slotsDisponibles.forEach((slot) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = slot.available ? "horario-btn" : "horario-btn horario-btn-ocupado";
+      btn.textContent = formatTime(slot.start_time);
+      btn.disabled = !slot.available;
+      if (slot.available) {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#repro-horarios-grid .horario-btn").forEach((b) => {
+            b.classList.remove("horario-btn-seleccionado");
+          });
+          btn.classList.add("horario-btn-seleccionado");
+          horarioReproSeleccionado = slot.start_time;
+          document.getElementById("repro-confirmar").disabled = false;
+        });
+      }
+      grid.appendChild(btn);
+    });
+  } catch (err) {
+    loading.hidden = true;
+    empty.hidden = false;
+    showToast("No pudimos cargar los horarios.", "error");
+  }
+}
+
+async function onReprogramarSubmit() {
+  if (!citaAReprogramar || !horarioReproSeleccionado) return;
+  
+  const fecha = document.getElementById("repro-fecha").value;
+  if (!fecha) {
+    showToast("Elegí una fecha.", "error");
+    return;
+  }
+  
+  const btn = document.getElementById("repro-confirmar");
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Reprogramando...";
+  
+  const errorEl = document.getElementById("repro-error");
+  errorEl.hidden = true;
+  
+  try {
+    await apiFetch(`/appointments/${citaAReprogramar.id}/reschedule`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        appointment_date: fecha,
+        start_time: horarioReproSeleccionado,
+      }),
+    });
+    showToast("Cita reprogramada.", "success");
+    document.getElementById("modal-reprogramar").close();
+    await loadMyAppointments();
+  } catch (err) {
+    errorEl.textContent = err.message;
+    errorEl.hidden = false;
+    setTimeout(() => {
+      errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+// Setup del modal
+document.addEventListener("DOMContentLoaded", () => {
+  const modalRepro = document.getElementById("modal-reprogramar");
+  if (!modalRepro) return;
+  
+  document.getElementById("modal-reprogramar-cerrar").addEventListener("click", () => modalRepro.close());
+  document.getElementById("repro-cancelar").addEventListener("click", () => modalRepro.close());
+  document.getElementById("repro-confirmar").addEventListener("click", onReprogramarSubmit);
+  
+  document.getElementById("repro-fecha").addEventListener("change", async (e) => {
+    const fecha = e.target.value;
+    if (!fecha || !citaAReprogramar) {
+      document.getElementById("repro-horarios-group").hidden = true;
+      return;
+    }
+    document.getElementById("repro-horarios-group").hidden = false;
+    horarioReproSeleccionado = null;
+    document.getElementById("repro-confirmar").disabled = true;
+    await cargarHorariosRepro(citaAReprogramar.doctor_id, fecha);
+  });
+});
