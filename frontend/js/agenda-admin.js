@@ -185,48 +185,85 @@ function dibujarGrilla(lunes, citas) {
 // Filtros de la agenda
 // ============================================================
 
+let agendaMedicosCache = [];
+let agendaEspecialidadesCache = [];
+
 async function inicializarFiltrosAgenda() {
-  // Cargar médicos
   try {
-    const medicos = await fetchDoctors();
-    const selectMed = document.getElementById("agenda-filtro-medico");
-    selectMed.innerHTML = '<option value="">Todos los médicos</option>';
-    medicos.forEach((m) => {
-      const opt = document.createElement("option");
-      opt.value = m.id;
-      opt.textContent = `${m.last_name}, ${m.first_name}`;
-      selectMed.appendChild(opt);
-    });
+    agendaMedicosCache = await fetchDoctors();
+    agendaEspecialidadesCache = await fetchSpecialties();
   } catch (err) {
-    console.error("Error al cargar médicos:", err);
+    console.error("Error al cargar filtros:", err);
+    return;
   }
   
-  // Cargar especialidades
-  try {
-    const especialidades = await fetchSpecialties();
-    const selectEsp = document.getElementById("agenda-filtro-especialidad");
-    selectEsp.innerHTML = '<option value="">Todas las especialidades</option>';
-    especialidades.forEach((e) => {
-      const opt = document.createElement("option");
-      opt.value = e.id;
-      opt.textContent = e.name;
-      selectEsp.appendChild(opt);
-    });
-  } catch (err) {
-    console.error("Error al cargar especialidades:", err);
-  }
+  llenarSelectMedicos(agendaMedicosCache);
+  llenarSelectEspecialidades(agendaEspecialidadesCache);
   
-  // Event listeners
-  document.getElementById("agenda-filtro-medico").addEventListener("change", () => {
-    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
-  });
+  // Al cambiar especialidad -> filtrar médicos
   document.getElementById("agenda-filtro-especialidad").addEventListener("change", () => {
+    const espId = document.getElementById("agenda-filtro-especialidad").value;
+    if (espId) {
+      const medicosFiltrados = agendaMedicosCache.filter((m) =>
+        (m.specialty_ids || []).includes(parseInt(espId))
+      );
+      llenarSelectMedicos(medicosFiltrados);
+    } else {
+      llenarSelectMedicos(agendaMedicosCache);
+    }
     if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
   });
+  
+  // Al cambiar médico -> filtrar especialidades
+  document.getElementById("agenda-filtro-medico").addEventListener("change", () => {
+    const medId = document.getElementById("agenda-filtro-medico").value;
+    if (medId) {
+      const medico = agendaMedicosCache.find((m) => m.id === parseInt(medId));
+      if (medico && medico.specialty_ids && medico.specialty_ids.length > 0) {
+        const especialidadesDelMedico = agendaEspecialidadesCache.filter((e) =>
+          medico.specialty_ids.includes(e.id)
+        );
+        llenarSelectEspecialidades(especialidadesDelMedico);
+      }
+    } else {
+      llenarSelectEspecialidades(agendaEspecialidadesCache);
+    }
+    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
+  });
+  
+  // Limpiar
   document.getElementById("agenda-filtros-limpiar").addEventListener("click", () => {
     document.getElementById("agenda-filtro-medico").value = "";
     document.getElementById("agenda-filtro-especialidad").value = "";
+    llenarSelectMedicos(agendaMedicosCache);
+    llenarSelectEspecialidades(agendaEspecialidadesCache);
     if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
+  });
+}
+
+function llenarSelectMedicos(medicos) {
+  const select = document.getElementById("agenda-filtro-medico");
+  const valorActual = select.value;
+  select.innerHTML = '<option value="">Todos los médicos</option>';
+  medicos.forEach((m) => {
+    const opt = document.createElement("option");
+    opt.value = m.id;
+    opt.textContent = `${m.last_name}, ${m.first_name}`;
+    if (String(m.id) === valorActual) opt.selected = true;
+    select.appendChild(opt);
+  });
+}
+
+function llenarSelectEspecialidades(especialidades) {
+  const select = document.getElementById("agenda-filtro-especialidad");
+  const valorActual = select.value;
+  select.innerHTML = '<option value="">Todas las especialidades</option>';
+  especialidades.forEach((e) => {
+    const opt = document.createElement("option");
+    opt.value = e.id;
+    opt.textContent = e.name;
+    if (String(e.id) === valorActual) opt.selected = true;
+    select.appendChild(opt);
   });
 }
 
