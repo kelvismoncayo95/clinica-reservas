@@ -319,3 +319,55 @@ function initSearchableSelect(inputId, items, onSelect) {
     }
   });
 }
+
+
+// ============================================================
+// Modal de confirmación reutilizable
+// ============================================================
+
+function confirmDialog(titulo, mensaje, textoAceptar = "Confirmar") {
+  return new Promise((resolve) => {
+    const dialog = document.getElementById("modal-confirm");
+    if (!dialog) {
+      // Si no existe, usar confirm() nativo como fallback
+      resolve(window.confirm(mensaje));
+      return;
+    }
+
+    document.getElementById("modal-confirm-titulo").textContent = titulo;
+    document.getElementById("modal-confirm-mensaje").textContent = mensaje;
+    document.getElementById("modal-confirm-aceptar").textContent = textoAceptar;
+
+    const cerrar = (resultado) => {
+      dialog.close();
+      resolve(resultado);
+    };
+
+    // Remover listeners viejos clonando los botones
+    const btnAceptar = document.getElementById("modal-confirm-aceptar");
+    const btnCancelar = document.getElementById("modal-confirm-cancelar");
+    const btnCerrar = document.getElementById("modal-confirm-cerrar");
+    const nuevoAceptar = btnAceptar.cloneNode(true);
+    const nuevoCancelar = btnCancelar.cloneNode(true);
+    const nuevoCerrar = btnCerrar.cloneNode(true);
+    btnAceptar.replaceWith(nuevoAceptar);
+    btnCancelar.replaceWith(nuevoCancelar);
+    btnCerrar.replaceWith(nuevoCerrar);
+
+    nuevoAceptar.addEventListener("click", () => cerrar(true));
+    nuevoCancelar.addEventListener("click", () => cerrar(false));
+    nuevoCerrar.addEventListener("click", () => cerrar(false));
+
+    dialog.showModal();
+  });
+}
+
+
+// ============================================================
+// FASE 10: Limpiar mensajes de error al cambiar opciones
+// ============================================================
+
+function limpiarErrorFormulario(errorId) {
+  const errorEl = document.getElementById(errorId);
+  if (errorEl) errorEl.hidden = true;
+}

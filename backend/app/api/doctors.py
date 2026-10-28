@@ -96,6 +96,13 @@ def doctor_appointments(
             detail="Medico no encontrado",
         )
 
+    # Validar que el rango de fechas sea coherente
+    if date_from and date_to and date_from > date_to:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La fecha 'desde' no puede ser posterior a 'hasta'",
+        )
+
     if current_user.role == "doctor":
         own_doctor = db.scalar(
             select(Doctor).where(Doctor.user_id == current_user.id)

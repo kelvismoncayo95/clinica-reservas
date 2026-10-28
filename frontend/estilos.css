@@ -1598,3 +1598,12 @@ textarea {
   color: var(--color-texto-suave);
   font-size: 0.85rem;
 }
+
+/* Fix: dropdown del buscador en filtros no se corta */
+.filtros-box {
+  overflow: visible !important;
+}
+
+.searchable-select {
+  overflow: visible;
+}
