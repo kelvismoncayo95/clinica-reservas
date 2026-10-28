@@ -144,6 +144,7 @@ async function loadDoctors() {
   try {
     state.doctors = await fetchDoctors();
     const select = document.getElementById("filtro-medico");
+    select.innerHTML = '<option value="">Todos los médicos</option>';
     state.doctors.forEach((d) => {
       const opt = document.createElement("option");
       opt.value = d.id;
@@ -160,6 +161,7 @@ async function loadPatients() {
   try {
     state.patients = await apiFetch("/patients");
     const select = document.getElementById("filtro-paciente");
+    select.innerHTML = '<option value="">Todos los pacientes</option>';
     state.patients.forEach((p) => {
       const opt = document.createElement("option");
       opt.value = p.id;
@@ -283,7 +285,7 @@ function renderCitaAdmin(cita) {
   menu.className = "lista-menu";
   menu.hidden = true;
 
-  // Solo mostramos acciones si la cita está confirmada
+  // Acciones según el estado
   if (cita.status === "confirmed") {
     const btnAtendida = document.createElement("button");
     btnAtendida.type = "button";
@@ -312,6 +314,16 @@ function renderCitaAdmin(cita) {
       cancelarCitaAdmin(cita.id);
     });
     menu.appendChild(btnCancelar);
+  } else if (cita.status === "attended" || cita.status === "no_show") {
+    const btnDeshacer = document.createElement("button");
+    btnDeshacer.type = "button";
+    btnDeshacer.textContent = "Deshacer cambio";
+    btnDeshacer.title = "Volver a estado confirmado (solo dentro de las 2 horas)";
+    btnDeshacer.addEventListener("click", () => {
+      menu.hidden = true;
+      deshacerEstadoAdmin(cita.id);
+    });
+    menu.appendChild(btnDeshacer);
   } else {
     const info = document.createElement("button");
     info.type = "button";
@@ -345,6 +357,16 @@ function renderCitaAdmin(cita) {
   return card;
 }
 
+
+async function deshacerEstadoAdmin(id) {
+  try {
+    await updateAppointmentStatus(id, "confirmed");
+    showToast("Cita vuelta a confirmada.", "success");
+    await loadCitas();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
 
 async function cambiarEstado(id, nuevoEstado) {
   try {
