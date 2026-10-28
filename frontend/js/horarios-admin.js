@@ -254,6 +254,7 @@ function cerrarModalHorario() {
 
 async function onHorarioSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("hor-error");
   document.querySelectorAll("#form-horario .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
@@ -329,6 +330,7 @@ function cerrarModalBloqueo() {
 
 async function onBloqueoSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("bloq-error");
   document.querySelectorAll("#form-bloqueo .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
