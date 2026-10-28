@@ -473,6 +473,7 @@ function onModalPatientChange(e) {
 
 
 function onModalSpecialtyChange(e) {
+  limpiarErrorFormulario("nc-error");
   const specialtyId = e.target.value ? Number(e.target.value) : null;
   state.selectedSpecialtyId = specialtyId;
   state.selectedDoctorId = null;
@@ -520,22 +521,12 @@ function onModalSpecialtyChange(e) {
     inputFecha.disabled = false;
     actualizarSubmitModal();
   });
-  const first = document.createElement("option");
-  first.value = "";
-  first.textContent = "Elegí un médico";
-  selMed.appendChild(first);
-  filtered.forEach((doc) => {
-    const opt = document.createElement("option");
-    opt.value = doc.id;
-    opt.textContent = `${doc.last_name}, ${doc.first_name}`;
-    selMed.appendChild(opt);
-  });
-  selMed.disabled = false;
   actualizarSubmitModal();
 }
 
 
 function onModalDoctorChange(e) {
+  limpiarErrorFormulario("nc-error");
   const doctorId = e.target.value ? Number(e.target.value) : null;
   state.selectedDoctorId = doctorId;
   state.selectedDate = null;
@@ -555,6 +546,7 @@ function onModalDoctorChange(e) {
 
 
 async function onModalDateChange(e) {
+  limpiarErrorFormulario("nc-error");
   const dateStr = e.target.value;
   state.selectedDate = dateStr || null;
   state.selectedStartTime = null;
