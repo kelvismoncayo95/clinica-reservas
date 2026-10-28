@@ -334,6 +334,7 @@ function cerrarModalAusencia() {
 
 async function onAusenciaSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("aus-error");
   document.querySelectorAll("#form-ausencia .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
