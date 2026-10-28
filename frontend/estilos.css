@@ -23,6 +23,28 @@
   --sombra-lg: 0 10px 30px rgba(16,33,31,.14);
 }
 
+/* ============================================================
+   MODO OSCURO (automático según el sistema)
+   ============================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primario: #2dd4bf;
+    --color-primario-hover: #5eead4;
+    --color-peligro: #f87171;
+    --color-exito: #4ade80;
+    --color-advertencia: #fbbf24;
+    --color-texto: #f1f5f9;
+    --color-texto-suave: #94a3b8;
+    --color-fondo: #0f172a;
+    --color-blanco: #1e293b;
+    --color-borde: #334155;
+    --color-borde-foco: #2dd4bf;
+    --sombra: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+    --sombra-lg: 0 10px 30px rgba(0,0,0,.4);
+  }
+}
+
 
 /* ----- Reset y base ----- */
 
