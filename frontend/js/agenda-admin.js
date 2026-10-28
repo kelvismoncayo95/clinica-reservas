@@ -76,7 +76,21 @@ async function cargarAgenda(lunes) {
   document.getElementById("agenda-grilla-container").hidden = true;
 
   try {
-    const citas = await apiFetch(`/appointments?date_from=${fechaInicio}&date_to=${fechaFin}`);
+    // Construir la URL con los filtros
+    const params = new URLSearchParams();
+    params.append("date_from", fechaInicio);
+    params.append("date_to", fechaFin);
+    
+    const filtroMedico = document.getElementById("agenda-filtro-medico").value;
+    const filtroEsp = document.getElementById("agenda-filtro-especialidad").value;
+    if (filtroMedico) params.append("doctor_id", filtroMedico);
+    
+    let citas = await apiFetch(`/appointments?${params.toString()}`);
+    
+    // Si hay filtro de especialidad, filtrar en el cliente
+    if (filtroEsp) {
+      citas = citas.filter((c) => c.specialty_id === parseInt(filtroEsp));
+    }
 
     if (citas.length === 0) {
       document.getElementById("agenda-loading").hidden = true;
@@ -165,3 +179,60 @@ function dibujarGrilla(lunes, citas) {
     }
   }
 }
+
+
+// ============================================================
+// Filtros de la agenda
+// ============================================================
+
+async function inicializarFiltrosAgenda() {
+  // Cargar médicos
+  try {
+    const medicos = await fetchDoctors();
+    const selectMed = document.getElementById("agenda-filtro-medico");
+    selectMed.innerHTML = '<option value="">Todos los médicos</option>';
+    medicos.forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.id;
+      opt.textContent = `${m.last_name}, ${m.first_name}`;
+      selectMed.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error al cargar médicos:", err);
+  }
+  
+  // Cargar especialidades
+  try {
+    const especialidades = await fetchSpecialties();
+    const selectEsp = document.getElementById("agenda-filtro-especialidad");
+    selectEsp.innerHTML = '<option value="">Todas las especialidades</option>';
+    especialidades.forEach((e) => {
+      const opt = document.createElement("option");
+      opt.value = e.id;
+      opt.textContent = e.name;
+      selectEsp.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error al cargar especialidades:", err);
+  }
+  
+  // Event listeners
+  document.getElementById("agenda-filtro-medico").addEventListener("change", () => {
+    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
+  });
+  document.getElementById("agenda-filtro-especialidad").addEventListener("change", () => {
+    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
+  });
+  document.getElementById("agenda-filtros-limpiar").addEventListener("click", () => {
+    document.getElementById("agenda-filtro-medico").value = "";
+    document.getElementById("agenda-filtro-especialidad").value = "";
+    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
+  });
+}
+
+// Llamar a inicializarFiltrosAgenda cuando se carga la agenda por primera vez
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("section-agenda")) {
+    inicializarFiltrosAgenda();
+  }
+});
