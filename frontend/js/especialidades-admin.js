@@ -211,6 +211,7 @@ function cerrarModalEspecialidad() {
 
 async function onEspecialidadSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("esp-error");
   document.querySelectorAll("#form-especialidad .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
