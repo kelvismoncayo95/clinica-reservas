@@ -236,6 +236,7 @@ function cerrarModalPaciente() {
 
 
 async function onPacienteSubmit(e) {
+  limpiarErrorFormulario("pac-error");
   // Validación nativa del navegador: si falla, mostrar el tooltip y salir.
   if (!e.target.checkValidity()) {
     e.target.reportValidity();
