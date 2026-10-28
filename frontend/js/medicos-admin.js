@@ -262,6 +262,7 @@ function renderEspecialidadesCheckboxes(selectedIds) {
 
 async function onMedicoSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("med-error");
   
   // Limpiar errores previos
   document.querySelectorAll("#form-medico .form-error").forEach((el) => {

@@ -229,6 +229,7 @@ function cerrarModalUsuario() {
 
 async function onUsuarioSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("usu-error");
   document.querySelectorAll("#form-usuario .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
