@@ -422,6 +422,7 @@ function cerrarModalCerrarHorario() {
 
 async function onCerrarHorarioSubmit(e) {
   e.preventDefault();
+  limpiarErrorFormulario("cerrar-error");
   document.querySelectorAll("#form-cerrar-horario .form-error").forEach((el) => {
     el.hidden = true;
     el.textContent = "";
