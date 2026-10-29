@@ -69,13 +69,13 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="reg-dni">DNI</label>
-            <input type="text" id="reg-dni" name="dni" required placeholder="30123456">
+            <label for="reg-dni">Cédula de identidad</label>
+            <input type="text" id="reg-dni" name="dni" required placeholder="1.234.567-8" inputmode="numeric">
             <p class="form-error" id="reg-dni-error" hidden></p>
           </div>
           <div class="form-group">
             <label for="reg-birth-date">Fecha de nacimiento</label>
-            <input type="date" id="reg-birth-date" name="birth_date" required>
+            <input type="date" id="reg-birth-date" name="birth_date" required max="2008-10-28" min="1906-10-28">
             <p class="form-error" id="reg-birth-date-error" hidden></p>
           </div>
         </div>
@@ -83,7 +83,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="reg-phone">Teléfono</label>
-            <input type="tel" id="reg-phone" name="phone" required placeholder="1145678901">
+            <input type="tel" id="reg-phone" name="phone" required placeholder="099 123 456" inputmode="tel" maxlength="15">
             <p class="form-error" id="reg-phone-error" hidden></p>
           </div>
           <div class="form-group">
@@ -101,9 +101,18 @@
 
         <div class="form-group">
           <label for="reg-password">Contraseña</label>
-          <input type="password" id="reg-password" name="password" autocomplete="new-password" required minlength="6">
-          <p class="form-help">Mínimo 6 caracteres.</p>
+          <div class="input-con-toggle">
+            <input type="password" id="reg-password" name="password" autocomplete="new-password" required minlength="8">
+            <button type="button" class="btn-toggle-password" id="reg-password-toggle" aria-label="Mostrar contraseña">👁</button>
+          </div>
+          <p class="form-help">Mínimo 8 caracteres.</p>
           <p class="form-error" id="reg-password-error" hidden></p>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password-confirm">Confirmar contraseña</label>
+          <input type="password" id="reg-password-confirm" name="password_confirm" autocomplete="new-password" required minlength="8">
+          <p class="form-error" id="reg-password-confirm-error" hidden></p>
         </div>
 
         <p class="form-error form-error-global" id="register-error" hidden></p>
@@ -116,8 +125,8 @@
   </main>
 
   <!-- Cargar los scripts al final para que el HTML esté listo -->
-  <script src="js/config.js?v=4"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/config.js?v=7"></script>
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/app.js?v=8"></script>
 </body>
 </html>

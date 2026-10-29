@@ -23,7 +23,7 @@ async function login(email, password) {
     if (response.status === 401) {
       throw new Error("El correo o la contraseña no son correctos. Revisalos e intentá de nuevo.");
     }
-    throw new Error(error.detail || "No pudimos iniciar sesión. Intentá de nuevo en unos segundos.");
+    throw new Error(mensajeDeError(error, response.status) || "No pudimos iniciar sesión. Intentá de nuevo en unos segundos.");
   }
 
   const data = await response.json();
@@ -42,7 +42,7 @@ async function register(data) {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || "No pudimos crear tu cuenta. Revisá los datos e intentá de nuevo.");
+    throw new Error(mensajeDeError(error, response.status) || "No pudimos crear tu cuenta. Revisá los datos e intentá de nuevo.");
   }
 
   return response.json();

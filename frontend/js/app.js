@@ -90,6 +90,47 @@ function setupLoginForm() {
   const form = document.getElementById("login-form");
   const submit = document.getElementById("login-submit");
 
+  // Filtrar la cédula: solo dígitos, máximo 8
+  const inputCedula = document.getElementById("reg-dni");
+  if (inputCedula) {
+    inputCedula.addEventListener("input", () => {
+      inputCedula.value = inputCedula.value.replace(/\D/g, "").slice(0, 8);
+    });
+  }
+
+  // Mostrar/ocultar contraseña
+  const togglePassword = document.getElementById("reg-password-toggle");
+  if (togglePassword) {
+    togglePassword.addEventListener("click", () => {
+      const input = document.getElementById("reg-password");
+      input.type = input.type === "password" ? "text" : "password";
+    });
+  }
+
+  // Filtrar el teléfono: solo dígitos, espacios, guiones y +, máximo 15
+  const inputPhone = document.getElementById("reg-phone");
+  if (inputPhone) {
+    inputPhone.addEventListener("input", () => {
+      inputPhone.value = inputPhone.value.replace(/[^0-9\s\-+]/g, "").slice(0, 15);
+    });
+  }
+
+  // Calcular max/min de fecha de nacimiento (18 a 120 años)
+  const inputFecha = document.getElementById("reg-birth-date");
+  if (inputFecha) {
+    const hoy = new Date();
+    const max = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate());
+    const min = new Date(hoy.getFullYear() - 120, hoy.getMonth(), hoy.getDate());
+    const formato = (d) => {
+      const anio = d.getFullYear();
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const dia = String(d.getDate()).padStart(2, "0");
+      return `${anio}-${mes}-${dia}`;
+    };
+    inputFecha.max = formato(max);
+    inputFecha.min = formato(min);
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     clearAllErrors();
@@ -176,8 +217,13 @@ function setupRegisterForm() {
       setFieldError("reg-email", "Ingresá tu correo electrónico.");
       hasError = true;
     }
-    if (!data.password || data.password.length < 6) {
-      setFieldError("reg-password", "La contraseña debe tener al menos 6 caracteres.");
+    if (!data.password || data.password.length < 8) {
+      setFieldError("reg-password", "La contraseña debe tener al menos 8 caracteres.");
+      hasError = true;
+    }
+    const passwordConfirm = document.getElementById("reg-password-confirm").value;
+    if (data.password !== passwordConfirm) {
+      setFieldError("reg-password-confirm", "Las contraseñas no coinciden.");
       hasError = true;
     }
     if (hasError) return;
@@ -193,7 +239,30 @@ function setupRegisterForm() {
         document.getElementById("tab-login").click();
       }, 800);
     } catch (err) {
-      setGlobalError("register-error", err.message);
+      // Parsear el error: si es un array de Pydantic, mostrar el primer mensaje
+      let mensaje = err.message;
+      if (typeof mensaje === "string" && mensaje.startsWith("[")) {
+        try {
+          const parsed = JSON.parse(mensaje);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const err0 = parsed[0];
+            const campo = err0.loc && err0.loc[err0.loc.length - 1];
+            const msgOriginal = err0.msg || "Error de validación";
+            if (msgOriginal.includes("email")) {
+              mensaje = "El correo electrónico no tiene un formato válido.";
+            } else if (msgOriginal.includes("DNI") || msgOriginal.includes("dni")) {
+              mensaje = "El DNI no tiene un formato válido (7 u 8 dígitos).";
+            } else if (msgOriginal.includes("birth_date") || msgOriginal.includes("fecha")) {
+              mensaje = "La fecha de nacimiento no es válida.";
+            } else {
+              mensaje = `Error en "${campo}": ${msgOriginal}`;
+            }
+          }
+        } catch (_) {
+          // Si no es JSON, dejar el mensaje como estaba
+        }
+      }
+      setGlobalError("register-error", mensaje);
     } finally {
       setButtonLoading(submit, false, "Crear mi cuenta");
     }
