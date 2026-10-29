@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function setupHorariosSection() {
-  document.getElementById("horarios-medico-select").addEventListener("change", onMedicoChange);
   document.getElementById("btn-nuevo-horario").addEventListener("click", () => abrirModalHorario());
   document.getElementById("btn-nuevo-bloqueo").addEventListener("click", () => abrirModalBloqueo());
   document.getElementById("modal-horario-cerrar").addEventListener("click", cerrarModalHorario);
@@ -48,12 +47,16 @@ async function cargarMedicosHorariosSiEsNecesario() {
   if (horariosMedicosCargados) return;
   try {
     horariosState.doctors = await fetchDoctors();
-    const select = document.getElementById("horarios-medico-select");
-    horariosState.doctors.forEach((d) => {
-      const opt = document.createElement("option");
-      opt.value = d.id;
-      opt.textContent = `${d.last_name}, ${d.first_name}`;
-      select.appendChild(opt);
+    const doctorItems = horariosState.doctors.map((d) => ({
+      value: d.id,
+      label: `${d.last_name}, ${d.first_name}`,
+      detalle: d.specialties?.length
+        ? d.specialties.map((e) => e.name).join(", ")
+        : "",
+    }));
+    initSearchableSelect("horarios-medico-select", doctorItems, (item) => {
+      horariosState.currentDoctorId = item.value;
+      onMedicoChange({ target: { value: item.value } });
     });
     horariosMedicosCargados = true;
   } catch (err) {

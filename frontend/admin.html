@@ -357,9 +357,11 @@
       <div class="filtros-box">
         <div class="form-group">
           <label for="horarios-medico-select">Médico</label>
-          <select id="horarios-medico-select">
-            <option value="">Elegí un médico</option>
-          </select>
+          <div class="searchable-select" id="horarios-medico-select-container">
+            <input type="text" id="horarios-medico-select" placeholder="Elegí un médico" autocomplete="off">
+            <input type="hidden" id="horarios-medico-select-id" value="">
+            <div class="searchable-dropdown" id="horarios-medico-select-dropdown" hidden></div>
+          </div>
         </div>
       </div>
 
@@ -909,7 +911,7 @@
   <script src="js/pacientes-admin.js?v=2"></script>
   <script src="js/medicos-admin.js?v=3"></script>
   <script src="js/especialidades-admin.js"></script>
-  <script src="js/horarios-admin.js"></script>
+  <script src="js/horarios-admin.js?v=1"></script>
   <script src="js/usuarios-admin.js"></script>
 </body>
 </html>
