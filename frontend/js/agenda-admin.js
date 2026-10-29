@@ -214,26 +214,12 @@ async function inicializarFiltrosAgenda() {
     if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
   });
   
-  // Al cambiar médico -> filtrar especialidades
-  document.getElementById("agenda-filtro-medico").addEventListener("change", () => {
-    const medId = document.getElementById("agenda-filtro-medico").value;
-    if (medId) {
-      const medico = agendaMedicosCache.find((m) => m.id === parseInt(medId));
-      if (medico && medico.specialty_ids && medico.specialty_ids.length > 0) {
-        const especialidadesDelMedico = agendaEspecialidadesCache.filter((e) =>
-          medico.specialty_ids.includes(e.id)
-        );
-        llenarSelectEspecialidades(especialidadesDelMedico);
-      }
-    } else {
-      llenarSelectEspecialidades(agendaEspecialidadesCache);
-    }
-    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
-  });
+
   
   // Limpiar
   document.getElementById("agenda-filtros-limpiar").addEventListener("click", () => {
     document.getElementById("agenda-filtro-medico").value = "";
+    document.getElementById("agenda-filtro-medico-id").value = "";
     document.getElementById("agenda-filtro-especialidad").value = "";
     llenarSelectMedicos(agendaMedicosCache);
     llenarSelectEspecialidades(agendaEspecialidadesCache);
@@ -242,15 +228,32 @@ async function inicializarFiltrosAgenda() {
 }
 
 function llenarSelectMedicos(medicos) {
-  const select = document.getElementById("agenda-filtro-medico");
-  const valorActual = select.value;
-  select.innerHTML = '<option value="">Todos los médicos</option>';
-  medicos.forEach((m) => {
-    const opt = document.createElement("option");
-    opt.value = m.id;
-    opt.textContent = `${m.last_name}, ${m.first_name}`;
-    if (String(m.id) === valorActual) opt.selected = true;
-    select.appendChild(opt);
+  const medicoItems = medicos.map((m) => ({
+    value: m.id,
+    label: `${m.last_name}, ${m.first_name}`,
+    detalle: m.specialty_ids?.length
+      ? m.specialty_ids.map((id) => {
+          const esp = agendaEspecialidadesCache.find((e) => e.id === id);
+          return esp ? esp.name : null;
+        }).filter(Boolean).join(", ")
+      : "",
+  }));
+  initSearchableSelect("agenda-filtro-medico", medicoItems, (item) => {
+    document.getElementById("agenda-filtro-medico-id").value = item ? item.value : "";
+    if (item && item.value) {
+      const medico = agendaMedicosCache.find((m) => m.id === item.value);
+      if (medico && medico.specialty_ids && medico.specialty_ids.length > 0) {
+        const especialidadesDelMedico = agendaEspecialidadesCache.filter((e) =>
+          medico.specialty_ids.includes(e.id)
+        );
+        llenarSelectEspecialidades(especialidadesDelMedico);
+      } else {
+        llenarSelectEspecialidades(agendaEspecialidadesCache);
+      }
+    } else {
+      llenarSelectEspecialidades(agendaEspecialidadesCache);
+    }
+    if (agendaSemanaActual) cargarAgenda(agendaSemanaActual);
   });
 }
 
