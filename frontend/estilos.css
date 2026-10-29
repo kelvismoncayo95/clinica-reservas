@@ -1778,3 +1778,53 @@ textarea {
   gap: 8px;
   margin-top: 4px;
 }
+
+/* ============================================================
+   FASE 10: Buscador con lupa
+   ============================================================ */
+
+.buscador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  background: var(--color-fondo);
+  height: 44px;
+  transition: all 0.2s ease;
+}
+
+.buscador:focus-within {
+  border-color: var(--color-primario);
+  background: var(--color-blanco);
+  box-shadow: 0 0 0 3px var(--color-primario-suave, #ccfbf1);
+}
+
+.buscador svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--color-texto-suave);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.buscador input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-texto);
+  padding: 0;
+  height: 100%;
+}
+
+.buscador input::placeholder {
+  color: var(--color-texto-suave);
+  opacity: 0.7;
+}
