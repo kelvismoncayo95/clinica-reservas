@@ -753,6 +753,7 @@ async function marcarAusenciaVista(id) {
     await apiFetch(`/absences/${id}/mark-seen`, { method: "PATCH" });
     showToast("Ausencia marcada como vista.", "success");
     await cargarAusenciasAdmin();
+    await actualizarBadgeAusencias();
   } catch (err) {
     showToast(err.message, "error");
   }
@@ -767,6 +768,7 @@ async function resolverAusencia(id) {
     });
     showToast("Ausencia marcada como resuelta.", "success");
     await cargarAusenciasAdmin();
+    await actualizarBadgeAusencias();
   } catch (err) {
     showToast(err.message, "error");
   }

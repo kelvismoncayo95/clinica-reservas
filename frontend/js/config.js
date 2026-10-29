@@ -466,3 +466,33 @@ function aplicarIconosMenu() {
 }
 
 document.addEventListener("DOMContentLoaded", aplicarIconosMenu);
+
+
+// ============================================================
+// FASE 10: Badge de ausencias pendientes en el menu
+// ============================================================
+
+async function actualizarBadgeAusencias() {
+  const badge = document.getElementById("nav-ausencias-badge");
+  if (!badge) return;
+
+  try {
+    const ausencias = await apiFetch("/absences?status_filter=pending");
+    const total = Array.isArray(ausencias) ? ausencias.length : 0;
+    if (total > 0) {
+      badge.textContent = total;
+      badge.hidden = false;
+    } else {
+      badge.hidden = true;
+    }
+  } catch (err) {
+    // Silencioso: si falla la consulta, no mostramos badge
+    badge.hidden = true;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("nav-ausencias")) {
+    actualizarBadgeAusencias();
+  }
+});

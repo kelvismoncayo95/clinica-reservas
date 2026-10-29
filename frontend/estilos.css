@@ -1717,3 +1717,27 @@ textarea {
   stroke-linejoin: round;
   flex: none;
 }
+
+/* ============================================================
+   FASE 10: Badge de ausencias pendientes
+   ============================================================ */
+
+.nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: auto;
+  border-radius: 10px;
+  background: #d97706;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.nav-badge[hidden] {
+  display: none !important;
+}
