@@ -81,7 +81,7 @@ async function cargarAgenda(lunes) {
     params.append("date_from", fechaInicio);
     params.append("date_to", fechaFin);
     
-    const filtroMedico = document.getElementById("agenda-filtro-medico").value;
+    const filtroMedico = document.getElementById("agenda-filtro-medico-id").value;
     const filtroEsp = document.getElementById("agenda-filtro-especialidad").value;
     if (filtroMedico) params.append("doctor_id", filtroMedico);
     
