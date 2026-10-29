@@ -371,3 +371,98 @@ function limpiarErrorFormulario(errorId) {
   const errorEl = document.getElementById(errorId);
   if (errorEl) errorEl.hidden = true;
 }
+
+
+// ============================================================
+// FASE 10: Mensajes de error legibles (Pydantic y genéricos)
+// ============================================================
+
+function mensajeDeError(data, status) {
+  const d = data && data.detail;
+  
+  // Caso 1: string directo
+  if (typeof d === "string") return d;
+  
+  // Caso 2: array de errores de Pydantic
+  if (Array.isArray(d)) {
+    const mensajes = d.map((e) => {
+      const campo = e.loc && e.loc[e.loc.length - 1];
+      const msg = e.msg || "Dato inválido";
+      
+      // Traducir mensajes comunes
+      if (msg.includes("Field required")) return `Falta completar: ${campo}`;
+      if (msg.includes("email")) return "El correo no tiene un formato válido";
+      if (msg.includes("String should have at most")) {
+        const max = msg.match(/\d+/)?.[0] || "?";
+        return `El campo ${campo} es demasiado largo (máximo ${max} caracteres)`;
+      }
+      if (msg.includes("String should have at least")) {
+        const min = msg.match(/\d+/)?.[0] || "?";
+        return `El campo ${campo} es demasiado corto (mínimo ${min} caracteres)`;
+      }
+      if (msg.includes("al menos 18 años")) {
+        return "Tenés que tener al menos 18 años para registrarte";
+      }
+      if (msg.includes("dominio del correo")) {
+        return "El correo no tiene un formato válido (ej: nombre@dominio.com)";
+      }
+      if (msg.includes("La cédula solo puede tener números")) {
+        return "La cédula solo puede tener números (7 u 8 dígitos)";
+      }
+      if (msg.includes("El nombre solo puede tener letras")) {
+        return "El nombre solo puede tener letras y espacios";
+      }
+      if (msg.includes("El teléfono solo puede tener")) {
+        return "El teléfono solo puede tener números, espacios, guiones o +";
+      }
+      if (msg.includes("value is not a valid email")) return "El correo no tiene un formato válido";
+      if (msg.includes("value is not a valid date")) return `La fecha de ${campo} no es válida`;
+      if (msg.includes("value is not a valid integer")) return `El campo ${campo} debe ser un número`;
+      
+      return msg;
+    });
+    return mensajes.join(". ");
+  }
+  
+  // Caso 3: objeto con mensaje
+  if (d && typeof d === "object" && d.msg) return d.msg;
+  
+  // Caso 4: fallback
+  return `Error ${status || ""}`.trim();
+}
+
+
+// ============================================================
+// FASE 10: Iconos del menu lateral (SVG inline)
+// ============================================================
+
+const ICONOS = {
+  inicio: '<path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-6h6v6"/>',
+  citas: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  agenda: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  ausencias: '<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>',
+  pacientes: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/>',
+  medicos: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+  especialidades: '<path d="M12 3 3 8l9 5 9-5z"/><path d="m3 13 9 5 9-5"/>',
+  horarios: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  usuarios: '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  "mis-citas": '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  "notificar-ausencia": '<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>',
+  reservar: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+};
+
+function aplicarIconosMenu() {
+  document.querySelectorAll(".nav-item").forEach((boton) => {
+    if (boton.querySelector(".icono")) return;  // ya tiene icono
+    const clave = boton.id.replace("nav-", "");
+    const trazo = ICONOS[clave];
+    if (trazo) {
+      boton.insertAdjacentHTML(
+        "afterbegin",
+        `<svg class="icono" viewBox="0 0 24 24" aria-hidden="true">${trazo}</svg>`
+      );
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", aplicarIconosMenu);

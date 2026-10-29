@@ -1629,3 +1629,91 @@ textarea {
 .searchable-select {
   overflow: visible;
 }
+
+/* ============================================================
+   FASE 10: Botón mostrar/ocultar contraseña
+   ============================================================ */
+
+.input-con-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-con-toggle input {
+  flex: 1;
+  padding-right: 2.5rem;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  color: var(--color-texto-suave);
+}
+
+.btn-toggle-password:hover {
+  color: var(--color-texto);
+}
+
+/* ============================================================
+   FASE 10: Mejorar el diseño del dropdown del buscador
+   ============================================================ */
+
+.searchable-dropdown {
+  border-radius: var(--radio);
+  border: 1px solid var(--color-borde);
+  box-shadow: var(--sombra-lg);
+  margin-top: 4px;
+}
+
+.searchable-option {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-borde);
+  transition: background 0.15s ease;
+}
+
+.searchable-option:last-child {
+  border-bottom: none;
+}
+
+.searchable-option:hover {
+  background: var(--color-fondo);
+}
+
+.searchable-option.selected {
+  background: var(--color-primario-suave, #ccfbf1);
+  color: var(--color-primario);
+}
+
+.searchable-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+   FASE 10: Iconos del menu lateral
+   ============================================================ */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-item .icono {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
