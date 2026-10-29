@@ -131,6 +131,7 @@ function setupFiltros() {
     document.getElementById("filtro-medico").value = "";
     document.getElementById("filtro-medico-id").value = "";
     document.getElementById("filtro-paciente").value = "";
+    document.getElementById("filtro-paciente-id").value = "";
     document.getElementById("filtro-estado").value = "";
     loadCitas();
   });
@@ -161,13 +162,14 @@ async function loadDoctors() {
 async function loadPatients() {
   try {
     state.patients = await apiFetch("/patients");
-    const select = document.getElementById("filtro-paciente");
-    select.innerHTML = '<option value="">Todos los pacientes</option>';
-    state.patients.forEach((p) => {
-      const opt = document.createElement("option");
-      opt.value = p.id;
-      opt.textContent = `${p.last_name}, ${p.first_name} (DNI ${p.dni})`;
-      select.appendChild(opt);
+    const patientItems = state.patients.map((p) => ({
+      value: p.id,
+      label: `${p.last_name}, ${p.first_name}`,
+      detalle: `DNI ${p.dni}`,
+    }));
+    initSearchableSelect("filtro-paciente", patientItems, (item) => {
+      document.getElementById("filtro-paciente-id").value = item ? item.value : "";
+      loadCitas();
     });
   } catch (err) {
     showToast("No pudimos cargar los pacientes.", "error");
@@ -198,7 +200,7 @@ async function loadCitas() {
   const params = {};
   const fecha = document.getElementById("filtro-fecha").value;
   const medico = document.getElementById("filtro-medico-id").value;
-  const paciente = document.getElementById("filtro-paciente").value;
+  const paciente = document.getElementById("filtro-paciente-id").value;
   const estado = document.getElementById("filtro-estado").value;
   if (fecha) params.date = fecha;
   if (medico) params.doctor_id = medico;
