@@ -1741,3 +1741,40 @@ textarea {
 .nav-badge[hidden] {
   display: none !important;
 }
+
+/* ============================================================
+   FASE 10: Filtros del panel médico (grid alineado)
+   ============================================================ */
+
+/* Solo aplica a los filtros que tienen .form-row + .form-group */
+.filtros-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+/* Los .form-row internos no deben romper el grid */
+.filtros-box .form-row {
+  display: contents;
+}
+
+/* Cada form-group ocupa una celda del grid */
+.filtros-box .form-group {
+  min-width: 0;
+}
+
+/* Los inputs y selects ocupan el 100% de su celda */
+.filtros-box .form-group input,
+.filtros-box .form-group select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Las acciones (botones) ocupan toda la fila debajo */
+.filtros-box .filtros-acciones {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
