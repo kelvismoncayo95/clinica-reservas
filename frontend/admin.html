@@ -171,9 +171,11 @@
         </div>
         <div class="form-group">
           <label for="filtro-medico">Médico</label>
-          <select id="filtro-medico">
-            <option value="">Todos los médicos</option>
-          </select>
+          <div class="searchable-select" id="filtro-medico-container">
+            <input type="text" id="filtro-medico" placeholder="Todos los médicos" autocomplete="off">
+            <input type="hidden" id="filtro-medico-id" value="">
+            <div class="searchable-dropdown" id="filtro-medico-dropdown" hidden></div>
+          </div>
         </div>
         <div class="form-group">
           <label for="filtro-paciente">Paciente</label>

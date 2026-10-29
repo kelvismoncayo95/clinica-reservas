@@ -124,12 +124,12 @@ function switchSection(which) {
 // ----- Filtros -----
 
 function setupFiltros() {
-  ["filtro-fecha", "filtro-medico", "filtro-paciente", "filtro-estado"].forEach((id) => {
-    document.getElementById(id).addEventListener("change", loadCitas);
-  });
+  document.getElementById("filtro-fecha").addEventListener("change", loadCitas);
+  document.getElementById("filtro-estado").addEventListener("change", loadCitas);
   document.getElementById("filtros-limpiar").addEventListener("click", () => {
     document.getElementById("filtro-fecha").value = "";
     document.getElementById("filtro-medico").value = "";
+    document.getElementById("filtro-medico-id").value = "";
     document.getElementById("filtro-paciente").value = "";
     document.getElementById("filtro-estado").value = "";
     loadCitas();
@@ -143,13 +143,14 @@ function setupFiltros() {
 async function loadDoctors() {
   try {
     state.doctors = await fetchDoctors();
-    const select = document.getElementById("filtro-medico");
-    select.innerHTML = '<option value="">Todos los médicos</option>';
-    state.doctors.forEach((d) => {
-      const opt = document.createElement("option");
-      opt.value = d.id;
-      opt.textContent = `${d.last_name}, ${d.first_name}`;
-      select.appendChild(opt);
+    const doctorItems = state.doctors.map((d) => ({
+      value: d.id,
+      label: `${d.last_name}, ${d.first_name}`,
+      detalle: `Matrícula ${d.license_number || ""}`,
+    }));
+    initSearchableSelect("filtro-medico", doctorItems, (item) => {
+      document.getElementById("filtro-medico-id").value = item ? item.value : "";
+      loadCitas();
     });
   } catch (err) {
     showToast("No pudimos cargar los médicos.", "error");
@@ -196,7 +197,7 @@ async function loadCitas() {
 
   const params = {};
   const fecha = document.getElementById("filtro-fecha").value;
-  const medico = document.getElementById("filtro-medico").value;
+  const medico = document.getElementById("filtro-medico-id").value;
   const paciente = document.getElementById("filtro-paciente").value;
   const estado = document.getElementById("filtro-estado").value;
   if (fecha) params.date = fecha;
