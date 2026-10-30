@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     EMAIL_FROM: str = ""
+    RESEND_API_KEY: str = ""
 
     # Reglas de negocio de citas
     APPOINTMENT_MIN_HOURS_NOTICE: int = 1

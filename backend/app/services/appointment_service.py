@@ -13,6 +13,8 @@ from app.models.specialty import Specialty
 from app.models.user import User
 from app.schemas.appointment import AppointmentCreate
 from app.core.config import get_settings
+from app.services.email_service import enviar_email
+from app.services.email_templates import get_email_reserva, get_email_cancelacion, get_email_reprogramacion
 from app.services.time_utils import (
     generate_slots,
     is_past_datetime,
@@ -247,6 +249,36 @@ def create_appointment(
 
     db.commit()
     db.refresh(appointment)
+
+    # ENVÍO DE EMAIL AL PACIENTE
+    try:
+        asunto, html = get_email_reserva(
+            patient_name=f"{patient.last_name}, {patient.first_name}",
+            doctor_name=f"{doctor.last_name}, {doctor.first_name}",
+            specialty=specialty.name,
+            date=data.appointment_date.strftime("%d/%m/%Y"),
+            time=data.start_time.strftime("%H:%M")
+        )
+        enviar_email(patient.email, asunto, html)
+    except Exception as e:
+        print(f"Error enviando email de reserva al paciente: {e}")
+
+    # ENVÍO DE EMAIL AL MÉDICO
+    try:
+        doctor_user = db.get(User, doctor.user_id)
+        if doctor_user and doctor_user.email:
+            asunto_med, html_med = get_email_reserva(
+                patient_name=f"{patient.last_name}, {patient.first_name}",
+                doctor_name=f"{doctor.last_name}, {doctor.first_name}",
+                specialty=specialty.name,
+                date=data.appointment_date.strftime("%d/%m/%Y"),
+                time=data.start_time.strftime("%H:%M")
+            )
+            html_med = html_med.replace("Hola", "Dr/a.")
+            enviar_email(doctor_user.email, asunto_med, html_med)
+    except Exception as e:
+        print(f"Error enviando email al médico: {e}")
+
     return appointment
 
 
@@ -290,6 +322,20 @@ def cancel_appointment(
 
     db.commit()
     db.refresh(appointment)
+
+    # ENVÍO DE EMAIL AL PACIENTE
+    try:
+        patient = db.get(Patient, appointment.patient_id)
+        if patient and patient.email:
+            asunto, html = get_email_cancelacion(
+                patient_name=f"{patient.last_name}, {patient.first_name}",
+                date=appointment.appointment_date.strftime("%d/%m/%Y"),
+                time=appointment.start_time.strftime("%H:%M")
+            )
+            enviar_email(patient.email, asunto, html)
+    except Exception as e:
+        print(f"Error enviando email de cancelación: {e}")
+
     return appointment
 
 
@@ -344,6 +390,22 @@ def reschedule_appointment(
 
     db.commit()
     db.refresh(appointment)
+
+    # ENVÍO DE EMAIL AL PACIENTE
+    try:
+        patient = db.get(Patient, appointment.patient_id)
+        if patient and patient.email:
+            asunto, html = get_email_reprogramacion(
+                patient_name=f"{patient.last_name}, {patient.first_name}",
+                old_date=old_date.strftime("%d/%m/%Y"),
+                old_time=old_start.strftime("%H:%M"),
+                new_date=new_date.strftime("%d/%m/%Y"),
+                new_time=new_start_time.strftime("%H:%M")
+            )
+            enviar_email(patient.email, asunto, html)
+    except Exception as e:
+        print(f"Error enviando email de reprogramación: {e}")
+
     return appointment
 
 
