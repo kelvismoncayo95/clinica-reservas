@@ -702,28 +702,54 @@ async function cargarAusenciasAdmin() {
 
 function renderAusenciaAdmin(a) {
   const card = document.createElement("article");
-  let claseEstado = "cita-no-show";
-  if (a.resolved_at) {
-    claseEstado = "cita-atendida";
-  } else if (a.seen_at) {
-    claseEstado = "cita-confirmada";
-  }
-  card.className = `cita-card ${claseEstado}`;
+  card.className = "lista-card";
 
+  // 1. Avatar con inicial del médico
+  const avatar = document.createElement("div");
+  avatar.className = "lista-avatar";
   const doctorName = a.doctor_name || `Médico #${a.doctor_id}`;
-  const motivo = a.reason ? a.reason : "Sin motivo especificado";
-  let estadoTexto = "Pendiente de gestión";
-  if (a.resolved_at) estadoTexto = "Resuelta";
-  else if (a.seen_at) estadoTexto = "Vista, sin resolver";
+  avatar.textContent = doctorName.charAt(0).toUpperCase();
 
-  card.innerHTML = `
-    <div class="cita-info">
-      <p class="cita-fecha">${formatDate(a.absence_date)} — ${doctorName}</p>
-      <p class="cita-detalle">${motivo}</p>
-      <p class="cita-estado">${estadoTexto}</p>
-    </div>
-  `;
+  // 2. Contenido
+  const contenido = document.createElement("div");
+  contenido.className = "lista-contenido";
 
+  const titulo = document.createElement("div");
+  titulo.className = "lista-titulo";
+  titulo.textContent = doctorName;
+
+  const detalle = document.createElement("div");
+  detalle.className = "lista-detalle";
+  detalle.textContent = a.reason || "Sin motivo especificado";
+
+  const secundario = document.createElement("div");
+  secundario.className = "lista-detalle-secundario";
+  secundario.textContent = `Fecha: ${formatDate(a.absence_date)}`;
+
+  contenido.appendChild(titulo);
+  contenido.appendChild(detalle);
+  contenido.appendChild(secundario);
+
+  // 3. Píldora de estado
+  const estado = document.createElement("span");
+  let textoEstado = "Pendiente";
+  let statusClass = "lista-estado-pendiente";
+  if (a.resolved_at) {
+    textoEstado = "Resuelta";
+    statusClass = "lista-estado-activo";
+  } else if (a.seen_at) {
+    textoEstado = "Vista";
+    statusClass = "lista-estado-activo";
+  }
+  estado.className = `lista-estado ${statusClass}`;
+  estado.textContent = textoEstado;
+
+  // 4. Armar la tarjeta
+  card.appendChild(avatar);
+  card.appendChild(contenido);
+  card.appendChild(estado);
+
+  // 5. Botones originales (sin menú "...")
   const acciones = document.createElement("div");
   acciones.className = "cita-acciones";
 
@@ -748,6 +774,7 @@ function renderAusenciaAdmin(a) {
   if (acciones.children.length > 0) {
     card.appendChild(acciones);
   }
+
   return card;
 }
 
