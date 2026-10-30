@@ -1865,3 +1865,20 @@ textarea {
   color: var(--color-texto-suave);
   opacity: 0.7;
 }
+
+/* ============================================================
+   Ajuste visual para los botones en las tarjetas del médico
+   ============================================================ */
+.lista-card {
+  flex-wrap: wrap;
+}
+
+.lista-card .cita-acciones {
+  width: 100%;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-borde, #e5e7eb);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

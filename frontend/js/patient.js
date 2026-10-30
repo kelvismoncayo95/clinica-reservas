@@ -284,7 +284,13 @@ function renderCita(cita) {
   // 1. Avatar con iniciales del médico
   const avatar = document.createElement("div");
   avatar.className = "lista-avatar";
-  const iniciales = "C"; // paciente no ve el nombre del médico en el backend actual
+  let iniciales = "?";
+  if (cita.doctor_name) {
+    const partes = cita.doctor_name.split(",");
+    if (partes.length === 2) {
+      iniciales = (partes[0].trim().charAt(0) + partes[1].trim().charAt(0)).toUpperCase();
+    }
+  }
   avatar.textContent = iniciales;
 
   // 2. Contenido

@@ -223,19 +223,44 @@ function formatearTituloDia(fechaStr) {
 
 function renderCita(c) {
   const card = document.createElement("article");
-  card.className = `cita-card ${getStatusClass(c.status)}`;
+  card.className = "lista-card";
 
-  const patientName = c.patient_name || `Paciente #${c.patient_id}`;
-  const specialtyName = c.specialty_name || "";
+  const avatar = document.createElement("div");
+  avatar.className = "lista-avatar";
+  let iniciales = "?";
+  if (c.patient_name) {
+    const partes = c.patient_name.split(",");
+    if (partes.length === 2) {
+      iniciales = (partes[0].trim().charAt(0) + partes[1].trim().charAt(0)).toUpperCase();
+    }
+  }
+  avatar.textContent = iniciales;
 
-  card.innerHTML = `
-    <div class="cita-info">
-      <p class="cita-fecha">${formatTime(c.start_time)} — ${formatTime(c.end_time)}</p>
-      <p class="cita-detalle">${patientName}</p>
-      ${specialtyName ? `<p class="cita-detalle">${specialtyName}</p>` : ""}
-      <p class="cita-estado">${getStatusLabel(c.status)}</p>
-    </div>
-  `;
+  const contenido = document.createElement("div");
+  contenido.className = "lista-contenido";
+
+  const titulo = document.createElement("div");
+  titulo.className = "lista-titulo";
+  titulo.textContent = `${formatTime(c.start_time)} — ${formatTime(c.end_time)}`;
+
+  const detalle = document.createElement("div");
+  detalle.className = "lista-detalle";
+  detalle.textContent = c.patient_name || `Paciente #${c.patient_id}`;
+
+  const secundario = document.createElement("div");
+  secundario.className = "lista-detalle-secundario";
+  secundario.textContent = c.specialty_name || "Consulta médica";
+
+  contenido.appendChild(titulo);
+  contenido.appendChild(detalle);
+  contenido.appendChild(secundario);
+
+  const estado = document.createElement("span");
+  const statusClass = c.status === "confirmed" ? "lista-estado-activo"
+    : c.status === "attended" ? "lista-estado-activo"
+    : "lista-estado-inactivo";
+  estado.className = `lista-estado ${statusClass}`;
+  estado.textContent = getStatusLabel(c.status);
 
   const acciones = document.createElement("div");
   acciones.className = "cita-acciones";
@@ -265,9 +290,14 @@ function renderCita(c) {
     acciones.appendChild(btnDeshacer);
   }
 
+  card.appendChild(avatar);
+  card.appendChild(contenido);
+  card.appendChild(estado);
+  
   if (acciones.children.length > 0) {
     card.appendChild(acciones);
   }
+
   return card;
 }
 
