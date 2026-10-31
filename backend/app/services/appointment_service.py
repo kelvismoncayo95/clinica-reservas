@@ -1,4 +1,5 @@
 from datetime import date, datetime, time, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -159,11 +160,12 @@ def create_appointment(
 
     # 1b. Reglas de negocio de reserva
     settings = get_settings()
-    now = datetime.now(timezone.utc)
+    tz = ZoneInfo(get_settings().CLINIC_TIMEZONE)
+    now = datetime.now(tz)
 
     # Anticipacion minima
     appointment_dt = datetime.combine(
-        data.appointment_date, data.start_time, tzinfo=timezone.utc
+        data.appointment_date, data.start_time, tzinfo=tz
     )
     hours_until = (appointment_dt - now).total_seconds() / 3600
     if hours_until < settings.APPOINTMENT_MIN_HOURS_NOTICE:
@@ -294,11 +296,12 @@ def cancel_appointment(
     # Regla de anticipacion minima solo para pacientes
     if current_user.role == "patient":
         settings = get_settings()
-        now = datetime.now(timezone.utc)
+        tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now = datetime.now(tz)
         appointment_dt = datetime.combine(
             appointment.appointment_date,
             appointment.start_time,
-            tzinfo=timezone.utc,
+            tzinfo=tz,
         )
         hours_until = (appointment_dt - now).total_seconds() / 3600
         if hours_until < settings.APPOINTMENT_MIN_HOURS_CANCEL_PATIENT:

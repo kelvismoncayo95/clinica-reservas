@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     EMAIL_FROM: str = ""
+    CLINIC_TIMEZONE: str = "America/Montevideo"
     RESEND_API_KEY: str = ""
 
     # Reglas de negocio de citas
