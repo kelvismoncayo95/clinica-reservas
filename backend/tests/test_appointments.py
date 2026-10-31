@@ -133,3 +133,128 @@ def test_rechazar_cancelacion_sin_anticipacion():
 
     r_cancel = client.patch(f"/api/v1/appointments/{cita_id}/cancel", headers=headers)
     assert r_cancel.status_code == 400, f"Esperaba 400, recibí {r_cancel.status_code}: {r_cancel.text}"
+
+
+def test_no_permite_reservar_despues_de_horario_cerrado():
+    """Test: no se puede reservar en un horario que ya fue cerrado (valid_until)."""
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+    from app.core.config import get_settings
+    from app.database import SessionLocal
+    from app.models.schedule import Schedule
+
+    crear_paciente("paciente5@test.com", "prueba123", "55555555")
+    headers = get_auth_headers("paciente5@test.com", "prueba123")
+
+    esp = crear_especialidad("Oftalmología")
+    crear_medico("medico5@test.com", "prueba123", "MP-005", esp.id)
+
+    # Buscar el próximo lunes (día 0 de la semana)
+    tz = ZoneInfo(get_settings().CLINIC_TIMEZONE)
+    ahora = datetime.now(tz)
+    # Próximo lunes a partir de hoy
+    dias_hasta_lunes = (0 - ahora.weekday()) % 7
+    if dias_hasta_lunes == 0:
+        dias_hasta_lunes = 7
+    proximo_lunes = (ahora + timedelta(days=dias_hasta_lunes)).date()
+    # El lunes de la semana siguiente
+    lunes_siguiente = proximo_lunes + timedelta(days=7)
+
+    # Cerrar el horario a partir del próximo lunes (valid_until = próximo lunes - 1 día)
+    valid_until = proximo_lunes - timedelta(days=1)
+    db = SessionLocal()
+    schedules = db.query(Schedule).filter(Schedule.doctor_id == 1).all()
+    for s in schedules:
+        s.valid_until = valid_until
+    db.commit()
+    db.close()
+
+    # Intentar reservar para el lunes siguiente (después de la fecha de corte)
+    payload = {
+        "doctor_id": 1,
+        "specialty_id": esp.id,
+        "appointment_date": lunes_siguiente.isoformat(),
+        "start_time": "10:00:00"
+    }
+    response = client.post("/api/v1/appointments", json=payload, headers=headers)
+    assert response.status_code == 409, (
+        f"BUG DETECTADO: se permitió reservar después de valid_until. "
+        f"Recibí {response.status_code}: {response.text}"
+    )
+
+
+def test_no_permite_reservar_con_medico_sin_especialidad():
+    """Test: no se puede reservar con un médico que no tiene especialidades (regla de María)."""
+    from datetime import date, timedelta
+    from tests.helpers import crear_medico_sin_especialidad
+
+    crear_paciente("paciente6@test.com", "prueba123", "66666666")
+    headers = get_auth_headers("paciente6@test.com", "prueba123")
+
+    # Creamos una especialidad para que el payload sea válido
+    esp = crear_especialidad("Neurología")
+    # Creamos un médico SIN especialidad
+    crear_medico_sin_especialidad("medico6@test.com", "prueba123", "MP-006")
+
+    fecha_futura = (date.today() + timedelta(days=7)).isoformat()
+    payload = {
+        "doctor_id": 1,
+        "specialty_id": esp.id,
+        "appointment_date": fecha_futura,
+        "start_time": "10:00:00"
+    }
+    response = client.post("/api/v1/appointments", json=payload, headers=headers)
+    assert response.status_code == 409, (
+        f"BUG DETECTADO: se permitió reservar con un médico sin especialidad. "
+        f"Recibí {response.status_code}: {response.text}"
+    )
+
+
+def test_manejo_integrity_error_en_choque_de_reservas():
+    """Test: si la base rechaza una cita por solapamiento (race condition),
+    el sistema debe devolver 409, no 500."""
+    from datetime import date, timedelta, time
+    from app.database import SessionLocal
+    from app.models.appointment import Appointment
+    from tests.helpers import crear_paciente, crear_especialidad, crear_medico
+
+    crear_paciente("paciente7@test.com", "prueba123", "77777777")
+    headers = get_auth_headers("paciente7@test.com", "prueba123")
+
+    esp = crear_especialidad("Traumatología")
+    crear_medico("medico7@test.com", "prueba123", "MP-007", esp.id)
+
+    fecha_futura = (date.today() + timedelta(days=10)).isoformat()
+
+    # Insertamos una cita directamente en la base (simulando otra persona que reservó al mismo tiempo)
+    db = SessionLocal()
+    # Necesitamos el patient_id y el created_by reales
+    from app.models.patient import Patient
+    from app.models.user import User
+    patient = db.query(Patient).join(User, Patient.user_id == User.id).filter(User.email == "paciente7@test.com").first()
+    cita_manual = Appointment(
+        patient_id=patient.id,
+        doctor_id=1,
+        specialty_id=esp.id,
+        appointment_date=date.fromisoformat(fecha_futura),
+        start_time=time(10, 0),
+        end_time=time(10, 30),
+        status="confirmed",
+        created_by=patient.user_id,
+    )
+    db.add(cita_manual)
+    db.commit()
+    db.close()
+
+    # Ahora intentamos crear otra cita en el mismo horario vía API
+    payload = {
+        "doctor_id": 1,
+        "specialty_id": esp.id,
+        "appointment_date": fecha_futura,
+        "start_time": "10:00:00"
+    }
+    response = client.post("/api/v1/appointments", json=payload, headers=headers)
+    assert response.status_code == 409, (
+        f"BUG DETECTADO: el choque de reservas devolvió {response.status_code} "
+        f"en lugar de 409. Respuesta: {response.text}"
+    )

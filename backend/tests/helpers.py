@@ -155,3 +155,43 @@ def crear_medico_full(
     db.refresh(user)
     db.close()
     return user
+
+
+def crear_medico_sin_especialidad(
+    email: str,
+    password: str = "prueba123",
+    license_number: str = "MP-NO-ESP",
+) -> User:
+    db = _get_db()
+    user = User(
+        email=email,
+        password_hash=hash_password(password),
+        role="doctor",
+    )
+    db.add(user)
+    db.flush()
+
+    doctor = Doctor(
+        user_id=user.id,
+        first_name="Test",
+        last_name="SinEspecialidad",
+        license_number=license_number,
+        email=email,
+    )
+    db.add(doctor)
+    db.flush()
+
+    # Horario de lunes a viernes
+    for dia in range(5):
+        db.add(Schedule(
+            doctor_id=doctor.id,
+            day_of_week=dia,
+            start_time=time(9, 0),
+            end_time=time(17, 0),
+            slot_duration_minutes=30,
+        ))
+
+    db.commit()
+    db.refresh(user)
+    db.close()
+    return user
