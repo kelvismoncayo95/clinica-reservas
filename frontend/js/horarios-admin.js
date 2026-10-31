@@ -140,11 +140,11 @@ function renderTablaSchedules(schedules) {
       }
     }
     tr.innerHTML = `
-      <td>${DIAS_SEMANA[s.day_of_week]}</td>
-      <td>${formatTime(s.start_time)}</td>
-      <td>${formatTime(s.end_time)}</td>
-      <td>${s.slot_duration_minutes} min</td>
-      <td>${vigencia}</td>
+      <td>${escapeHTML(DIAS_SEMANA[s.day_of_week])}</td>
+      <td>${escapeHTML(formatTime(s.start_time))}</td>
+      <td>${escapeHTML(formatTime(s.end_time))}</td>
+      <td>${escapeHTML(s.slot_duration_minutes)} min</td>
+      <td>${escapeHTML(vigencia)}</td>
     `;
     const tdAcc = document.createElement("td");
     tdAcc.className = "acciones-horario";
@@ -220,8 +220,8 @@ function renderBlock(b) {
   const motivo = b.reason ? b.reason : "Sin motivo especificado";
   card.innerHTML = `
     <div class="cita-info">
-      <p class="cita-fecha">Del ${formatDate(b.start_date)} al ${formatDate(b.end_date)}</p>
-      <p class="cita-estado">${motivo}</p>
+      <p class="cita-fecha">Del ${escapeHTML(formatDate(b.start_date))} al ${escapeHTML(formatDate(b.end_date))}</p>
+      <p class="cita-estado">${escapeHTML(motivo)}</p>
     </div>
   `;
   const acciones = document.createElement("div");

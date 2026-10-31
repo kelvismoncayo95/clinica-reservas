@@ -161,11 +161,11 @@ function dibujarGrilla(lunes, citas) {
       citasDelBloque.forEach((cita) => {
         const bloque = document.createElement("div");
         bloque.className = `agenda-bloque agenda-bloque-${cita.status}`;
-        bloque.title = `${cita.patient_name} - ${cita.doctor_name}`;
+        bloque.title = `${escapeHTML(cita.patient_name)} - ${escapeHTML(cita.doctor_name)}`;
         bloque.innerHTML = `
-          <div class="agenda-bloque-hora">${cita.start_time.substring(0, 5)}</div>
-          <div class="agenda-bloque-paciente">${cita.patient_name || "Paciente"}</div>
-          <div class="agenda-bloque-medico">${cita.doctor_name || ""}</div>
+          <div class="agenda-bloque-hora">${escapeHTML(cita.start_time.substring(0, 5))}</div>
+          <div class="agenda-bloque-paciente">${escapeHTML(cita.patient_name || "Paciente")}</div>
+          <div class="agenda-bloque-medico">${escapeHTML(cita.doctor_name || "")}</div>
         `;
         bloque.addEventListener("click", () => {
           if (typeof abrirModalDetalleCita === "function") {

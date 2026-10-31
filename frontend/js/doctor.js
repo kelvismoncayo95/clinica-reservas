@@ -445,9 +445,9 @@ function renderAusencia(a) {
   const motivo = a.reason ? a.reason : "Sin motivo especificado";
   card.innerHTML = `
     <div class="cita-info">
-      <p class="cita-fecha">${formatDate(a.absence_date)}</p>
-      <p class="cita-detalle">${motivo}</p>
-      <p class="cita-estado">${estado}</p>
+      <p class="cita-fecha">${escapeHTML(formatDate(a.absence_date))}</p>
+      <p class="cita-detalle">${escapeHTML(motivo)}</p>
+      <p class="cita-estado">${escapeHTML(estado)}</p>
     </div>
   `;
   return card;
