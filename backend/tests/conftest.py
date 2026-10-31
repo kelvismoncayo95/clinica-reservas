@@ -20,6 +20,9 @@ url_test = url_real.rsplit("/", 1)[0] + "/clinica_test"
 assert url_test.endswith("clinica_test"), "La URL de test debe terminar en clinica_test"
 os.environ["DATABASE_URL"] = url_test  # ANTES de importar app
 
+import os
+os.environ["TESTING"] = "true"
+
 import pytest
 from alembic import command
 from alembic.config import Config
@@ -27,6 +30,9 @@ from sqlalchemy import text
 
 import app.models  # noqa: F401  (registra todas las tablas)
 from app.database import Base, engine
+from app.main import app
+from app.core.limiter import limiter
+app.state.limiter = limiter
 
 
 @pytest.fixture(scope="session", autouse=True)
