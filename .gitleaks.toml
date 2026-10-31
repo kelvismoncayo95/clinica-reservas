@@ -1,0 +1,19 @@
+# Configuracion de gitleaks para el proyecto clinica-reservas
+title = "Gitleaks config"
+
+[allowlist]
+description = "Archivos y patrones permitidos"
+paths = [
+    '''backend/tests/.*''',
+    '''backend/\.env\.example''',
+    '''backend/\.env\.test''',
+    '''backend/venv/.*''',
+    '''frontend/.*\.js''',
+]
+regexes = [
+    '''prueba123''',
+    '''admin123''',
+    '''maria123''',
+    '''carlos123''',
+    '''clinicadelsur2026''',
+]
