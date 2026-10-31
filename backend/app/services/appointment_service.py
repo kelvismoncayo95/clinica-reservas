@@ -1,7 +1,7 @@
 from datetime import date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_
 from sqlalchemy.orm import Session
 
 from app.models.appointment import Appointment
@@ -89,12 +89,17 @@ def _check_date_not_blocked(
 def _get_schedules_for_date(
     db: Session, doctor_id: int, appointment_date: date
 ) -> list[Schedule]:
-    """Devuelve TODOS los horarios activos del medico para ese dia."""
+    """Devuelve los horarios activos del medico para ese dia,
+    excluyendo los que ya fueron cerrados (valid_until)."""
     day_of_week = appointment_date.weekday()
     stmt = select(Schedule).where(
         Schedule.doctor_id == doctor_id,
         Schedule.day_of_week == day_of_week,
         Schedule.activo.is_(True),
+        or_(
+            Schedule.valid_until.is_(None),
+            Schedule.valid_until >= appointment_date,
+        ),
     )
     schedules = list(db.scalars(stmt).all())
     if not schedules:
