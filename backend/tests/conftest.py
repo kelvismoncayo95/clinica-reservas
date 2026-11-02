@@ -8,14 +8,16 @@ if str(BACKEND_DIR) not in sys.path:
 
 from dotenv import dotenv_values
 
-# Lee la URL original del .env y la cambia por la base de pruebas
-env_actual = dotenv_values(BACKEND_DIR / ".env")
-url_real = env_actual.get("DATABASE_URL", "")
-if not url_real:
-    raise RuntimeError("No se encontró DATABASE_URL en el .env")
+# Si DATABASE_URL ya está en el entorno (ej. GitHub Actions), la usamos directo
+url_test = os.environ.get("DATABASE_URL")
 
-# Reemplaza el nombre de la base por clinica_test
-url_test = url_real.rsplit("/", 1)[0] + "/clinica_test"
+# Si no, la leemos del .env local y le cambiamos el nombre a clinica_test
+if not url_test:
+    env_actual = dotenv_values(BACKEND_DIR / ".env")
+    url_real = env_actual.get("DATABASE_URL", "")
+    if not url_real:
+        raise RuntimeError("No se encontró DATABASE_URL ni en el entorno ni en .env")
+    url_test = url_real.rsplit("/", 1)[0] + "/clinica_test"
 
 assert url_test.endswith("clinica_test"), "La URL de test debe terminar en clinica_test"
 os.environ["DATABASE_URL"] = url_test  # ANTES de importar app
