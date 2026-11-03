@@ -73,7 +73,26 @@ function redirectByRole(role) {
 
 function redirectIfLoggedIn() {
   const user = getCurrentUser();
-  if (user && getToken()) {
-    redirectByRole(user.role);
+  const token = getToken();
+  
+  if (!user || !token) {
+    clearSession();
+    return;
   }
+  
+  // Validamos el token contra el backend antes de redirigir
+  apiFetch('/auth/me')
+    .then(() => {
+      if (user.role === 'admin' || user.role === 'reception') {
+        window.location.href = 'admin.html';
+      } else if (user.role === 'doctor') {
+        window.location.href = 'doctor.html';
+      } else if (user.role === 'patient') {
+        window.location.href = 'patient.html';
+      }
+    })
+    .catch(() => {
+      clearSession();
+      console.log('Sesion expirada o invalida. Por favor, inicia sesion de nuevo.');
+    });
 }
