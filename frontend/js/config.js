@@ -7,9 +7,15 @@
 // Desde el iPhone (Tailscale): http://100.127.30.91:8000/api/v1
 const API_BASE = (() => {
   const host = window.location.hostname;
+  // Si estamos en producción (Render/Vercel), apuntamos al backend en Render
+  if (host.includes("onrender.com") || host.includes("vercel.app")) {
+    return "https://clinica-reservas.onrender.com/api/v1";
+  }
+  // Si estamos en local, usamos localhost
   if (host === "localhost" || host === "127.0.0.1") {
     return "http://localhost:8000/api/v1";
   }
+  // Fallback para la red local
   return `http://${host}:8000/api/v1`;
 })();
 
