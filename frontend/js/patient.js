@@ -150,7 +150,7 @@ function onDoctorChange(e) {
     apiFetch(`/doctors/${doctorId}/schedules`)
       .then(schedules => {
         if (schedules && schedules.length > 0) {
-          const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+          const diasNombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
           const diasUnicos = [...new Set(schedules.map(s => diasNombres[s.day_of_week]))];
           helpDias.textContent = `Este médico atiende: ${diasUnicos.join(", ")}`;
           helpDias.style.display = "block";
@@ -185,12 +185,17 @@ async function onDateChange(e) {
   // Validar que el día de la semana elegido tenga atención
   try {
     const schedules = await apiFetch(`/doctors/${state.selectedDoctorId}/schedules`);
-    const fecha = new Date(dateStr + 'T00:00:00'); // Forzamos zona horaria local para que no se corra un día
-    const diaSemana = fecha.getDay();
+    
+    // Calculamos el día de la semana a partir del string "YYYY-MM-DD" sin usar Date()
+    const [year, month, day] = dateStr.split('-').map(Number);
+    // El 0 de JS es domingo, pero nuestro backend usa 0 para lunes. Así que convertimos.
+    let diaSemana = new Date(year, month - 1, day).getDay(); // 0=Domingo, 1=Lunes...
+    diaSemana = (diaSemana === 0) ? 6 : diaSemana - 1; // Ahora 0=Lunes, 6=Domingo
+    
     const atiende = schedules.some(s => s.day_of_week === diaSemana);
     
     if (!atiende) {
-      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const diasNombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
       setErrorReserva(`El médico no atiende los ${diasNombres[diaSemana]}. Por favor, elegí otro día.`);
       document.getElementById("horarios-group").hidden = true;
       e.target.value = ""; // Borramos la fecha inválida
