@@ -1,29 +1,50 @@
-# Sistema de Reservas — Clínica Médica
+# 🏥 Medical Clinic Booking System
 
-Sistema web de gestión de turnos para una clínica médica pequeña.
-Backend con API y frontend web para el personal y los pacientes.
+A full-stack web application for managing medical appointments, built with **FastAPI**, **PostgreSQL**, and **Vanilla JavaScript**.
 
-## Stack
+## ✨ Features
+- **Role-based access control:** Admin, Receptionist, Doctor, and Patient.
+- **Smart Scheduling:** Prevents overlapping appointments using PostgreSQL `EXCLUDE` constraints.
+- **Business Rules Engine:** Configurable rules via `.env` (min/max advance booking, max future appointments per patient).
+- **Email Notifications:** Integration with Resend API for booking, cancellation, and rescheduling alerts.
+- **Audit Trail:** Soft deletes and `appointment_logs` track all critical changes.
+- **Security:** JWT authentication, bcrypt password hashing, Rate Limiting (5 req/min on login), XSS protection.
 
-- Backend: FastAPI + SQLAlchemy 2.x + Alembic
-- Base de datos: PostgreSQL
-- Validación: Pydantic v2
-- Autenticación: JWT
-- Frontend: HTML + CSS + JavaScript vanilla
+## 🛠️ Tech Stack
+- **Backend:** Python 3.12, FastAPI, SQLAlchemy 2.x, Alembic, Pydantic v2.
+- **Database:** PostgreSQL 15 (with `btree_gist` extension).
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript (no frameworks).
+- **DevOps:** Docker, Docker Compose, GitHub Actions (CI).
+- **Testing:** Pytest (14 integration tests covering core business rules).
 
-## Estructura
+## 📦 Project Structure
+- backend/: FastAPI application (API, models, schemas, services)
+- backend/alembic/: Database migrations
+- backend/tests/: Pytest test suite
+- frontend/: Static HTML/CSS/JS client
+- docker-compose.yml: Container orchestration
 
-- `backend/` — API, modelos, schemas, servicios
-- `frontend/` — interfaz web
-- `docs/` — documentación del proyecto
+## ⚙️ How to run locally (Docker)
+1. Clone the repository.
+2. Create your `.env` file based on `.env.example`.
+3. Run:
+   docker compose up -d
+   docker compose exec api alembic upgrade head
+4. Access the API docs at `http://localhost:8000/docs`.
 
-## Documentación
+## 🧠 Key Technical Decisions
+- **Overlap Prevention:** Used PostgreSQL `EXCLUDE USING gist` constraint instead of application-level checks. This guarantees data integrity even under race conditions.
+- **Timezone Handling:** The system relies on `ZoneInfo` (America/Montevideo) to compare naive datetimes properly. This prevents bugs when checking if a cancellation is allowed.
+- **Testing Strategy:** Tests run against an isolated `clinica_test` database. They create their own data (fixtures) and truncate tables after each run. CI runs these tests automatically on every push.
+- **Email Testing:** Integrated Resend API. In development, it only sends emails to the registered test account (sandbox mode).
 
-La documentación técnica y de contexto se mantiene de forma local
-en el directorio `docs/`. Si sos un colaborador nuevo y necesitás
-entender las decisiones de diseño, pedile al mantenedor del proyecto
-el documento de contexto.
+## 🔒 Security
+- Passwords are hashed with bcrypt.
+- JWT tokens expire in 60 minutes.
+- Login endpoint is rate-limited (slowapi).
+- HTML escaping on the frontend to prevent XSS.
+- No secrets in Git history (verified with `gitleaks`).
 
-## Instalación rápida
-
-Ver instrucciones detalladas en la documentación interna.
+## 👨‍💻 Author
+**Kelvis Moncayo**
+- [LinkedIn](https://linkedin.com/in/kelvismoncayohurtado)
