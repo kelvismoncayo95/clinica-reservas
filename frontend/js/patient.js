@@ -136,13 +136,37 @@ function onDoctorChange(e) {
   state.selectedDate = null;
   state.selectedStartTime = null;
   const inputFecha = document.getElementById("reserva-fecha");
+  const helpDias = document.getElementById("reserva-dias-info");
   document.getElementById("horarios-group").hidden = true;
   document.getElementById("reserva-submit").disabled = true;
   inputFecha.value = "";
   inputFecha.disabled = !doctorId;
+  
   if (doctorId) {
     const today = new Date().toISOString().split("T")[0];
     inputFecha.min = today;
+    
+    // Buscamos los horarios del médico para mostrar los días que atiende
+    apiFetch(`/doctors/${doctorId}/schedules`)
+      .then(schedules => {
+        if (schedules && schedules.length > 0) {
+          const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+          const diasUnicos = [...new Set(schedules.map(s => diasNombres[s.day_of_week]))];
+          helpDias.textContent = `Este médico atiende: ${diasUnicos.join(", ")}`;
+          helpDias.style.display = "block";
+          helpDias.style.color = "var(--color-texto-suave)";
+        } else {
+          helpDias.textContent = "Este médico no tiene horarios cargados.";
+          helpDias.style.display = "block";
+          helpDias.style.color = "red";
+        }
+      })
+      .catch(() => {
+        helpDias.textContent = "";
+        helpDias.style.display = "none";
+      });
+  } else {
+    if (helpDias) helpDias.style.display = "none";
   }
 }
 
@@ -152,10 +176,30 @@ async function onDateChange(e) {
   state.selectedDate = dateStr || null;
   state.selectedStartTime = null;
   document.getElementById("reserva-submit").disabled = true;
+  
   if (!dateStr || !state.selectedDoctorId) {
     document.getElementById("horarios-group").hidden = true;
     return;
   }
+
+  // Validar que el día de la semana elegido tenga atención
+  try {
+    const schedules = await apiFetch(`/doctors/${state.selectedDoctorId}/schedules`);
+    const fecha = new Date(dateStr + 'T00:00:00'); // Forzamos zona horaria local para que no se corra un día
+    const diaSemana = fecha.getDay();
+    const atiende = schedules.some(s => s.day_of_week === diaSemana);
+    
+    if (!atiende) {
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      setErrorReserva(`El médico no atiende los ${diasNombres[diaSemana]}. Por favor, elegí otro día.`);
+      document.getElementById("horarios-group").hidden = true;
+      e.target.value = ""; // Borramos la fecha inválida
+      return;
+    }
+  } catch (err) {
+    console.error("Error validando día:", err);
+  }
+
   document.getElementById("horarios-group").hidden = false;
   await loadHorarios(state.selectedDoctorId, dateStr);
 }
