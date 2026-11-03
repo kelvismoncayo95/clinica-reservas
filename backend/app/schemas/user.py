@@ -10,7 +10,7 @@ UserRole = Literal["admin", "reception", "doctor", "patient"]
 class UserBase(BaseModel):
     """Campos comunes."""
 
-    email: EmailStr
+    email: str
     role: UserRole
 
 
@@ -23,7 +23,7 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     """Datos para modificar un usuario. Todos opcionales."""
 
-    email: EmailStr | None = None
+    email: str | None = None
     role: UserRole | None = None
     password: str | None = Field(default=None, min_length=6, max_length=100)
     activo: bool | None = None

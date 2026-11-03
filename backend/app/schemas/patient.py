@@ -11,7 +11,7 @@ class PatientBase(BaseModel):
     dni: str = Field(min_length=7, max_length=8)
     birth_date: date
     phone: str = Field(min_length=7, max_length=15)
-    email: EmailStr
+    email: str
     obra_social: str | None = Field(default=None, max_length=100)
 
     @field_validator("first_name", "last_name")
@@ -97,7 +97,7 @@ class PatientUpdate(BaseModel):
     last_name: str | None = Field(default=None, min_length=1, max_length=100)
     birth_date: date | None = None
     phone: str | None = Field(default=None, min_length=1, max_length=50)
-    email: EmailStr | None = None
+    email: str | None = None
     obra_social: str | None = Field(default=None, max_length=100)
     activo: bool | None = None
 
