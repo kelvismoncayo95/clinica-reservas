@@ -10,6 +10,26 @@ A full-stack web application for managing medical appointments, built with **Fas
 - **Audit Trail:** Soft deletes and `appointment_logs` track all critical changes.
 - **Security:** JWT authentication, bcrypt password hashing, Rate Limiting (5 req/min on login), XSS protection.
 
+
+## 🌐 Live Demo & Test Credentials
+
+**Frontend (Web App):** [https://clinica-reservas-frontend.vercel.app/](https://clinica-reservas-frontend.vercel.app/)
+**Backend (API Docs):** [https://clinica-reservas.onrender.com/docs](https://clinica-reservas.onrender.com/docs)
+
+### How to test the system (Please read):
+To test the full flow, you have two options:
+
+1. **As a Patient (Register):** Click on "Registrarme" (Sign up) and create a new patient account with a valid email (e.g., your own Gmail). Then, you can book, view, and cancel appointments.
+2. **As Staff (Login):** Use one of the following pre-seeded accounts to access the Admin, Reception, or Doctor panels.
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Admin** | `maria.admin@clinicadelsur.test` | `clinicadelsur2026` |
+| **Reception** | `sofia.recepcion@clinicadelsur.test` | `clinicadelsur2026` |
+| **Doctor** | `martin.garcia@clinicadelsur.test` | `clinicadelsur2026` |
+
+*(Note: The free tier of Render spins down after 15 minutes of inactivity. The first request may take up to 50 seconds to wake up the server).*
+
 ## 🛠️ Tech Stack
 - **Backend:** Python 3.12, FastAPI, SQLAlchemy 2.x, Alembic, Pydantic v2.
 - **Database:** PostgreSQL 15 (with `btree_gist` extension).
