@@ -10,14 +10,14 @@ class DoctorBase(BaseModel):
     last_name: str = Field(min_length=1, max_length=100)
     license_number: str = Field(min_length=1, max_length=50)
     phone: str | None = Field(default=None, max_length=50)
-    email: EmailStr | None = None
+    email: str | None | None = None
 
 
 class DoctorCreate(DoctorBase):
     """Datos para crear un medico. Incluye datos de acceso y especialidades."""
 
     password: str = Field(min_length=6, max_length=100)
-    user_email: EmailStr  # email de login (puede ser distinto del de contacto)
+    user_email: str | None  # email de login (puede ser distinto del de contacto)
     specialty_ids: list[int] = Field(default_factory=list)
 
 
@@ -28,7 +28,7 @@ class DoctorUpdate(BaseModel):
     last_name: str | None = Field(default=None, min_length=1, max_length=100)
     license_number: str | None = Field(default=None, min_length=1, max_length=50)
     phone: str | None = Field(default=None, max_length=50)
-    email: EmailStr | None = None
+    email: str | None | None = None
     activo: bool | None = None
     specialty_ids: list[int] | None = None
 
