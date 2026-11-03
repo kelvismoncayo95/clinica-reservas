@@ -206,6 +206,12 @@ def create_appointment(
     if doctor is None or not doctor.activo:
         raise AppointmentServiceError("Medico no encontrado")
 
+    # Regla de Maria: el medico debe tener al menos una especialidad
+    if not doctor.specialties:
+        raise AppointmentServiceError(
+            "El medico no tiene especialidades asignadas y no puede recibir citas"
+        )
+
     specialty = db.get(Specialty, data.specialty_id)
     if specialty is None or not specialty.activo:
         raise AppointmentServiceError("Especialidad no encontrada")
