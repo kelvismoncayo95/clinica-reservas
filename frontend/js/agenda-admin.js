@@ -86,6 +86,8 @@ async function cargarAgenda(lunes) {
     if (filtroMedico) params.append("doctor_id", filtroMedico);
     
     let citas = await apiFetch(`/appointments?${params.toString()}`);
+    state.citas = citas; // Guardamos para la lista
+    if (typeof renderAgendaLista === "function") renderAgendaLista(); // Llenamos la tabla
     
     // Si hay filtro de especialidad, filtrar en el cliente
     if (filtroEsp) {
