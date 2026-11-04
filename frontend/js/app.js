@@ -217,6 +217,18 @@ function setupRegisterForm() {
       setFieldError("reg-email", "Ingresá tu correo electrónico.");
       hasError = true;
     }
+    
+    // Validación de contraseña
+    const password = document.getElementById("reg-password").value;
+    const passwordConfirm = document.getElementById("reg-password-confirm").value;
+    if (!password || password.length < 8) {
+      setFieldError("reg-password", "La contraseña debe tener al menos 8 caracteres.");
+      hasError = true;
+    } else if (password !== passwordConfirm) {
+      setFieldError("reg-password-confirm", "Las contraseñas no coinciden.");
+      hasError = true;
+    }
+    
     if (hasError) return;
 
     setButtonLoading(submit, true);
