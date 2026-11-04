@@ -158,19 +158,22 @@ function dibujarGrilla(lunes, citas) {
         return c.appointment_date === fechaDia && parseInt(c.start_time.split(":")[0]) === hora;
       });
 
-      citasDelBloque.forEach((cita) => {
-        const bloque = document.createElement("div");
-        bloque.className = `agenda-bloque agenda-bloque-${cita.status}`;
-        bloque.title = `${escapeHTML(cita.patient_name)} - ${escapeHTML(cita.doctor_name)}`;
-        bloque.innerHTML = `
-          <div class="agenda-bloque-paciente" style="font-weight: bold; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(cita.patient_name || "Paciente")}</div>
-          <div class="agenda-bloque-medico" style="font-size: 0.6rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(cita.doctor_name || "")} ${cita.specialty_name ? "· " + escapeHTML(cita.specialty_name) : ""}</div>
-        `;
-        bloque.addEventListener("click", () => {
-          if (typeof abrirModalDetalleCita === "function") {
-            abrirModalDetalleCita(cita);
-          }
+      // Mostramos solo las primeras 2 citas y un botón "+N más"
+        const MAX_VISIBLES = 2;
+        citasDelBloque.slice(0, MAX_VISIBLES).forEach((c) => {
+          celda.appendChild(crearBloque(c));
         });
+        if (citasDelBloque.length > MAX_VISIBLES) {
+          const mas = document.createElement("button");
+          mas.type = "button";
+          mas.className = "agenda-mas";
+          mas.textContent = `+${citasDelBloque.length - MAX_VISIBLES} más`;
+          mas.addEventListener("click", () => {
+            mas.remove();
+            citasDelBloque.slice(MAX_VISIBLES).forEach((c) => celda.appendChild(crearBloque(c)));
+          });
+          celda.appendChild(mas);
+        }
         celda.appendChild(bloque);
       });
 
@@ -315,3 +318,24 @@ function renderAgendaLista() {
     tbody.appendChild(tr);
   });
 }
+
+function crearBloque(cita) {
+  const b = document.createElement("div");
+  b.className = `agenda-bloque agenda-bloque-${cita.status}`;
+  const l1 = document.createElement("strong");
+  l1.textContent = `${cita.start_time.slice(0, 5)} ${cita.patient_name || "Paciente"}`;
+  const l2 = document.createElement("div");
+  l2.textContent = [cita.doctor_name, cita.specialty_name].filter(Boolean).join(" · ");
+  b.append(l1, l2);
+  return b;
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-vista]");
+  if (!btn) return;
+  const grilla = document.getElementById("agenda-grilla");
+  const lista = document.getElementById("agenda-lista");
+  if (!grilla || !lista) return;
+  grilla.hidden = btn.dataset.vista !== "calendario";
+  lista.hidden = btn.dataset.vista !== "lista";
+});
