@@ -39,7 +39,12 @@ def validate_specialty_ids(db: Session, ids: list[int]) -> list[Specialty]:
 def create_doctor(db: Session, data: DoctorCreate) -> Doctor:
     """Crea User + Doctor + especialidades en una transaccion."""
 
-    if db.scalar(select(User).where(User.email == data.user_email)):
+    # Si no viene user_email, usamos el email de contacto como login
+    email_login = data.user_email if data.user_email else data.email
+    if not email_login:
+        raise DoctorServiceError("Se requiere un email de login o de contacto")
+
+    if db.scalar(select(User).where(User.email == email_login)):
         raise DoctorServiceError("Ya existe un usuario con ese email")
 
     if db.scalar(
@@ -55,7 +60,7 @@ def create_doctor(db: Session, data: DoctorCreate) -> Doctor:
     specialties = validate_specialty_ids(db, data.specialty_ids)
 
     user = User(
-        email=data.user_email,
+        email=email_login,
         password_hash=hash_password(data.password),
         role="doctor",
     )

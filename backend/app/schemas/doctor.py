@@ -17,7 +17,7 @@ class DoctorCreate(DoctorBase):
     """Datos para crear un medico. Incluye datos de acceso y especialidades."""
 
     password: str = Field(min_length=6, max_length=100)
-    user_email: str | None  # email de login (puede ser distinto del de contacto)
+    user_email: str | None = None  # email de login (opcional, usa email si no se envía)
     specialty_ids: list[int] = Field(default_factory=list)
 
 
