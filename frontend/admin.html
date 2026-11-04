@@ -104,7 +104,67 @@
       <div class="agenda-header">
         <div class="agenda-titulo">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div id="agenda-lista" class="agenda-lista" hidden>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2 style="margin: 0;">Agenda semanal</h2>
+          
+        </div>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-semana-anterior">&lt;</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-semana-siguiente">&gt;</button>
+          </div>
+        </div>
+          <p class="section-subtitle" id="agenda-rango-semana">—</p>
+        </div>
+        <div class="agenda-controles">
+          <button type="button" class="btn btn-secondary btn-sm" id="agenda-semana-anterior">←</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="agenda-semana-siguiente">→</button>
+          <button type="button" class="btn btn-primary btn-sm" id="agenda-nueva-cita">Nueva cita</button>
+        </div>
+      </div>
+
+      <div class="filtros-box">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="agenda-filtro-medico">Médico</label>
+            <div class="searchable-select" id="agenda-filtro-medico-container">
+              <input type="text" id="agenda-filtro-medico" placeholder="Todos los médicos" autocomplete="off">
+              <input type="hidden" id="agenda-filtro-medico-id" value="">
+              <div class="searchable-dropdown" id="agenda-filtro-medico-dropdown" hidden></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="agenda-filtro-especialidad">Especialidad</label>
+            <select id="agenda-filtro-especialidad">
+              <option value="">Todas las especialidades</option>
+            </select>
+          </div>
+        </div>
+        <div class="filtros-acciones">
+          <button type="button" class="btn btn-secondary btn-sm" id="agenda-filtros-limpiar">
+            Limpiar filtros
+          </button>
+        </div>
+      </div>
+
+      <div class="agenda-leyenda">
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-confirmed"></span> Confirmada</span>
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-pending"></span> Pendiente</span>
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-attended"></span> Atendida</span>
+        <span class="agenda-leyenda-item"><span class="agenda-leyenda-color agenda-color-cancelled"></span> Cancelada</span>
+      </div>
+
+      <div id="agenda-loading" class="loading-box">
+        <p>Cargando agenda...</p>
+      </div>
+
+      <div id="agenda-empty" class="empty-box" hidden>
+        <h3>No hay citas esta semana</h3>
+        <p>Cuando se agenden citas, van a aparecer acá.</p>
+      </div>
+
+      <div id="agenda-grilla-container" class="agenda-grilla-container" hidden>
+        <div id="agenda-grilla" class="agenda-grilla" hidden></div>
+        <div id="agenda-lista" class="agenda-lista">
           <table class="horarios-tabla" style="width: 100%;">
             <thead>
               <tr>
