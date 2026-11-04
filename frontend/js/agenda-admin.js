@@ -174,8 +174,6 @@ function dibujarGrilla(lunes, citas) {
           });
           celda.appendChild(mas);
         }
-        celda.appendChild(bloque);
-      });
 
       grilla.appendChild(celda);
     }
