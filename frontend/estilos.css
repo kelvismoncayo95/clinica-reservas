@@ -2042,10 +2042,6 @@ textarea {
   background-color: transparent !important;
 }
 
-/* ============================================================
-   CSS Definitivo de la Agenda Semanal (Compacto y Ordenado)
-   ============================================================ */
-
 /* La celda de la hora: altura fija para que no se estiren los bloques */
 .agenda-grilla-celda {
   display: flex;
@@ -2102,4 +2098,61 @@ textarea {
 /* Día actual: Solo pintamos el header, no la celda completa */
 .agenda-grilla-celda.hoy {
   background-color: transparent !important;
+}
+
+/* ============================================================
+   Agenda Semanal (Calendario) - Definitivo
+   ============================================================ */
+.agenda-grilla-celda {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px;
+  height: 60px; /* 1 hora = 60px fijos */
+  overflow-y: auto; /* Scroll si hay muchas citas */
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--color-borde);
+  border-right: 1px solid var(--color-borde);
+  background-color: transparent;
+}
+
+.agenda-bloque {
+  position: relative !important;
+  display: block;
+  padding: 2px 4px;
+  border-radius: 4px;
+  border-left: 3px solid #0f766e;
+  cursor: pointer;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  min-height: 28px;
+}
+
+.agenda-bloque-paciente {
+  font-weight: bold;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+
+.agenda-bloque-medico {
+  font-size: 0.6rem;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+
+.agenda-bloque-confirmed { background-color: #e0f2fe; border-left-color: #0ea5e9; }
+.agenda-bloque-attended { background-color: #dcfce7; border-left-color: #22c55e; }
+.agenda-bloque-cancelled { background-color: #fee2e2; border-left-color: #ef4444; }
+.agenda-bloque-no_show { background-color: #fef3c7; border-left-color: #f59e0b; }
+
+/* Día actual: el fondo del header tiene un color suave, pero la celda no */
+.agenda-grilla-celda-header.hoy {
+  background-color: #e0f2fe;
+  border-radius: 4px;
 }
