@@ -1882,3 +1882,35 @@ textarea {
   gap: 8px;
   justify-content: flex-end;
 }
+
+/* Arreglos de responsive y desbordes (Reportados por QA) */
+.lista-titulo, .lista-detalle, .lista-detalle-secundario, .cita-detalle {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  /* Evitar que las tablas se salgan de la pantalla */
+  .horarios-tabla-container {
+    overflow-x: auto;
+  }
+  .horarios-tabla th, .horarios-tabla td {
+    white-space: nowrap;
+    font-size: 0.85rem;
+    padding: 8px 4px;
+  }
+  /* Achicar el textarea de especialidades */
+  #esp-descripcion {
+    min-height: 60px;
+    height: 60px;
+  }
+  /* El modal de usuarios en el celular */
+  .lista-card {
+    flex-wrap: wrap;
+  }
+  .lista-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+}

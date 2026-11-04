@@ -103,7 +103,13 @@
     <section id="section-agenda" class="app-section" role="tabpanel" aria-labelledby="nav-agenda" hidden>
       <div class="agenda-header">
         <div class="agenda-titulo">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
           <h2>Agenda semanal</h2>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-semana-anterior">&lt;</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-semana-siguiente">&gt;</button>
+          </div>
+        </div>
           <p class="section-subtitle" id="agenda-rango-semana">—</p>
         </div>
         <div class="agenda-controles">
@@ -546,7 +552,14 @@
           <p class="form-error" id="usu-role-error" hidden></p>
         </div>
 
-        <div class="form-row" id="usu-password-group">
+        <div class="form-row" id="usu-password-group" hidden>
+          <div class="form-group" style="width: 100%;">
+            <p class="form-help" style="color: var(--color-primario); font-weight: bold; margin-bottom: 0;">
+              Al crear el usuario, el sistema generará una contraseña temporal. Se la deberás comunicar al empleado para que pueda ingresar.
+            </p>
+          </div>
+        </div>
+        <div class="form-row" id="usu-password-fields" hidden>
           <div class="form-group">
             <label for="usu-password">Contraseña</label>
             <input type="password" id="usu-password" placeholder="Mínimo 6 caracteres">

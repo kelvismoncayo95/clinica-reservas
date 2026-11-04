@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import secrets
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -50,6 +51,9 @@ def create_user(
     _: User = Depends(require_admin),
 ):
     """Crea un usuario del sistema. Solo admin."""
+    # Generamos una contraseña temporal si no viene en el payload
+    password_temporal = data.password if data.password else secrets.token_urlsafe(6)
+    
     existing = db.scalar(select(User).where(User.email == data.email))
     if existing is not None:
         raise HTTPException(
@@ -59,7 +63,7 @@ def create_user(
 
     user = User(
         email=data.email,
-        password_hash=hash_password(data.password),
+        password_hash=hash_password(password_temporal),
         role=data.role,
     )
     db.add(user)
