@@ -2180,3 +2180,38 @@ textarea {
   background: none; border: 0; padding: 2px 4px; font-size: 12px; 
   font-weight: 700; color: var(--color-primario); text-align: left; cursor: pointer; 
 }
+
+/* ============================================================
+   Vista de Lista de la Agenda (Única vista)
+   ============================================================ */
+#agenda-lista {
+  margin-top: 1rem;
+  background: var(--color-blanco);
+  border-radius: var(--radio);
+  overflow: hidden;
+  border: 1px solid var(--color-borde);
+}
+
+#agenda-lista table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#agenda-lista th {
+  background-color: var(--color-fondo);
+  padding: 12px;
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+#agenda-lista td {
+  padding: 12px;
+  border-bottom: 1px solid var(--color-borde);
+  font-size: 0.9rem;
+}
+
+#agenda-lista tr:last-child td {
+  border-bottom: none;
+}
