@@ -163,11 +163,8 @@ function dibujarGrilla(lunes, citas) {
         bloque.className = `agenda-bloque agenda-bloque-${cita.status}`;
         bloque.title = `${escapeHTML(cita.patient_name)} - ${escapeHTML(cita.doctor_name)}`;
         bloque.innerHTML = `
-          <div class="agenda-bloque-hora">${escapeHTML(cita.start_time.substring(0, 5))}</div>
-          <div class="agenda-bloque-paciente">${escapeHTML(cita.patient_name || "Paciente")}</div>
-          <div class="agenda-bloque-detalle" style="font-size: 0.6rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${escapeHTML(cita.doctor_name || "")} ${cita.specialty_name ? "· " + escapeHTML(cita.specialty_name) : ""}
-          </div>
+          <div class="agenda-bloque-paciente" style="font-weight: bold; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(cita.patient_name || "Paciente")}</div>
+          <div class="agenda-bloque-medico" style="font-size: 0.6rem; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(cita.doctor_name || "")} ${cita.specialty_name ? "· " + escapeHTML(cita.specialty_name) : ""}</div>
         `;
         bloque.addEventListener("click", () => {
           if (typeof abrirModalDetalleCita === "function") {
