@@ -275,3 +275,43 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarFiltrosAgenda();
   }
 });
+
+
+// ============================================================
+// Render de la Agenda en formato Lista (para ver todas las citas)
+// ============================================================
+function renderAgendaLista() {
+  const tbody = document.getElementById("agenda-lista-body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  // Usamos el state de citas que ya se cargó en la agenda
+  const citas = state.citas || [];
+
+  if (citas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem;">No hay citas en esta semana.</td></tr>';
+    return;
+  }
+
+  // Ordenamos por fecha y hora
+  const citasOrdenadas = [...citas].sort((a, b) => {
+    if (a.appointment_date !== b.appointment_date) return a.appointment_date.localeCompare(b.appointment_date);
+    return a.start_time.localeCompare(b.start_time);
+  });
+
+  citasOrdenadas.forEach((c) => {
+    const tr = document.createElement("tr");
+    const statusClass = c.status === 'confirmed' ? 'lista-estado-activo'
+      : c.status === 'attended' ? 'lista-estado-activo'
+      : 'lista-estado-inactivo';
+    tr.innerHTML = `
+      <td>${escapeHTML(formatDate(c.appointment_date))}</td>
+      <td>${escapeHTML(c.start_time.substring(0, 5))}</td>
+      <td><strong>${escapeHTML(c.patient_name || "Paciente")}</strong></td>
+      <td>${escapeHTML(c.doctor_name || "")}</td>
+      <td>${escapeHTML(c.specialty_name || "")}</td>
+      <td><span class="lista-estado ${statusClass}">${escapeHTML(getStatusLabel(c.status))}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
