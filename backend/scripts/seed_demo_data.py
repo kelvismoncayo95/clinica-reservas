@@ -19,6 +19,7 @@ db = Session()
 from app.models.user import User
 from app.models.patient import Patient
 from app.models.doctor import Doctor
+from app.models.doctor_specialty import doctor_specialties
 from app.models.specialty import Specialty
 from app.models.schedule import Schedule
 from app.models.appointment import Appointment
@@ -34,6 +35,7 @@ db.query(AppointmentLog).delete()
 db.query(Appointment).delete()
 db.query(Schedule).delete()
 db.query(Patient).delete()
+db.execute(doctor_specialties.delete())  # Borrar relación medico-especialidad
 db.query(Doctor).delete()
 db.query(Specialty).delete()
 db.query(User).delete()
@@ -128,7 +130,7 @@ for i in range(100):
 
     c = Appointment(
         patient_id=pac.id, doctor_id=doc.id, specialty_id=esp.id,
-        appointment_date=fecha, start_time=hora, end_time=time(hora.hour, hora.minute + 30),
+        appointment_date=fecha, start_time=hora, end_time=(datetime.combine(date.today(), hora) + timedelta(minutes=30)).time(),
         status=estado, created_by=admin_user.id
     )
     db.add(c)
