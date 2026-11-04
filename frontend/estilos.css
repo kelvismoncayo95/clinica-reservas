@@ -1914,3 +1914,21 @@ textarea {
     font-size: 0.9rem;
   }
 }
+
+/* Arreglo para que las citas no se superpongan en la agenda */
+.agenda-celda {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  max-height: 120px; /* Para que no crezca infinito */
+  padding: 2px;
+}
+
+.agenda-bloque {
+  position: static !important; /* Quitamos el absolute que las superpone */
+  margin-bottom: 0;
+  padding: 4px;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
