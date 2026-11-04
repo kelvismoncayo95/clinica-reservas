@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupModalNuevaCita();
 
   // Fecha de hoy por defecto en el filtro
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = getHoyLocal();
   document.getElementById("filtro-fecha").value = hoy;
 
   // Cargar datos iniciales
@@ -96,6 +96,11 @@ function switchSection(which) {
   });
 
   state.currentSection = which;
+
+  // Si volvemos a la seccion de citas, recargamos la lista para ver los cambios
+  if (which === "citas" && typeof loadCitas === "function") {
+    loadCitas();
+  }
   const secciones = ["inicio", "citas", "agenda", "ausencias", "pacientes", "medicos", "especialidades", "horarios", "usuarios"];
   secciones.forEach((sec) => {
     const btn = document.getElementById(`nav-${sec}`);
@@ -541,7 +546,7 @@ function onModalDoctorChange(e) {
   inputFecha.disabled = !doctorId;
 
   if (doctorId) {
-    const today = new Date().toISOString().split("T")[0];
+    const today = getHoyLocal();
     inputFecha.min = today;
   }
   actualizarSubmitModal();

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupModalAusencia();
 
   // Fecha de hoy por defecto
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = getHoyLocal();
   document.getElementById("filtro-fecha-desde").value = hoy;
   document.getElementById("filtro-fecha-hasta").value = hoy;
 
@@ -67,7 +67,7 @@ function setupFiltros() {
   
   // Botones de acceso rápido
   document.getElementById("filtro-hoy").addEventListener("click", () => {
-    const hoy = new Date().toISOString().split("T")[0];
+    const hoy = getHoyLocal();
     document.getElementById("filtro-fecha-desde").value = hoy;
     document.getElementById("filtro-fecha-hasta").value = hoy;
     cargarCitas();
@@ -348,7 +348,7 @@ function abrirModalAusencia() {
     el.textContent = "";
   });
 
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = getHoyLocal();
   document.getElementById("aus-fecha").min = hoy;
 
   document.getElementById("modal-ausencia").showModal();
