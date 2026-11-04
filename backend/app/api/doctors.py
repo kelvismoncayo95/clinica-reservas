@@ -84,6 +84,20 @@ def doctor_appointments(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    # Seguridad: Solo admin, recepcion o el propio medico pueden ver las citas
+    if current_user.role == "patient":
+        raise HTTPException(
+            status_code=403,
+            detail="Los pacientes no pueden acceder a la agenda de los medicos."
+        )
+    if current_user.role == "doctor":
+        doctor = db.query(Doctor).filter(Doctor.user_id == current_user.id).first()
+        if not doctor or doctor.id != doctor_id:
+            raise HTTPException(
+                status_code=403,
+                detail="Solo podes ver tus propias citas."
+            )
+
     """Lista las citas de un medico. El medico solo puede ver las suyas.
 
     Acepta un filtro opcional ?status=confirmed para traer solo las

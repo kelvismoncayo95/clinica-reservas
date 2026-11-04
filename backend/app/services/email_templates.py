@@ -40,3 +40,19 @@ def get_email_reprogramacion(patient_name: str, old_date: str, old_time: str, ne
         <p>Clínica Médica del Sur</p>
     </div>"""
     return asunto, html
+
+def get_email_reserva_medico(doctor_name: str, patient_name: str, date: str, time: str) -> tuple[str, str]:
+    """Devuelve (asunto, html) para el correo de reserva que recibe el medico."""
+    asunto = f"Nueva cita agendada - {date}"
+    html = f"""
+    <div style="font-family: Arial, sans-serif; color: #333;">
+        <h2>Dr/a. {doctor_name}</h2>
+        <p>Tenés una nueva cita agendada en tu agenda.</p>
+        <ul>
+            <li><strong>Paciente:</strong> {patient_name}</li>
+            <li><strong>Fecha:</strong> {date}</li>
+            <li><strong>Hora:</strong> {time}</li>
+        </ul>
+        <p>Clínica Médica del Sur</p>
+    </div>"""
+    return asunto, html

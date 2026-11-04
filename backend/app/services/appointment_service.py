@@ -15,7 +15,7 @@ from app.models.user import User
 from app.schemas.appointment import AppointmentCreate
 from app.core.config import get_settings
 from app.services.email_service import enviar_email
-from app.services.email_templates import get_email_reserva, get_email_cancelacion, get_email_reprogramacion
+from app.services.email_templates import get_email_reserva, get_email_reserva_medico, get_email_cancelacion, get_email_reprogramacion
 from app.services.time_utils import (
     generate_slots,
     is_past_datetime,
@@ -287,7 +287,12 @@ def create_appointment(
                 date=data.appointment_date.strftime("%d/%m/%Y"),
                 time=data.start_time.strftime("%H:%M")
             )
-            html_med = html_med.replace("Hola", "Dr/a.")
+            asunto_med, html_med = get_email_reserva_medico(
+                doctor_name=f"{doctor.last_name}, {doctor.first_name}",
+                patient_name=f"{patient.last_name}, {patient.first_name}",
+                date=data.appointment_date.strftime("%d/%m/%Y"),
+                time=data.start_time.strftime("%H:%M")
+            )
             enviar_email(doctor_user.email, asunto_med, html_med)
     except Exception as e:
         print(f"Error enviando email al médico: {e}")
