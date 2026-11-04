@@ -88,7 +88,7 @@ for i in range(50):
     ape = random.choice(APELLIDOS)
     dni = str(10000000 + i)
     email = f"{nom.lower()}.{ape.lower()}{i}@test.com"
-    u = User(email=email, password_hash=hash_password("prueba123"), role="patient")
+    u = User(email=email, password_hash=hash_password("paciente123"), role="patient")
     db.add(u); db.flush()
     p = Patient(user_id=u.id, first_name=nom, last_name=ape, dni=dni, birth_date=date(1980+i%20, 1, 1), phone=f"099{100000+i}", email=email)
     db.add(p); db.flush()
