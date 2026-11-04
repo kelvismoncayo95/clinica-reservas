@@ -216,6 +216,12 @@ def create_appointment(
     if specialty is None or not specialty.activo:
         raise AppointmentServiceError("Especialidad no encontrada")
 
+    # Regla de negocio: el medico debe tener asignada esa especialidad
+    if specialty not in doctor.specialties:
+        raise AppointmentServiceError(
+            f"El medico no atiende la especialidad {specialty.name}"
+        )
+
     # 3. Fecha no pasada
     if is_past_datetime(data.appointment_date, data.start_time):
         raise AppointmentServiceError(
