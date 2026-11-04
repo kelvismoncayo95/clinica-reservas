@@ -217,15 +217,6 @@ function setupRegisterForm() {
       setFieldError("reg-email", "Ingresá tu correo electrónico.");
       hasError = true;
     }
-    if (!data.password || data.password.length < 8) {
-      setFieldError("reg-password", "La contraseña debe tener al menos 8 caracteres.");
-      hasError = true;
-    }
-    const passwordConfirm = document.getElementById("reg-password-confirm").value;
-    if (data.password !== passwordConfirm) {
-      setFieldError("reg-password-confirm", "Las contraseñas no coinciden.");
-      hasError = true;
-    }
     if (hasError) return;
 
     setButtonLoading(submit, true);
