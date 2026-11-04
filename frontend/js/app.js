@@ -99,7 +99,7 @@ function setupLoginForm() {
   }
 
   // Mostrar/ocultar contraseña
-  const togglePassword = null; // Oculto en el registro
+  const togglePassword = document.getElementById("reg-password-toggle");
   if (togglePassword) {
     togglePassword.addEventListener("click", () => {
       const input = document.getElementById("reg-password");
