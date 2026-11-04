@@ -187,6 +187,7 @@ function setupRegisterForm() {
       birth_date: document.getElementById("reg-birth-date").value,
       phone: document.getElementById("reg-phone").value.trim(),
       email: document.getElementById("reg-email").value.trim(),
+      password: document.getElementById("reg-password").value,
       
       obra_social: document.getElementById("reg-obra-social").value.trim() || null,
     };
