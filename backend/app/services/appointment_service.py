@@ -377,6 +377,27 @@ def reschedule_appointment(
             "Solo se pueden reprogramar citas confirmadas"
         )
 
+    # 1. Regla de anticipación mínima (solo para pacientes)
+    if current_user.role == "patient":
+        settings = get_settings()
+        tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now = datetime.now(tz)
+        nueva_fecha_hora = datetime.combine(new_date, new_start_time, tzinfo=tz)
+        hours_until = (nueva_fecha_hora - now).total_seconds() / 3600
+        
+        if hours_until < settings.APPOINTMENT_MIN_HOURS_CANCEL_PATIENT:
+            raise AppointmentServiceError(
+                f"No podes reprogramar con menos de "
+                f"{settings.APPOINTMENT_MIN_HOURS_CANCEL_PATIENT} horas de anticipacion."
+            )
+            
+        # 2. Regla de anticipación máxima (no más de 60 días)
+        if hours_until > settings.APPOINTMENT_MAX_DAYS_AHEAD * 24:
+            raise AppointmentServiceError(
+                f"No podes reprogramar con mas de "
+                f"{settings.APPOINTMENT_MAX_DAYS_AHEAD} dias de anticipacion."
+            )
+
     if is_past_datetime(new_date, new_start_time):
         raise AppointmentServiceError(
             "No se puede reprogramar a una fecha u hora pasada"

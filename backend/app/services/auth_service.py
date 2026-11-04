@@ -1,3 +1,4 @@
+import secrets
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -28,9 +29,12 @@ def register_patient(
     if db.scalar(select(Patient).where(Patient.dni == data.dni)):
         raise AuthServiceError("Ya existe un paciente con ese DNI")
 
+    # Generamos contraseña temporal si el paciente se registra sin una
+    password_temporal = data.password if hasattr(data, 'password') and data.password else secrets.token_urlsafe(6)
+
     user = User(
         email=data.email,
-        password_hash=hash_password(data.password),
+        password_hash=hash_password(password_temporal),
         role="patient",
     )
     db.add(user)
