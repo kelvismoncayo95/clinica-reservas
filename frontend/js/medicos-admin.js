@@ -62,14 +62,14 @@ async function cargarMedicos() {
 
 
 function onBuscarMedico(e) {
-  const q = e.target.value.trim().toLowerCase();
+  const q = normalizarTexto(e.target.value.trim());
   if (!q) {
     medicosState.filtered = medicosState.doctors.slice();
   } else {
     medicosState.filtered = medicosState.doctors.filter((d) => {
       return (
-        d.first_name.toLowerCase().includes(q) ||
-        d.last_name.toLowerCase().includes(q) ||
+        normalizarTexto(d.first_name).includes(normalizarTexto(q)) ||
+        normalizarTexto(d.last_name).includes(normalizarTexto(q)) ||
         d.license_number.toLowerCase().includes(q)
       );
     });

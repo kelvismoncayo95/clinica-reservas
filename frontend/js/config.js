@@ -527,3 +527,14 @@ function getHoyLocal() {
   const dia = String(hoy.getDate()).padStart(2, "0");
   return `${anio}-${mes}-${dia}`;
 }
+
+// ============================================================
+// Normaliza un texto para búsquedas (ignora mayúsculas y tildes)
+// ============================================================
+function normalizarTexto(str) {
+  if (!str) return "";
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Elimina tildes
+    .toLowerCase();
+}

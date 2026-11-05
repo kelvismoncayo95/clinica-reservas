@@ -63,14 +63,14 @@ async function cargarPacientes() {
 
 
 function onBuscarPaciente(e) {
-  const q = e.target.value.trim().toLowerCase();
+  const q = normalizarTexto(e.target.value.trim());
   if (!q) {
     pacientesState.filtered = pacientesState.patients.slice();
   } else {
     pacientesState.filtered = pacientesState.patients.filter((p) => {
       return (
-        p.first_name.toLowerCase().includes(q) ||
-        p.last_name.toLowerCase().includes(q) ||
+        normalizarTexto(p.first_name).includes(normalizarTexto(q)) ||
+        normalizarTexto(p.last_name).includes(normalizarTexto(q)) ||
         p.dni.toLowerCase().includes(q)
       );
     });

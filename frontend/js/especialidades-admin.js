@@ -59,7 +59,7 @@ async function cargarEspecialidades() {
 
 
 function onBuscarEspecialidad(e) {
-  const q = e.target.value.trim().toLowerCase();
+  const q = normalizarTexto(e.target.value.trim());
   if (!q) {
     especialidadesState.filtered = especialidadesState.specialties.slice();
   } else {

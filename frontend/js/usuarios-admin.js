@@ -66,7 +66,7 @@ async function cargarUsuarios() {
 
 
 function onBuscarUsuario(e) {
-  const q = e.target.value.trim().toLowerCase();
+  const q = normalizarTexto(e.target.value.trim());
   if (!q) {
     usuariosState.filtered = usuariosState.users.slice();
   } else {
