@@ -39,10 +39,9 @@ def validate_specialty_ids(db: Session, ids: list[int]) -> list[Specialty]:
 def create_doctor(db: Session, data: DoctorCreate) -> Doctor:
     """Crea User + Doctor + especialidades en una transaccion."""
 
-    # Si no viene user_email, usamos el email de contacto como login
-    email_login = data.user_email if data.user_email else data.email
+    email_login = data.email
     if not email_login:
-        raise DoctorServiceError("Se requiere un email de login o de contacto")
+        raise DoctorServiceError("Se requiere un email")
 
     if db.scalar(select(User).where(User.email == email_login)):
         raise DoctorServiceError("Ya existe un usuario con ese email")

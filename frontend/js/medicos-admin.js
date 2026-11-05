@@ -277,7 +277,7 @@ async function onMedicoSubmit(e) {
     license_number: document.getElementById("med-license").value.trim(),
     phone: document.getElementById("med-phone").value.trim() || null,
     email: document.getElementById("med-email").value.trim() || null,
-    user_email: document.getElementById("med-user-email").value.trim(),
+    email_confirm: document.getElementById("med-email-confirm").value.trim(),
   };
 
   const editing = medState.editingId !== null;
