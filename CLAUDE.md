@@ -29,8 +29,12 @@ nuevo sobre cómo trabajar, se agrega aquí (no se crean archivos aparte).
    que hicimos, con la explicación y una respuesta de ejemplo.
 6. **Dame una recomendación**, no solo opciones. Prefiero que me digas qué
    harías tú.
-7. Escríbeme en español, con mensajes claros y ordenados (tablas y listas
-   ayudan).
+7. **Escríbeme SIEMPRE en español**, también en los mensajes cortos que
+   escribes mientras trabajas ("ahora reviso...", "encontré..."). Nunca
+   cambies al inglés a mitad de la explicación. Mensajes claros y ordenados
+   (tablas y listas ayudan).
+8. Cuando subas cambios, dime **en qué Pull Request están** y si ya quedaron
+   publicados o falta que yo haga merge.
 
 ## Mi objetivo de carrera (para orientar las decisiones)
 

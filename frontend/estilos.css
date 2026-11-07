@@ -1182,6 +1182,7 @@ textarea {
   height: 12px;
   border-radius: 3px;
   display: inline-block;
+  border: 1px solid currentColor;
 }
 .agenda-color-confirmed { background: #d1fae5; border: 1px solid #059669; }
 .agenda-color-pending { background: #fef3c7; border: 1px dashed #d97706; }
