@@ -6,9 +6,10 @@ Este documento detalla los pasos a seguir para resolver los problemas reportados
 - **Problema:** "Garcia" no encontraba "García".
 - **Solución:** Se agregó `normalizarTexto()` en `config.js` y se aplicó en los filtros.
 
-## 2. Responsive Móvil (PRIORIDAD MEDIA)
-- **Problema:** Tablas y modales se rompen en pantallas pequeñas.
-- **Solución:** Ajustar CSS con `@media (max-width: 768px)` y usar `overflow-x: auto` en tablas.
+## 2. Responsive Móvil (RESUELTO)
+- **Problema:** En el celular, la Agenda del admin hacía que toda la página se corriera hacia los costados.
+- **Causa:** `.app-main` es un hijo de un layout flex y se estiraba al ancho de la tabla (le faltaba `min-width: 0`). Además había CSS dañado en `.filtros-acciones` (`display:ita flex;`).
+- **Solución:** `min-width: 0` en `.app-main`, CSS corregido, y la tabla de la Agenda se muestra como tarjetas en pantallas de hasta 600px. Revisadas en tamaño iPhone todas las pantallas de admin, paciente, médico, login, registro y recuperar contraseña.
 
 ## 3. Edición/Creación de Médicos (RESUELTO)
 - **Problema:** El formulario no abría ni guardaba.

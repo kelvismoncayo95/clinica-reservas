@@ -427,6 +427,10 @@ input::placeholder {
 
 .app-main {
   max-width: 960px;
+  width: 100%;
+  /* Sin esto, en un layout flex el contenido ancho (tablas) estira toda la
+     página en el celular en vez de deslizarse dentro de su propia caja. */
+  min-width: 0;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
 }
@@ -613,13 +617,14 @@ input::placeholder {
 }
 
 .filtros-box .form-group {
-  margin-bottom: 0;c
+  margin-bottom: 0;
 }
 
 .filtros-acciones {
-  display:ita flex;
- - gap: 0.5rem;
-  grid-column: 1 / -iones1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  grid-column: 1 / -1;
   margin-top: 0.25rem;
 }
 
@@ -1144,6 +1149,7 @@ textarea {
 
 .agenda-controles {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
 }
@@ -2174,4 +2180,44 @@ textarea {
 .agenda-grilla-celda-header.hoy {
   background-color: #e0f2fe;
   border-radius: 4px;
+}
+
+
+/* ============================================================
+   Agenda en el celular: cada fila de la tabla se ve como tarjeta.
+   El nombre de cada columna sale del atributo data-label de la celda.
+   ============================================================ */
+@media (max-width: 600px) {
+  .agenda-lista .horarios-tabla thead {
+    display: none;
+  }
+
+  .agenda-lista .horarios-tabla,
+  .agenda-lista .horarios-tabla tbody,
+  .agenda-lista .horarios-tabla tr,
+  .agenda-lista .horarios-tabla td {
+    display: block;
+    width: 100%;
+  }
+
+  .agenda-lista .horarios-tabla tr {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  .agenda-lista .horarios-tabla td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem 0;
+    border-bottom: none;
+    text-align: right;
+  }
+
+  .agenda-lista .horarios-tabla td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--color-texto-suave);
+    text-align: left;
+  }
 }

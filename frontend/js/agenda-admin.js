@@ -307,12 +307,12 @@ function renderAgendaLista() {
       : c.status === 'attended' ? 'lista-estado-activo'
       : 'lista-estado-inactivo';
     tr.innerHTML = `
-      <td>${escapeHTML(formatDate(c.appointment_date))}</td>
-      <td>${escapeHTML(c.start_time.substring(0, 5))}</td>
-      <td><strong>${escapeHTML(c.patient_name || "Paciente")}</strong></td>
-      <td>${escapeHTML(c.doctor_name || "")}</td>
-      <td>${escapeHTML(c.specialty_name || "")}</td>
-      <td><span class="lista-estado ${statusClass}">${escapeHTML(getStatusLabel(c.status))}</span></td>
+      <td data-label="Fecha">${escapeHTML(formatDate(c.appointment_date))}</td>
+      <td data-label="Hora">${escapeHTML(c.start_time.substring(0, 5))}</td>
+      <td data-label="Paciente"><strong>${escapeHTML(c.patient_name || "Paciente")}</strong></td>
+      <td data-label="Médico">${escapeHTML(c.doctor_name || "")}</td>
+      <td data-label="Especialidad">${escapeHTML(c.specialty_name || "")}</td>
+      <td data-label="Estado"><span class="lista-estado ${statusClass}">${escapeHTML(getStatusLabel(c.status))}</span></td>
     `;
     tbody.appendChild(tr);
   });

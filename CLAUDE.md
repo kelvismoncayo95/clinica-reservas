@@ -46,8 +46,14 @@ Plan: terminar este proyecto y después hacer un segundo proyecto
 
 ## Reglas del proyecto
 
-- `main` es producción (se despliega en Render y Vercel): **nunca** se trabaja
-  directo ahí. Todo va por rama + Pull Request.
+- `main` es producción: **nunca** se trabaja directo ahí. Todo va por rama +
+  Pull Request.
+- Deploy: Render (backend) y Vercel (frontend) publican desde `main`.
+  Render corre `alembic upgrade head` antes de arrancar: las migraciones se
+  aplican solas en cada deploy. Si la migración falla, el deploy no se
+  publica y queda la versión anterior.
+- Correos: Resend en modo prueba (remitente `onboarding@resend.dev`), solo
+  llegan al email dueño de la cuenta de Resend.
 - Nunca borrar la base de datos de producción.
 - Antes de subir: correr los tests (`cd backend && pytest -q`) y, si se tocó
   el frontend, probarlo en el navegador.
