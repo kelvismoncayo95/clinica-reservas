@@ -10,10 +10,10 @@ Este documento detalla los pasos a seguir para resolver los problemas reportados
 - **Problema:** Tablas y modales se rompen en pantallas pequeñas.
 - **Solución:** Ajustar CSS con `@media (max-width: 768px)` y usar `overflow-x: auto` en tablas.
 
-## 3. Edición/Creación de Médicos (BUG CRÍTICO)
-- **Problema:** El formulario no guarda cambios.
-- **Causa probable:** El endpoint `POST /doctors` no recibe bien los datos o el frontend no envía los campos correctos.
-- **Solución:** Revisar `app/api/doctors.py` y `frontend/js/medicos-admin.js`.
+## 3. Edición/Creación de Médicos (RESUELTO)
+- **Problema:** El formulario no abría ni guardaba.
+- **Causa:** En `medicos-admin.js` se usaba un elemento que ya no existía (`med-user-email-group`) y una variable mal escrita (`medState`), y no se enviaban `password` ni `specialty_ids`. En el backend, cambiar el email del médico no cambiaba su email de login y no se validaba el formato.
+- **Solución:** Frontend corregido, email sincronizado con `users` (con chequeo de duplicados) y 8 tests nuevos en `backend/tests/test_doctors.py`.
 
 ## 4. Verificación de Doble Correo (SEGURIDAD)
 - **Problema:** Los usuarios pueden registrarse con emails falsos.
