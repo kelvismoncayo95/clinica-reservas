@@ -26,9 +26,10 @@ Este documento detalla los pasos a seguir para resolver los problemas reportados
 - **Seguridad:** el token se guarda hasheado (SHA-256), vence a los 30 minutos, sirve una sola vez, pedir uno nuevo anula los anteriores, la respuesta no revela si el email existe y hay rate limit.
 - **Tests:** 8 tests en `backend/tests/test_password_reset.py`.
 
-## 6. Mejoras de Agenda (UX)
+## 6. Mejoras de Agenda (RESUELTO)
 - **Problema:** Fechas y horarios difíciles de leer.
-- **Solución:** Cambiar formato de fecha (ej: "Lunes 4 de Nov") y agrupar horarios por bloques (mañana/tarde).
+- **Solución:** función única `formatFechaLegible()` en `config.js` ("Lunes 9 de noviembre", "Lun 9 nov", "Hoy", "Mañana", "Ayer") usada en paciente, médico, citas y agenda. Los horarios para reservar se agrupan en "Mañana" y "Tarde" (`renderHorariosPorBloque()`).
+- **Bugs encontrados al probar:** un nombre repetido (`DIAS_SEMANA`) que habría roto la sección Horarios del admin, y horarios duplicados si se cambiaba la fecha rápido.
 
 ## 7. Migración a React (FUTURO)
 - **Recomendación de mentor:** React + Vite + TypeScript.

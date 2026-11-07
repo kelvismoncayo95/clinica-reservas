@@ -256,7 +256,7 @@ function renderCitaAdmin(cita) {
 
   const hora = document.createElement("div");
   hora.className = "lista-titulo";
-  hora.textContent = `${formatTime(cita.start_time)} · ${formatDate(cita.appointment_date)}`;
+  hora.textContent = `${formatTime(cita.start_time)} · ${formatFechaLegible(cita.appointment_date)}`;
 
   const paciente = document.createElement("div");
   paciente.className = "lista-detalle";
@@ -729,7 +729,7 @@ function renderAusenciaAdmin(a) {
 
   const secundario = document.createElement("div");
   secundario.className = "lista-detalle-secundario";
-  secundario.textContent = `Fecha: ${formatDate(a.absence_date)}`;
+  secundario.textContent = `Fecha: ${formatFechaLegible(a.absence_date)}`;
 
   contenido.appendChild(titulo);
   contenido.appendChild(detalle);

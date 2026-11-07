@@ -39,6 +39,6 @@ Para futuros colaboradores (o IAs), leer `docs/METODOLOGIA_TRABAJO.md`. Reglas c
 2. ~~**Edición/Creación de médicos:** El formulario actual no guarda cambios.~~ (Resuelto)
 3. **Verificación de doble correo:** Al registrarse, pedir confirmación por email.
 4. ~~**Recuperación de contraseña:** Implementar "Olvidé mi contraseña".~~ (Resuelto)
-5. **Fechas en agenda del paciente:** Mejorar legibilidad.
-6. **Horarios en agenda:** Mejorar legibilidad.
+5. ~~**Fechas en agenda del paciente:** Mejorar legibilidad.~~ (Resuelto)
+6. ~~**Horarios en agenda:** Mejorar legibilidad.~~ (Resuelto)
 7. **Búsqueda con tildes:** El buscador debe tratar "Garcia" y "García" como iguales (usar normalización o `unaccent` en PostgreSQL).

@@ -212,12 +212,7 @@ function renderCitasAgrupadas(citas) {
 
 
 function formatearTituloDia(fechaStr) {
-  const [y, m, d] = fechaStr.split("-").map(Number);
-  const fecha = new Date(y, m - 1, d);
-  const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-  const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
-                 "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-  return `${dias[fecha.getDay()]} ${d} de ${meses[m - 1]}`;
+  return formatFechaLegible(fechaStr);
 }
 
 
@@ -445,7 +440,7 @@ function renderAusencia(a) {
   const motivo = a.reason ? a.reason : "Sin motivo especificado";
   card.innerHTML = `
     <div class="cita-info">
-      <p class="cita-fecha">${escapeHTML(formatDate(a.absence_date))}</p>
+      <p class="cita-fecha">${escapeHTML(formatFechaLegible(a.absence_date))}</p>
       <p class="cita-detalle">${escapeHTML(motivo)}</p>
       <p class="cita-estado">${escapeHTML(estado)}</p>
     </div>

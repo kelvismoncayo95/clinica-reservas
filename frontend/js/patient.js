@@ -225,7 +225,10 @@ async function loadHorarios(doctorId, dateStr) {
       return;
     }
     grid.hidden = false;
-    data.slots.forEach((slot) => {
+    // Si el usuario cambió de fecha rápido, puede haber dos cargas a la vez:
+    // limpiamos justo antes de dibujar para no mostrar horarios repetidos.
+    grid.innerHTML = "";
+    renderHorariosPorBloque(grid, data.slots, (slot) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = slot.available ? "horario-btn" : "horario-btn horario-btn-ocupado";
@@ -234,7 +237,7 @@ async function loadHorarios(doctorId, dateStr) {
       if (slot.available) {
         btn.addEventListener("click", () => onHorarioSelect(btn, slot.start_time));
       }
-      grid.appendChild(btn);
+      return btn;
     });
   } catch (err) {
     loading.hidden = true;
@@ -348,7 +351,7 @@ function renderCita(cita) {
 
   const titulo = document.createElement("div");
   titulo.className = "lista-titulo";
-  titulo.textContent = `${formatDate(cita.appointment_date)} · ${formatTime(cita.start_time)}`;
+  titulo.textContent = `${formatFechaLegible(cita.appointment_date, { corta: true })} · ${formatTime(cita.start_time)}`;
 
   const detalle = document.createElement("div");
   detalle.className = "lista-detalle";
@@ -467,7 +470,7 @@ function abrirModalReprogramar(cita) {
   horarioReproSeleccionado = null;
   
   const info = document.getElementById("modal-reprogramar-info");
-  info.textContent = `Cita actual: ${formatDate(cita.appointment_date)} a las ${formatTime(cita.start_time)}`;
+  info.textContent = `Cita actual: ${formatFechaLegible(cita.appointment_date)} a las ${formatTime(cita.start_time)}`;
   
   // Reset
   document.getElementById("repro-fecha").value = "";
@@ -506,7 +509,8 @@ async function cargarHorariosRepro(doctorId, fecha) {
     const slotsDisponibles = data.slots;
     
     grid.hidden = false;
-    slotsDisponibles.forEach((slot) => {
+    grid.innerHTML = "";
+    renderHorariosPorBloque(grid, slotsDisponibles, (slot) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = slot.available ? "horario-btn" : "horario-btn horario-btn-ocupado";
@@ -522,7 +526,7 @@ async function cargarHorariosRepro(doctorId, fecha) {
           document.getElementById("repro-confirmar").disabled = false;
         });
       }
-      grid.appendChild(btn);
+      return btn;
     });
   } catch (err) {
     loading.hidden = true;

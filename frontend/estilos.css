@@ -555,6 +555,14 @@ input::placeholder {
   margin-top: 0.5rem;
 }
 
+.horarios-bloque-titulo {
+  grid-column: 1 / -1;
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+}
+
 .horario-btn {
   padding: 0.6rem 0.5rem;
   font-size: 0.95rem;
