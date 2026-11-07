@@ -19,9 +19,11 @@ Este documento detalla los pasos a seguir para resolver los problemas reportados
 - **Problema:** Los usuarios pueden registrarse con emails falsos.
 - **Solución:** Implementar envío de email de confirmación con Resend (requiere dominio verificado).
 
-## 5. Recuperación de Contraseña (UX)
-- **Problema:** No hay "Olvidé mi contraseña".
-- **Solución:** Endpoint `/auth/forgot-password` que envía un email con un token temporal.
+## 5. Recuperación de Contraseña (RESUELTO)
+- **Problema:** No había "Olvidé mi contraseña".
+- **Solución:** `POST /auth/forgot-password` y `POST /auth/reset-password`, tabla `password_reset_tokens` y página `frontend/reset-password.html`.
+- **Seguridad:** el token se guarda hasheado (SHA-256), vence a los 30 minutos, sirve una sola vez, pedir uno nuevo anula los anteriores, la respuesta no revela si el email existe y hay rate limit.
+- **Tests:** 8 tests en `backend/tests/test_password_reset.py`.
 
 ## 6. Mejoras de Agenda (UX)
 - **Problema:** Fechas y horarios difíciles de leer.
