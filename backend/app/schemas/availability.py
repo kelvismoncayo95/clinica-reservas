@@ -16,3 +16,11 @@ class AvailabilityResponse(BaseModel):
     doctor_id: int
     date: date
     slots: list[AvailabilitySlot] = Field(default_factory=list)
+
+
+class DayAvailability(BaseModel):
+    """Un dia del calendario de reservas."""
+
+    date: date
+    available: bool
+    reason: str | None = None

@@ -154,6 +154,60 @@ function formatDate(dateStr) {
 }
 
 
+// ----- Fechas legibles -----
+// "2026-11-09" -> "Lunes 9 de noviembre" (larga) o "Lun 9 nov" (corta).
+// Si es hoy, mañana o ayer, se agrega adelante: "Hoy · lunes 9 de noviembre".
+// Si es de otro año, se agrega el año al final.
+
+const FECHA_DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const FECHA_MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+               "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+function capitalizar(texto) {
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+function formatFechaLegible(dateStr, { corta = false } = {}) {
+  if (!dateStr) return "";
+  const [y, m, d] = dateStr.split("-").map(Number);
+  // new Date(año, mes, día) usa la hora local: evita el bug de UTC
+  // de new Date("2026-11-09"), que en Uruguay puede mostrar el día anterior.
+  const fecha = new Date(y, m - 1, d);
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const diferenciaDias = Math.round((fecha - hoy) / 86400000);
+
+  const dia = FECHA_DIAS[fecha.getDay()];
+  const mes = FECHA_MESES[m - 1];
+  const anio = y !== hoy.getFullYear() ? (corta ? ` ${y}` : ` de ${y}`) : "";
+  const texto = corta
+    ? `${capitalizar(dia.slice(0, 3))} ${d} ${mes.slice(0, 3)}${anio}`
+    : `${dia} ${d} de ${mes}${anio}`;
+
+  const relativo = { 0: "Hoy", 1: "Mañana", [-1]: "Ayer" }[diferenciaDias];
+  if (relativo) return corta ? relativo : `${relativo} · ${texto}`;
+  return capitalizar(texto);
+}
+
+
+// Dibuja los botones de horarios separados en "Mañana" y "Tarde".
+// crearBoton(slot) devuelve el <button> de cada horario.
+function renderHorariosPorBloque(grid, slots, crearBoton) {
+  const bloques = [
+    { titulo: "☀️ Mañana", slots: slots.filter((s) => parseInt(s.start_time) < 13) },
+    { titulo: "🌙 Tarde", slots: slots.filter((s) => parseInt(s.start_time) >= 13) },
+  ];
+  bloques.forEach((bloque) => {
+    if (bloque.slots.length === 0) return;
+    const titulo = document.createElement("p");
+    titulo.className = "horarios-bloque-titulo";
+    titulo.textContent = bloque.titulo;
+    grid.appendChild(titulo);
+    bloque.slots.forEach((slot) => grid.appendChild(crearBoton(slot)));
+  });
+}
+
+
 function formatTime(timeStr) {
   if (!timeStr) return "";
   return timeStr.slice(0, 5);  // "10:00:00" -> "10:00"

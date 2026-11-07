@@ -8,6 +8,7 @@ A full-stack web application for managing medical appointments, built with **Fas
 - **Business Rules Engine:** Configurable rules via `.env` (min/max advance booking, max future appointments per patient).
 - **Email Notifications:** Integration with Resend API for booking, cancellation, and rescheduling alerts.
 - **Audit Trail:** Soft deletes and `appointment_logs` track all critical changes.
+- **Availability Calendar:** Booking calendar that highlights the days each doctor can be booked (schedules, absences, blocked days and full days computed in the backend).
 - **Password Recovery:** "Forgot password" flow with single-use, hashed, time-limited tokens.
 - **Security:** JWT authentication, bcrypt password hashing, Rate Limiting (5 req/min on login), XSS protection.
 
@@ -36,7 +37,7 @@ To test the full flow, you have two options:
 - **Database:** PostgreSQL 15 (with `btree_gist` extension).
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript (no frameworks).
 - **DevOps:** Docker, Docker Compose, GitHub Actions (CI).
-- **Testing:** Pytest (30 integration tests covering core business rules).
+- **Testing:** Pytest (36 integration tests covering core business rules).
 
 ## 📦 Project Structure
 - backend/: FastAPI application (API, models, schemas, services)

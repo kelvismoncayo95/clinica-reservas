@@ -26,10 +26,19 @@ Este documento detalla los pasos a seguir para resolver los problemas reportados
 - **Seguridad:** el token se guarda hasheado (SHA-256), vence a los 30 minutos, sirve una sola vez, pedir uno nuevo anula los anteriores, la respuesta no revela si el email existe y hay rate limit.
 - **Tests:** 8 tests en `backend/tests/test_password_reset.py`.
 
-## 6. Mejoras de Agenda (UX)
+## 6. Mejoras de Agenda (RESUELTO)
 - **Problema:** Fechas y horarios difíciles de leer.
-- **Solución:** Cambiar formato de fecha (ej: "Lunes 4 de Nov") y agrupar horarios por bloques (mañana/tarde).
+- **Solución:** función única `formatFechaLegible()` en `config.js` ("Lunes 9 de noviembre", "Lun 9 nov", "Hoy", "Mañana", "Ayer") usada en paciente, médico, citas y agenda. Los horarios para reservar se agrupan en "Mañana" y "Tarde" (`renderHorariosPorBloque()`).
+- **Bugs encontrados al probar:** un nombre repetido (`DIAS_SEMANA`) que habría roto la sección Horarios del admin, y horarios duplicados si se cambiaba la fecha rápido.
 
-## 7. Migración a React (FUTURO)
+## 7. Calendario con días disponibles (RESUELTO)
+- **Problema:** al reservar se usaba el calendario del celular, que no muestra qué días atiende el médico. El usuario elegía "a ciegas" y recién después le decían que ese día no se podía.
+- **Solución:**
+  - Backend: `GET /api/v1/doctors/{id}/available-dates?from=&to=`, que devuelve día por día si se puede reservar y, si no, el motivo (`pasado`, `fuera_de_rango`, `no_atiende`, `bloqueado`, `ausencia`, `completo`). Usa las mismas reglas que crear una cita, con 4 consultas para todo el rango (no una por día).
+  - Frontend: componente `js/calendario.js` usado en Reservar, Reprogramar y Nueva cita (admin).
+- **Bug corregido:** el backend dejaba reservar el día en que el médico había avisado una ausencia.
+- **Tests:** 6 tests en `backend/tests/test_available_dates.py`.
+
+## 8. Migración a React (FUTURO)
 - **Recomendación de mentor:** React + Vite + TypeScript.
 - **Plan:** Empezar por el login y el dashboard de cliente, dejando el backend igual.

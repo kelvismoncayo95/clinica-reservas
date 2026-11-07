@@ -303,11 +303,10 @@ function renderAgendaLista() {
 
   citasOrdenadas.forEach((c) => {
     const tr = document.createElement("tr");
-    const statusClass = c.status === 'confirmed' ? 'lista-estado-activo'
-      : c.status === 'attended' ? 'lista-estado-activo'
-      : 'lista-estado-inactivo';
+    // Mismo color que la leyenda de arriba (clases estado-confirmed, etc.)
+    const statusClass = `estado-${c.status}`;
     tr.innerHTML = `
-      <td data-label="Fecha">${escapeHTML(formatDate(c.appointment_date))}</td>
+      <td data-label="Fecha">${escapeHTML(formatFechaLegible(c.appointment_date, { corta: true }))}</td>
       <td data-label="Hora">${escapeHTML(c.start_time.substring(0, 5))}</td>
       <td data-label="Paciente"><strong>${escapeHTML(c.patient_name || "Paciente")}</strong></td>
       <td data-label="Médico">${escapeHTML(c.doctor_name || "")}</td>

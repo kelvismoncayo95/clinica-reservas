@@ -79,7 +79,12 @@ async function loadDoctors() {
   }
 }
 
+// Calendarios que muestran los días disponibles del médico (js/calendario.js)
+let calendarioReserva = null;
+let calendarioRepro = null;
+
 function setupReservaForm() {
+  calendarioReserva = crearCalendarioDisponible("reserva-fecha");
   document.getElementById("reserva-especialidad").addEventListener("change", onSpecialtyChange);
   document.getElementById("reserva-medico").addEventListener("change", onDoctorChange);
   document.getElementById("reserva-fecha").addEventListener("change", onDateChange);
@@ -104,6 +109,7 @@ function onSpecialtyChange(e) {
   document.getElementById("reserva-submit").disabled = true;
   inputFecha.value = "";
   inputFecha.disabled = true;
+  calendarioReserva.setDoctor(null);
   if (!specialtyId) {
     selectMed.innerHTML = "<option value=\"\">Primero elegí una especialidad</option>";
     selectMed.disabled = true;
@@ -141,6 +147,7 @@ function onDoctorChange(e) {
   document.getElementById("reserva-submit").disabled = true;
   inputFecha.value = "";
   inputFecha.disabled = !doctorId;
+  calendarioReserva.setDoctor(doctorId);
   
   if (doctorId) {
     const today = new Date().toISOString().split("T")[0];
@@ -225,7 +232,10 @@ async function loadHorarios(doctorId, dateStr) {
       return;
     }
     grid.hidden = false;
-    data.slots.forEach((slot) => {
+    // Si el usuario cambió de fecha rápido, puede haber dos cargas a la vez:
+    // limpiamos justo antes de dibujar para no mostrar horarios repetidos.
+    grid.innerHTML = "";
+    renderHorariosPorBloque(grid, data.slots, (slot) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = slot.available ? "horario-btn" : "horario-btn horario-btn-ocupado";
@@ -234,7 +244,7 @@ async function loadHorarios(doctorId, dateStr) {
       if (slot.available) {
         btn.addEventListener("click", () => onHorarioSelect(btn, slot.start_time));
       }
-      grid.appendChild(btn);
+      return btn;
     });
   } catch (err) {
     loading.hidden = true;
@@ -298,6 +308,7 @@ function resetReservaForm() {
   const inputFecha = document.getElementById("reserva-fecha");
   inputFecha.value = "";
   inputFecha.disabled = true;
+  calendarioReserva.setDoctor(null);
   document.getElementById("horarios-group").hidden = true;
 }
 
@@ -348,7 +359,7 @@ function renderCita(cita) {
 
   const titulo = document.createElement("div");
   titulo.className = "lista-titulo";
-  titulo.textContent = `${formatDate(cita.appointment_date)} · ${formatTime(cita.start_time)}`;
+  titulo.textContent = `${formatFechaLegible(cita.appointment_date, { corta: true })} · ${formatTime(cita.start_time)}`;
 
   const detalle = document.createElement("div");
   detalle.className = "lista-detalle";
@@ -467,11 +478,10 @@ function abrirModalReprogramar(cita) {
   horarioReproSeleccionado = null;
   
   const info = document.getElementById("modal-reprogramar-info");
-  info.textContent = `Cita actual: ${formatDate(cita.appointment_date)} a las ${formatTime(cita.start_time)}`;
+  info.textContent = `Cita actual: ${formatFechaLegible(cita.appointment_date)} a las ${formatTime(cita.start_time)}`;
   
   // Reset
-  document.getElementById("repro-fecha").value = "";
-  document.getElementById("repro-fecha").min = new Date().toISOString().split("T")[0];
+  calendarioRepro.setDoctor(cita.doctor_id);
   document.getElementById("repro-horarios-group").hidden = true;
   document.getElementById("repro-horarios-grid").hidden = true;
   document.getElementById("repro-horarios-grid").innerHTML = "";
@@ -506,7 +516,8 @@ async function cargarHorariosRepro(doctorId, fecha) {
     const slotsDisponibles = data.slots;
     
     grid.hidden = false;
-    slotsDisponibles.forEach((slot) => {
+    grid.innerHTML = "";
+    renderHorariosPorBloque(grid, slotsDisponibles, (slot) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = slot.available ? "horario-btn" : "horario-btn horario-btn-ocupado";
@@ -522,7 +533,7 @@ async function cargarHorariosRepro(doctorId, fecha) {
           document.getElementById("repro-confirmar").disabled = false;
         });
       }
-      grid.appendChild(btn);
+      return btn;
     });
   } catch (err) {
     loading.hidden = true;
@@ -580,6 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("repro-cancelar").addEventListener("click", () => modalRepro.close());
   document.getElementById("repro-confirmar").addEventListener("click", onReprogramarSubmit);
   
+  calendarioRepro = crearCalendarioDisponible("repro-fecha");
   document.getElementById("repro-fecha").addEventListener("change", async (e) => {
     const fecha = e.target.value;
     if (!fecha || !citaAReprogramar) {

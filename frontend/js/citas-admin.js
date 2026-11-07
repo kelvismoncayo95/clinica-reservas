@@ -256,7 +256,7 @@ function renderCitaAdmin(cita) {
 
   const hora = document.createElement("div");
   hora.className = "lista-titulo";
-  hora.textContent = `${formatTime(cita.start_time)} · ${formatDate(cita.appointment_date)}`;
+  hora.textContent = `${formatTime(cita.start_time)} · ${formatFechaLegible(cita.appointment_date)}`;
 
   const paciente = document.createElement("div");
   paciente.className = "lista-detalle";
@@ -403,7 +403,11 @@ async function cancelarCitaAdmin(id) {
 // Modal de nueva cita
 // ============================================================
 
+// Calendario con los días disponibles del médico (js/calendario.js)
+let calendarioNuevaCita = null;
+
 function setupModalNuevaCita() {
+  calendarioNuevaCita = crearCalendarioDisponible("nc-fecha");
   document.getElementById("modal-cerrar").addEventListener("click", cerrarModalNuevaCita);
   document.getElementById("nc-cancelar").addEventListener("click", cerrarModalNuevaCita);
   document.getElementById("nc-especialidad").addEventListener("change", onModalSpecialtyChange);
@@ -468,6 +472,7 @@ function resetModalNuevaCita() {
   const inputFecha = document.getElementById("nc-fecha");
   inputFecha.value = "";
   inputFecha.disabled = true;
+  calendarioNuevaCita.setDoctor(null);
   document.getElementById("nc-horarios-group").hidden = true;
   document.getElementById("nc-submit").disabled = true;
   document.getElementById("nc-error").hidden = true;
@@ -494,6 +499,7 @@ function onModalSpecialtyChange(e) {
   document.getElementById("nc-medico-dropdown").hidden = true;
   inputFecha.value = "";
   inputFecha.disabled = true;
+  calendarioNuevaCita.setDoctor(null);
 
   if (!specialtyId) {
     inputMed.value = "";
@@ -527,6 +533,7 @@ function onModalSpecialtyChange(e) {
     state.selectedDoctorId = item.value;
     // Habilitar el campo de fecha cuando se elige un médico
     inputFecha.disabled = false;
+    calendarioNuevaCita.setDoctor(item.value);
     actualizarSubmitModal();
   });
   actualizarSubmitModal();
@@ -544,6 +551,7 @@ function onModalDoctorChange(e) {
   document.getElementById("nc-horarios-group").hidden = true;
   inputFecha.value = "";
   inputFecha.disabled = !doctorId;
+  calendarioNuevaCita.setDoctor(doctorId);
 
   if (doctorId) {
     const today = getHoyLocal();
@@ -588,7 +596,8 @@ async function loadHorariosModal(doctorId, dateStr) {
       return;
     }
     grid.hidden = false;
-    data.slots.forEach((slot) => {
+    grid.innerHTML = "";
+    renderHorariosPorBloque(grid, data.slots, (slot) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = slot.available ? "horario-btn" : "horario-btn horario-btn-ocupado";
@@ -597,7 +606,7 @@ async function loadHorariosModal(doctorId, dateStr) {
       if (slot.available) {
         btn.addEventListener("click", () => onModalHorarioSelect(btn, slot.start_time));
       }
-      grid.appendChild(btn);
+      return btn;
     });
   } catch (err) {
     loading.hidden = true;
@@ -729,7 +738,7 @@ function renderAusenciaAdmin(a) {
 
   const secundario = document.createElement("div");
   secundario.className = "lista-detalle-secundario";
-  secundario.textContent = `Fecha: ${formatDate(a.absence_date)}`;
+  secundario.textContent = `Fecha: ${formatFechaLegible(a.absence_date)}`;
 
   contenido.appendChild(titulo);
   contenido.appendChild(detalle);

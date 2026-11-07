@@ -12,4 +12,5 @@
 - POST /auth/reset-password (cambiar contraseña con el token)
 - POST /appointments (crear cita)
 - GET /appointments?date=...
+- GET /doctors/{id}/available-dates?from=...&to=... (días disponibles para el calendario)
 - PATCH /appointments/{id}/cancel
