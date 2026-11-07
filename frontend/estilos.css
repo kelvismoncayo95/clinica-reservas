@@ -224,6 +224,25 @@ input::placeholder {
   font-weight: 500;
 }
 
+.login-link-secundario {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.login-link-secundario a {
+  color: var(--color-primario);
+  font-weight: 500;
+}
+
+.mensaje-ok {
+  background: rgba(21, 128, 61, 0.08);
+  border: 1px solid rgba(21, 128, 61, 0.3);
+  color: var(--color-texto);
+  border-radius: var(--radio);
+  padding: 0.75rem 1rem;
+}
+
 .form-error-global {
   background: #fef2f2;
   border: 1px solid #fecaca;

@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    PASSWORD_RESET_EXPIRE_MINUTES: int = 30
+
+    # URL del frontend (para armar el link del correo de recuperacion)
+    FRONTEND_URL: str = "http://localhost:5500"
 
     # CORS
     CORS_ORIGINS: str = ""

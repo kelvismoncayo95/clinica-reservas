@@ -8,6 +8,7 @@ from app.models.appointment import Appointment
 from app.models.appointment_log import AppointmentLog
 from app.models.doctor_absence import DoctorAbsence
 from app.models.doctor_specialty import doctor_specialties
+from app.models.password_reset_token import PasswordResetToken
 
 __all__ = [
     "User",
@@ -20,4 +21,5 @@ __all__ = [
     "AppointmentLog",
     "DoctorAbsence",
     "doctor_specialties",
+    "PasswordResetToken",
 ]

@@ -13,3 +13,23 @@ class TokenResponse(BaseModel):
 
     access_token: str
     token_type: str = "bearer"
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Pedido de "Olvidé mi contraseña": solo el email."""
+
+    # str y no EmailStr: los usuarios de la demo usan dominios .test
+    email: str = Field(min_length=3, max_length=255)
+
+
+class ResetPasswordRequest(BaseModel):
+    """Token recibido por correo + la contraseña nueva."""
+
+    token: str = Field(min_length=10, max_length=200)
+    new_password: str = Field(min_length=8, max_length=100)
+
+
+class MessageResponse(BaseModel):
+    """Respuesta simple con un mensaje."""
+
+    message: str
