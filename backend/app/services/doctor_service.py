@@ -106,6 +106,21 @@ def update_doctor(db: Session, doctor: Doctor, data: DoctorUpdate) -> Doctor:
                 "Ya existe otro medico con esa matricula"
             )
 
+    # El email del medico es tambien su email de login (tabla users).
+    # Si cambia, hay que cambiarlo en los dos lados para que sigan iguales.
+    new_email = update_data.get("email")
+    if new_email and new_email != doctor.email:
+        taken = db.scalar(
+            select(User).where(
+                User.email == new_email,
+                User.id != doctor.user_id,
+            )
+        )
+        if taken is not None:
+            raise DoctorServiceError("Ya existe un usuario con ese email")
+        user = db.get(User, doctor.user_id)
+        user.email = new_email
+
     specialty_ids = update_data.pop("specialty_ids", None)
 
     for field, value in update_data.items():

@@ -763,12 +763,13 @@
             <input type="tel" id="med-phone" placeholder="1145678901" pattern="[0-9+\s\-]{7,20}" title="Solo números, espacios, guiones o +" minlength="7" maxlength="20" inputmode="tel">
           </div>
           <div class="form-group">
-            <label for="med-email">Email de contacto <span class="form-optional">(opcional)</span></label>
+            <label for="med-email">Email <span class="form-optional">(para iniciar sesión)</span></label>
             <input type="email" id="med-email" placeholder="carlos@clinica.com">
+            <p class="form-error" id="med-email-error" hidden></p>
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="med-email-confirm-group">
           <label for="med-email-confirm">Confirmar correo electrónico</label>
           <input type="email" id="med-email-confirm" placeholder="Repetí el correo">
           <p class="form-error" id="med-email-confirm-error" hidden></p>
@@ -936,7 +937,7 @@
   <script src="js/appointments.js"></script>
   <script src="js/citas-admin.js?v=1"></script>
   <script src="js/pacientes-admin.js?v=2"></script>
-  <script src="js/medicos-admin.js?v=3"></script>
+  <script src="js/medicos-admin.js?v=4"></script>
   <script src="js/especialidades-admin.js"></script>
   <script src="js/horarios-admin.js?v=1"></script>
   <script src="js/usuarios-admin.js"></script>

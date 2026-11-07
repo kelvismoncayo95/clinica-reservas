@@ -1,6 +1,13 @@
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+# Validacion simple de formato "algo@algo.algo". No usamos EmailStr porque
+# rechaza dominios reservados como ".test", que usan los medicos de la demo.
+Email = Annotated[
+    str, Field(max_length=255, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+]
 
 
 class DoctorBase(BaseModel):
@@ -10,7 +17,7 @@ class DoctorBase(BaseModel):
     last_name: str = Field(min_length=1, max_length=100)
     license_number: str = Field(min_length=1, max_length=50)
     phone: str | None = Field(default=None, max_length=50)
-    email: str | None | None = None
+    email: Email | None = None
 
 
 class DoctorCreate(DoctorBase):
@@ -27,7 +34,7 @@ class DoctorUpdate(BaseModel):
     last_name: str | None = Field(default=None, min_length=1, max_length=100)
     license_number: str | None = Field(default=None, min_length=1, max_length=50)
     phone: str | None = Field(default=None, max_length=50)
-    email: str | None | None = None
+    email: Email | None = None
     activo: bool | None = None
     specialty_ids: list[int] | None = None
 

@@ -192,7 +192,7 @@ function abrirModalMedico(doctor = null) {
   medicosState.editingId = doctor ? doctor.id : null;
   const titulo = document.getElementById("modal-medico-titulo");
   const submit = document.getElementById("med-submit");
-  const userEmailGroup = document.getElementById("med-user-email-group");
+  const emailConfirmGroup = document.getElementById("med-email-confirm-group");
   const passwordGroup = document.getElementById("med-password-group");
   const licenseHint = document.getElementById("med-license-hint");
 
@@ -207,7 +207,7 @@ function abrirModalMedico(doctor = null) {
   if (doctor) {
     titulo.textContent = "Editar médico";
     submit.textContent = "Guardar cambios";
-    userEmailGroup.hidden = true;
+    emailConfirmGroup.hidden = true;
     passwordGroup.hidden = true;
     licenseHint.textContent = "La matrícula no se puede modificar.";
     document.getElementById("med-id").value = doctor.id;
@@ -220,7 +220,7 @@ function abrirModalMedico(doctor = null) {
   } else {
     titulo.textContent = "Nuevo médico";
     submit.textContent = "Crear médico";
-    userEmailGroup.hidden = false;
+    emailConfirmGroup.hidden = false;
     passwordGroup.hidden = false;
     document.getElementById("med-license").disabled = false;
     licenseHint.textContent = "";
@@ -277,10 +277,10 @@ async function onMedicoSubmit(e) {
     license_number: document.getElementById("med-license").value.trim(),
     phone: document.getElementById("med-phone").value.trim() || null,
     email: document.getElementById("med-email").value.trim() || null,
-    email_confirm: document.getElementById("med-email-confirm").value.trim(),
   };
+  const emailConfirm = document.getElementById("med-email-confirm").value.trim();
 
-  const editing = medState.editingId !== null;
+  const editing = medicosState.editingId !== null;
   const password = document.getElementById("med-password").value;
   const passwordConfirm = document.getElementById("med-password-confirm").value;
   
@@ -319,12 +319,15 @@ async function onMedicoSubmit(e) {
     }
   }
 
-  // Validar Email de login
-  if (!data.user_email) {
-    setFieldError("med-user-email", "El email de inicio de sesión es obligatorio.");
+  // Validar Email (es el que el médico usa para iniciar sesión)
+  if (!data.email) {
+    setFieldError("med-email", "El email es obligatorio: el médico lo usa para iniciar sesión.");
     hasError = true;
-  } else if (!data.user_email.includes("@") || !data.user_email.includes(".")) {
-    setFieldError("med-user-email", "El email no tiene un formato válido (ejemplo: nombre@dominio.com).");
+  } else if (!data.email.includes("@") || !data.email.includes(".")) {
+    setFieldError("med-email", "El email no tiene un formato válido (ejemplo: nombre@dominio.com).");
+    hasError = true;
+  } else if (!editing && data.email !== emailConfirm) {
+    setFieldError("med-email-confirm", "Los correos no coinciden.");
     hasError = true;
   }
 
@@ -361,6 +364,15 @@ async function onMedicoSubmit(e) {
   const originalText = submit.textContent;
   submit.disabled = true;
   submit.textContent = editing ? "Guardando..." : "Creando...";
+
+  // Armar lo que se manda al backend. La matrícula no se edita y la
+  // contraseña solo se manda al crear.
+  data.specialty_ids = specialty_ids;
+  if (editing) {
+    delete data.license_number;
+  } else {
+    data.password = password;
+  }
 
   try {
     if (editing) {

@@ -35,7 +35,7 @@ To test the full flow, you have two options:
 - **Database:** PostgreSQL 15 (with `btree_gist` extension).
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript (no frameworks).
 - **DevOps:** Docker, Docker Compose, GitHub Actions (CI).
-- **Testing:** Pytest (14 integration tests covering core business rules).
+- **Testing:** Pytest (22 integration tests covering core business rules).
 
 ## 📦 Project Structure
 - backend/: FastAPI application (API, models, schemas, services)
