@@ -79,7 +79,12 @@ async function loadDoctors() {
   }
 }
 
+// Calendarios que muestran los días disponibles del médico (js/calendario.js)
+let calendarioReserva = null;
+let calendarioRepro = null;
+
 function setupReservaForm() {
+  calendarioReserva = crearCalendarioDisponible("reserva-fecha");
   document.getElementById("reserva-especialidad").addEventListener("change", onSpecialtyChange);
   document.getElementById("reserva-medico").addEventListener("change", onDoctorChange);
   document.getElementById("reserva-fecha").addEventListener("change", onDateChange);
@@ -104,6 +109,7 @@ function onSpecialtyChange(e) {
   document.getElementById("reserva-submit").disabled = true;
   inputFecha.value = "";
   inputFecha.disabled = true;
+  calendarioReserva.setDoctor(null);
   if (!specialtyId) {
     selectMed.innerHTML = "<option value=\"\">Primero elegí una especialidad</option>";
     selectMed.disabled = true;
@@ -141,6 +147,7 @@ function onDoctorChange(e) {
   document.getElementById("reserva-submit").disabled = true;
   inputFecha.value = "";
   inputFecha.disabled = !doctorId;
+  calendarioReserva.setDoctor(doctorId);
   
   if (doctorId) {
     const today = new Date().toISOString().split("T")[0];
@@ -301,6 +308,7 @@ function resetReservaForm() {
   const inputFecha = document.getElementById("reserva-fecha");
   inputFecha.value = "";
   inputFecha.disabled = true;
+  calendarioReserva.setDoctor(null);
   document.getElementById("horarios-group").hidden = true;
 }
 
@@ -473,8 +481,7 @@ function abrirModalReprogramar(cita) {
   info.textContent = `Cita actual: ${formatFechaLegible(cita.appointment_date)} a las ${formatTime(cita.start_time)}`;
   
   // Reset
-  document.getElementById("repro-fecha").value = "";
-  document.getElementById("repro-fecha").min = new Date().toISOString().split("T")[0];
+  calendarioRepro.setDoctor(cita.doctor_id);
   document.getElementById("repro-horarios-group").hidden = true;
   document.getElementById("repro-horarios-grid").hidden = true;
   document.getElementById("repro-horarios-grid").innerHTML = "";
@@ -584,6 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("repro-cancelar").addEventListener("click", () => modalRepro.close());
   document.getElementById("repro-confirmar").addEventListener("click", onReprogramarSubmit);
   
+  calendarioRepro = crearCalendarioDisponible("repro-fecha");
   document.getElementById("repro-fecha").addEventListener("change", async (e) => {
     const fecha = e.target.value;
     if (!fecha || !citaAReprogramar) {

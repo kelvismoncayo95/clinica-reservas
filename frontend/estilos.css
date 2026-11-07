@@ -2230,3 +2230,137 @@ textarea {
     text-align: left;
   }
 }
+
+
+/* ============================================================
+   Calendario de días disponibles (js/calendario.js)
+   ============================================================ */
+.calendario {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-blanco);
+  padding: 0.75rem;
+  max-width: 360px;
+}
+
+.calendario-vacio {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+.calendario-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.calendario-titulo {
+  font-weight: 600;
+}
+
+.calendario-nav {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-texto);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.calendario-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.calendario-grilla {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.calendario-dia-nombre {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  padding-bottom: 0.25rem;
+}
+
+.calendario-dia {
+  aspect-ratio: 1;
+  min-height: 2.25rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.calendario-dia-disponible {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+  font-weight: 600;
+}
+
+.calendario-dia-no-disponible {
+  background: transparent;
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.calendario-dia-cargando {
+  background: transparent;
+  color: var(--color-texto-suave);
+  opacity: 0.5;
+}
+
+.calendario-dia-hoy {
+  outline: 1px dashed var(--color-primario);
+  outline-offset: -4px;
+}
+
+.calendario-dia-seleccionado {
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+  color: #fff;
+}
+
+.calendario-pie {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.calendario-pie > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.calendario-muestra {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 3px;
+  border: 1px solid #d1d5db;
+  text-decoration: none;
+}
+
+.calendario-mensaje {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.calendario-mensaje-aviso {
+  color: var(--color-advertencia);
+  font-weight: 500;
+}

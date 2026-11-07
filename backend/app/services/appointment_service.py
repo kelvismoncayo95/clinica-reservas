@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models.appointment import Appointment
 from app.models.appointment_log import AppointmentLog
 from app.models.block import Block
+from app.models.doctor_absence import DoctorAbsence
 from app.models.doctor import Doctor
 from app.models.patient import Patient
 from app.models.schedule import Schedule
@@ -83,6 +84,22 @@ def _check_date_not_blocked(
     if block is not None:
         raise AppointmentServiceError(
             f"El medico no atiende esa fecha ({block.reason or 'bloqueado'})"
+        )
+
+
+def _check_doctor_not_absent(
+    db: Session, doctor_id: int, appointment_date: date
+) -> None:
+    """Lanza error si el medico aviso una ausencia para esa fecha."""
+    absence = db.scalar(
+        select(DoctorAbsence).where(
+            DoctorAbsence.doctor_id == doctor_id,
+            DoctorAbsence.absence_date == appointment_date,
+        )
+    )
+    if absence is not None:
+        raise AppointmentServiceError(
+            "El medico aviso que no atiende ese dia. Elegi otra fecha."
         )
 
 
@@ -230,6 +247,7 @@ def create_appointment(
 
     # 4. Fecha no bloqueada
     _check_date_not_blocked(db, doctor.id, data.appointment_date)
+    _check_doctor_not_absent(db, doctor.id, data.appointment_date)
 
     # 5. Horario valido y end_time
     schedules = _get_schedules_for_date(db, doctor.id, data.appointment_date)
@@ -404,6 +422,7 @@ def reschedule_appointment(
         )
 
     _check_date_not_blocked(db, appointment.doctor_id, new_date)
+    _check_doctor_not_absent(db, appointment.doctor_id, new_date)
     schedules = _get_schedules_for_date(db, appointment.doctor_id, new_date)
     new_end_time = _validate_slot_exists(schedules, new_start_time)
 

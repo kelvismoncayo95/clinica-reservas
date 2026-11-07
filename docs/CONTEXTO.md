@@ -10,7 +10,7 @@ Es un sistema web de gestión de turnos para una clínica médica pequeña. Reem
 - **Base de datos:** PostgreSQL 15 (con extensión `btree_gist`).
 - **Frontend:** HTML, CSS y JavaScript vanilla (en proceso de migración a React).
 - **Infraestructura:** Docker, Docker Compose, GitHub Actions (CI).
-- **Testing:** Pytest (30 tests de integración).
+- **Testing:** Pytest (36 tests de integración).
 - **Deploy:** Backend en Render, Frontend en Vercel, DB en Neon.
 
 ## 3. Decisiones Técnicas Clave
@@ -23,7 +23,7 @@ Es un sistema web de gestión de turnos para una clínica médica pequeña. Reem
 ## 4. Estado Actual
 - **Backend:** 37 endpoints funcionando.
 - **Frontend:** Login, panel de paciente, panel de admin, panel de médico.
-- **Tests:** 30 tests en verde, CI configurado en GitHub Actions.
+- **Tests:** 36 tests en verde, CI configurado en GitHub Actions.
 - **Deploy:** Sistema desplegado y funcionando en internet.
 - **Datos:** Base de datos poblada con 50 pacientes, 6 médicos y 100 citas (datos ficticios).
 
