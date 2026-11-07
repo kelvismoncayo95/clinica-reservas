@@ -35,7 +35,7 @@ Para futuros colaboradores (o IAs), leer `docs/METODOLOGIA_TRABAJO.md`. Reglas c
 - Probar en local antes de subir.
 
 ## 6. Pendientes (Feedback de QA)
-1. **Responsive móvil:** Ajustar vistas en celulares.
+1. ~~**Responsive móvil:** Ajustar vistas en celulares.~~ (Resuelto)
 2. ~~**Edición/Creación de médicos:** El formulario actual no guarda cambios.~~ (Resuelto)
 3. **Verificación de doble correo:** Al registrarse, pedir confirmación por email.
 4. ~~**Recuperación de contraseña:** Implementar "Olvidé mi contraseña".~~ (Resuelto)
