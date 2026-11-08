@@ -48,6 +48,19 @@ La más realista: una fintech que usa Python y acepta perfil junior.
 Plan: terminar este proyecto y después hacer un segundo proyecto
 (una **API de billetera digital**) orientado a esas ofertas.
 
+## Reglas para TODOS mis proyectos
+
+1. **Primero los documentos, después el código.** Antes de programar un
+   proyecto nuevo se escriben, en este orden:
+   PRD → TRD → App Flow → UX/UI → Backend Schema → Plan de implementación.
+   No se empieza a programar hasta que yo los revise.
+2. **Cada proyecto tiene demo pública** que cualquiera pueda usar libremente
+   (cuentas de prueba, datos ficticios y, si hace falta, un reinicio
+   automático de los datos de la demo).
+3. Próximo proyecto: **API de billetera digital** (`digital-wallet-api`).
+   Código en inglés, documentación en inglés + español. Deploy en Render +
+   Neon + Upstash (Redis); AWS queda como paso opcional al final.
+
 ## Reglas del proyecto
 
 - `main` es producción: **nunca** se trabaja directo ahí. Todo va por rama +
