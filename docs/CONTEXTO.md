@@ -21,7 +21,7 @@ Es un sistema web de gestión de turnos para una clínica médica pequeña. Reem
 - **Seguridad:** Rate limiting (5/min en login), XSS protection, JWT, gitleaks (sin secretos en el repo).
 
 ## 4. Estado Actual
-- **Backend:** 37 endpoints funcionando.
+- **Backend:** 48 endpoints funcionando.
 - **Frontend:** Login, panel de paciente, panel de admin, panel de médico.
 - **Tests:** 36 tests en verde, CI configurado en GitHub Actions.
 - **Deploy:** Sistema desplegado y funcionando en internet.

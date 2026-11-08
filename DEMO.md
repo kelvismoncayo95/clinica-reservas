@@ -25,5 +25,5 @@ La base de datos en la nube (Neon) fue poblada con 50 pacientes falsos y 100 cit
 ## 🚀 ¿Cómo probar la demo?
 1. Entrá a la web (link en el README principal).
 2. Usá las credenciales de la tabla de arriba para entrar como Admin, Recepción o Médico.
-3. Para probar como Paciente, **registrate con cualquier email** (no se pide contraseña, el sistema la genera).
+3. Para probar como Paciente, **registrate** con tu email y una contraseña. Si te la olvidás, usá "¿Olvidaste tu contraseña?" en el login.
 4. Reservá una cita con cualquier médico y probá cancelarla o reprogramarla.
